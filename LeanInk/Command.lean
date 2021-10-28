@@ -28,10 +28,11 @@ instance : ParsableArgument Command where
   allConstructors := [generate, analyze, version, licenses, help]
 
 def helpMessage : Command -> String
-  | generate => s!"TODO"
-  | analyze => s!"TODO"
-  | licenses => s!"TODO"
-  | _ => Help.generalHelp
+  | generate => Help.generateHelp
+  | analyze => Help.analyzeHelp
+  | version => Help.versionHelp
+  | licenses => Help.licensesHelp
+  | help => Help.helpHelp
 
 def printHelp : Option Command -> IO UInt32
   | some c => do 
