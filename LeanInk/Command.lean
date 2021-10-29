@@ -7,10 +7,8 @@ namespace LeanInk
 
 -- MARK: Commands
 inductive Command where
-  | generate : Command
   | analyze : Command
   | version : Command
-  | licenses : Command
   | help : Command
 
 namespace Command
@@ -19,19 +17,15 @@ namespace Command
 -- it easily parsable for each argument provided by the user. 
 instance : ParsableArgument Command where
   toStrings
-  | generate => ["g", "generate"]
   | analyze => ["a", "analyze"]
   | version => ["v", "version"]
-  | licenses => ["l", "licenses"]
   | help => ["h", "help"]
 
-  allConstructors := [generate, analyze, version, licenses, help]
+  allConstructors := [analyze, version, help]
 
 def helpMessage : Command -> String
-  | generate => Help.generateHelp
   | analyze => Help.analyzeHelp
   | version => Help.versionHelp
-  | licenses => Help.licensesHelp
   | help => Help.helpHelp
 
 def printHelp : Option Command -> IO UInt32
@@ -46,10 +40,8 @@ def printHelp : Option Command -> IO UInt32
 -- and all unspecified arguments to the execution context.
 def execute (c: Command) (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
   match c with
-  | generate => IO.println s!"Execute generate"; return 0
   | analyze => IO.println s!"Execute analyze"; return 0
   | version => Version.printVersion
-  | licenses => IO.println s!"Print licenses"; return 0
   | help => do
     match args with
     | [] => printHelp none
