@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     # We use macos-11 because macos-latest is still 10.15
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ ubuntu-latest, macos-11 ]
 
     steps:
       # Checkout repository
