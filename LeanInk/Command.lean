@@ -2,6 +2,7 @@ import LeanInk.ParsableArgument
 import LeanInk.GlobalArgument
 import LeanInk.Version
 import LeanInk.Help
+import LeanInk.Analyze
 
 namespace LeanInk
 
@@ -43,7 +44,7 @@ def printHelp : Option Command -> IO UInt32
 -- and all unspecified arguments to the execution context.
 def execute (c: Command) (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
   match c with
-  | analyze => IO.println s!"Execute analyze"; return 0
+  | analyze => Analyze.exec globalArgs args
   | version => Version.printVersion
   | leanVersion => Version.printLeanVersion
   | help => do
