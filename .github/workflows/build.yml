@@ -1,4 +1,4 @@
-name: Build and Test commit
+name: CI
 
 on:
   push:
