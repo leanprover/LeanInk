@@ -28,7 +28,7 @@ instance : ParsableArgument Command where
 def helpMessage : Command -> String
   | analyze => Help.analyzeHelp
   | version => Help.versionHelp
-  | leanVersion => Help.versionHelp
+  | leanVersion => Help.leanVersionHelp
   | help => Help.helpHelp
 
 def printHelp : Option Command -> IO UInt32

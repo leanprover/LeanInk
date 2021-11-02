@@ -4,9 +4,11 @@ import LeanInk.Version
 namespace LeanInk
 namespace Help
 
-def generalHelp := s!"  {Version.cliVersionOutput}
+def header := s!"  {Version.cliVersionOutput}
   LeanInk is a tool for Lean which generates static code visualization through the integration of Alectryon.
+"
 
+def generalHelp := s!"{header}
   USAGE:
       leanInk <COMMAND> [FlAGS]
 
@@ -21,9 +23,7 @@ def generalHelp := s!"  {Version.cliVersionOutput}
   DISCUSSION: TODO
 "
 
-def analyzeHelp := s!"  {Version.cliVersionOutput}
-  LeanInk is a tool for Lean which generates static code visualization through the integration of Alectryon.
-
+def analyzeHelp := s!"{header}
   USAGE:
       leanInk a <LEAN_CODE_FILES> [FlAGS]
       leanInk analyze <LEAN_CODE_FILES> [FlAGS]
@@ -35,19 +35,25 @@ def analyzeHelp := s!"  {Version.cliVersionOutput}
   DISCUSSION: TODO
 "
 
-def versionHelp := s!"  {Version.cliVersionOutput}
-  LeanInk is a tool for Lean which generates static code visualization through the integration of Alectryon.
-
+def versionHelp := s!"{header}
   USAGE:
       leanInk v
       leanInk version
+      leanInk --version
   
   DISCUSSION: Prints the version number of LeanInk and it's supported Lean4 version.
 "
 
-def helpHelp := s!"  {Version.cliVersionOutput}
-  LeanInk is a tool for Lean which generates static code visualization through the integration of Alectryon.
+def leanVersionHelp := s!"{header}
+  USAGE:
+      leanInk lV
+      leanInk leanVersion
+      leanInk --leanVersion
+  
+  DISCUSSION: Prints the version of the supported Lean4 version of this LeanInk instance. This is also used for propagating the LeanVersion to Alectryon.
+"
 
+def helpHelp := s!"{header}
   USAGE:
       leanInk h [COMMAND]
       leanInk help [COMMAND]
