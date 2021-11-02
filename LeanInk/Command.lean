@@ -9,6 +9,7 @@ namespace LeanInk
 inductive Command where
   | analyze : Command
   | version : Command
+  | leanVersion : Command
   | help : Command
 
 namespace Command
@@ -18,14 +19,16 @@ namespace Command
 instance : ParsableArgument Command where
   toStrings
   | analyze => ["a", "analyze"]
-  | version => ["v", "version"]
+  | version => ["v", "version", "--version"]
+  | leanVersion => ["lV", "leanVersion", "--leanVersion"]
   | help => ["h", "help"]
 
-  allConstructors := [analyze, version, help]
+  allConstructors := [analyze, version, leanVersion, help]
 
 def helpMessage : Command -> String
   | analyze => Help.analyzeHelp
   | version => Help.versionHelp
+  | leanVersion => Help.versionHelp
   | help => Help.helpHelp
 
 def printHelp : Option Command -> IO UInt32
@@ -42,6 +45,7 @@ def execute (c: Command) (globalArgs: List GlobalArgument) (args: List String) :
   match c with
   | analyze => IO.println s!"Execute analyze"; return 0
   | version => Version.printVersion
+  | leanVersion => Version.printLeanVersion
   | help => do
     match args with
     | [] => printHelp none
