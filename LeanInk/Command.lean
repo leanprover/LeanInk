@@ -12,6 +12,7 @@ inductive Command where
   | version : Command
   | leanVersion : Command
   | help : Command
+  deriving BEq
 
 namespace Command
 

@@ -5,6 +5,7 @@ namespace LeanInk
 -- Global Arguments are arguments which are supported by every command.
 inductive GlobalArgument where
   | verbose : GlobalArgument
+  deriving BEq
 
 namespace GlobalArgument
 
