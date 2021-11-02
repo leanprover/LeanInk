@@ -54,7 +54,6 @@ jobs:
       # Install elan with nightly toolchain
       - name: install elan
         run: |
-          set -o pipefail
           curl -O --location https://raw.githubusercontent.com/leanprover/elan/master/elan-init.ps1
           powershell -f elan-init.ps1 --default-toolchain leanprover/lean4:nightly -y
           del elan-init.ps1
