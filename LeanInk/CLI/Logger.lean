@@ -1,5 +1,4 @@
-namespace LeanInk
-namespace Logger
+namespace LeanInk.CLI.Logger
 
 open Lean
 

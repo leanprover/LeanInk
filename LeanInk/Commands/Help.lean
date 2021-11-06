@@ -1,8 +1,7 @@
-import LeanInk.GlobalArgument
-import LeanInk.Version
+import LeanInk.CLI.GlobalArgument
+import LeanInk.Commands.Version
 
-namespace LeanInk
-namespace Help
+namespace LeanInk.Commands.Help
 
 def header := s!"  {Version.cliVersionOutput}
   LeanInk is a tool for Lean which generates static code visualization through the integration of Alectryon.

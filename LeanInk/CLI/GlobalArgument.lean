@@ -1,6 +1,6 @@
-import LeanInk.ParsableArgument
+import LeanInk.CLI.ParsableArgument
 
-namespace LeanInk
+namespace LeanInk.CLI
 
 -- Global Arguments are arguments which are supported by every command.
 inductive GlobalArgument where

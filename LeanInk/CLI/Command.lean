@@ -1,10 +1,11 @@
-import LeanInk.ParsableArgument
-import LeanInk.GlobalArgument
-import LeanInk.Version
-import LeanInk.Help
-import LeanInk.Analyze
+import LeanInk.CLI.ParsableArgument
+import LeanInk.CLI.GlobalArgument
+import LeanInk.Commands.Version
+import LeanInk.Commands.Help
+import LeanInk.Commands.Analyze
 
-namespace LeanInk
+namespace LeanInk.CLI
+open LeanInk.Commands
 
 -- MARK: Commands
 inductive Command where

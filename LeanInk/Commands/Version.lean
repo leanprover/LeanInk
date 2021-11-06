@@ -1,5 +1,4 @@
-namespace LeanInk
-namespace Version
+namespace LeanInk.Commands.Version
 
 def version := s!"0.0.1"
 def leanVersion := s!"leanprover/lean4:nightly-2021-11-02"

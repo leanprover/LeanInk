@@ -1,4 +1,4 @@
-namespace LeanInk
+namespace LeanInk.CLI
 
 -- The ParsableArgument class describes objects with traits that allow it to be parsed
 -- from the List of String arguments in the CLI.
