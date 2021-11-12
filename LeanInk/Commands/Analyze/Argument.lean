@@ -15,6 +15,7 @@ namespace LeanInk.Commands.Analyze
 -- this would also allow support for additional output formats
 inductive Argument where
  | alectryonFragmentOutput : Argument
+ | lakeFile : Argument
  deriving BEq
 
 namespace Argument
@@ -22,5 +23,6 @@ namespace Argument
 instance : CLI.ParsableArgument Argument where
   toStrings
   | alectryonFragmentOutput => ["-afo", "--alectryonFragmentOuptut", "--output=alectryonFragments"]
+  | lakeFile => ["-l", "--lake"]
 
-  allConstructors := [alectryonFragmentOutput]
+  allConstructors := [alectryonFragmentOutput, lakeFile]
