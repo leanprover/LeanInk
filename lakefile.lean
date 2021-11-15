@@ -6,7 +6,7 @@ package leanInk where
   dependencies := #[
     {
       name := `lake
-      src := Source.git "https://github.com/leanprover/lake.git" "ba9005829cf53e77cb241fc6fb86a2d4e8d8219c"
+      src := Source.git "https://github.com/leanprover/lake.git" "e957827c21e83101c4ce888f1752845dfdd03403"
     }
   ]
   moreLinkArgs :=
