@@ -12,5 +12,13 @@ inductive OutputType where
 -- The analyze `Configuration` describes all input specifications and infos for
 -- the LeanInk analysis execution context. It contains the list of input file paths, etc.
 structure Configuration where
-  inputFile: FilePath
+  inputFilePath : FilePath
+  inputFileContents : String
   outputType : OutputType
+
+namespace Configuration
+
+def inputFileName (self : Configuration) : String :=
+  self.inputFilePath.toString
+
+end Configuration
