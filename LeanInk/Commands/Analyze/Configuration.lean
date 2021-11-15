@@ -12,5 +12,5 @@ inductive OutputType where
 -- The analyze `Configuration` describes all input specifications and infos for
 -- the LeanInk analysis execution context. It contains the list of input file paths, etc.
 structure Configuration where
-  inputFiles: List FilePath
+  inputFile: FilePath
   outputType : OutputType
