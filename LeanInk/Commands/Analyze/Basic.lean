@@ -8,17 +8,17 @@ import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.FileHelper
 import LeanInk.Commands.Analyze.Analysis
 
+import LeanInk.Output.AlectryonFragment
+
 import Lean.Util.Path
+import Lean.Data.Json
+import Lean.Data.Json.Printer
 
 namespace LeanInk.Commands.Analyze
 
 open LeanInk.CLI
 open Lean
 open System
-
-private def _analyze (configuration: Configuration) : IO Unit := do
-  let successfull <- analyzeInput configuration
-  return
 
 private def _validateInputFile (file : FilePath) : Bool := do
   return isLeanFile file
@@ -32,6 +32,21 @@ private def _buildConfiguration (arguments: List Argument) (file: FilePath) : IO
     outputType := OutputType.alectryonFragments 
   }
 
+-- OUTPUT
+open IO.FS
+
+def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : IO Unit := do
+  let dirEntry : DirEntry := { 
+    root := folderPath,
+    fileName := fileName ++ ".leanInk"
+  }
+  let path ← dirEntry.path
+  IO.FS.writeFile path content
+  IO.println s!"Results written to file: {path}!"
+
+open LeanInk.Output.AlectryonFragment in
+def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
+
 -- EXECUTION
 def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
   let (arguments, files) : List Argument × List String := parseArgumentList args
@@ -40,10 +55,13 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
     if not (_validateInputFile a) then do
       Logger.logError s!"Provided file \"{a}\" is not lean file."
     else
+      Logger.logInfo s!"Starting process with lean file: {a}"
       let configuration ← _buildConfiguration arguments a
       Logger.logInfo "Loading Lean Context..."
       initializeLeanContext
       Logger.logInfo "Analyzing..."
-      _analyze configuration
+      let result ← analyzeInput configuration
+      let currentDir ← IO.currentDir
+      createOutputFile currentDir configuration.inputFileName (generateOutput result)
       return 0
   | _ => Logger.logError s!"No input files provided"
