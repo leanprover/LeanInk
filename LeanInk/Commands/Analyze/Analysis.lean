@@ -14,21 +14,48 @@ open Lean
 open Lean.Elab
 open Output.AlectryonFragment
 
-def generateFragments (trees: List InfoTree) : IO (List Fragment) := do
-  match trees with
-  | [] => []
-  | tree::trees => do
-    let format ← InfoTree.format tree
-    let fragment := Fragment.text { contents := s!"{format}" }
-    let rest ← generateFragments trees
-    return fragment::rest
+inductive AnalysisFragment where
+  | tactic (i: TacticInfo) (ctx: ContextInfo)
+  | term (i: TermInfo) (ctx: ContextInfo)
+  | field (i: FieldInfo) (ctx: ContextInfo)
 
-def analyzeInfoTree (config: Configuration) (tree: InfoTree) : Array Fragment := do
+namespace AnalysisFragment
+  def toFormat : AnalysisFragment -> IO Format
+  | tactic i ctx => i.format ctx
+  | term i ctx => i.format ctx
+  | field i ctx => i.format ctx
+
+  def toAlectryonFragment : AnalysisFragment -> Fragment
+  | tactic _ _ => Fragment.text { contents := "tactic" }
+  | term _ _ => Fragment.text { contents := "term" }
+  | field _ _ => Fragment.text { contents := "field" }
+
+end AnalysisFragment
+
+-- INFO TREE analysis
+def Info.toAnalysisFragment (info: Info) (ctx: ContextInfo) : Option AnalysisFragment := do
+  match info with
+  | Info.ofTacticInfo i => AnalysisFragment.tactic i ctx
+  --| Info.ofTermInfo i => AnalysisFragment.term i ctx
+  --| Info.ofFieldInfo i => AnalysisFragment.field i ctx
+  | _ => none
+
+partial def resolveLeafList (ctx?: Option ContextInfo := none) (tree: InfoTree) : List AnalysisFragment := do
   match tree with
-  | InfoTree.context info tree => #[]
-  | InfoTree.node info children => #[]
-  | InfoTree.ofJson json => #[]
-  | InfoTree.hole metavar => #[]
+  | InfoTree.context ctx tree => resolveLeafList ctx tree
+  | InfoTree.node info children =>
+    match ctx? with
+    | none => return [] -- Add error handling
+    | some ctx =>
+      if children.isEmpty then
+        match Info.toAnalysisFragment info ctx with
+        | some f => [f]
+        | none => []
+      else
+        let ctx := info.updateContext? ctx
+        let resolvedChildren := children.toList.map (resolveLeafList ctx)
+        return resolvedChildren.join
+  | _ => []
 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State := do 
   return { Command.mkState env msg with infoState := { enabled := true }}
@@ -44,8 +71,12 @@ def analyzeInput (config: Configuration) : IO (Array Fragment) := do
   let trees := s.commandState.infoState.trees
 
   IO.println s!"INFO! Trees enabled: {s.commandState.infoState.enabled}"
-  IO.println s!"INFO! Gathered commands: {s.commands.size}"
   IO.println s!"INFO! Gathered trees: {s.commandState.infoState.trees.size}"
 
-  let fragments ← generateFragments trees.toList
-  return fragments.toArray
+  let fragments ← (trees.toList.map (resolveLeafList)).join
+
+  for fragment in fragments do
+    let format ← fragment.toFormat
+    IO.println format
+
+  return (fragments.map (λ f => f.toAlectryonFragment)).toArray
