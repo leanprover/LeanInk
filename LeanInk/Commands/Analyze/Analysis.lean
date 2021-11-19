@@ -137,7 +137,7 @@ partial def resolveLeafList (ctx?: Option ContextInfo := none) (tree: InfoTree) 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State := do 
   return { Command.mkState env msg with infoState := { enabled := true }}
 
-def analyzeInput (config: Configuration) : IO (List Fragment) := do
+def analyzeInput (config: Configuration) : IO (Option (AnnotationIntervalTree)) := do
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
   let options := Options.empty.setBool `trace.Elab.info true
@@ -151,5 +151,4 @@ def analyzeInput (config: Configuration) : IO (List Fragment) := do
 
   let fragments ← joinSortedAF (trees.toList.map (resolveLeafList))
   let filteredFragments := fragments.filter (λ x => x.size > 0)
-  let annotationTree := AnnotationIntervalTree.create filteredFragments
-  return filteredFragments.map (λ x => x.toAlectryonFragment)
+  return (← AnnotationIntervalTree.create filteredFragments)
