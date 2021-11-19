@@ -62,6 +62,6 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
       Logger.logInfo "Analyzing..."
       let result ← analyzeInput configuration
       let currentDir ← IO.currentDir
-      createOutputFile currentDir configuration.inputFileName (generateOutput result)
+      createOutputFile currentDir configuration.inputFileName (generateOutput result.toArray)
       return 0
   | _ => Logger.logError s!"No input files provided"
