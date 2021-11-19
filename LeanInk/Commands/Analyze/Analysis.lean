@@ -1,5 +1,4 @@
 import LeanInk.Commands.Analyze.Configuration
-import LeanInk.Commands.Analyze.Utility
 
 import LeanInk.Output.AlectryonFragment
 
@@ -33,6 +32,14 @@ namespace AnalysisFragment
   | term i _ => (i.toElabInfo.stx.getPos? true).getD 0
   | field i _ => (i.stx.getPos? true).getD 0
 
+  def tailPos : AnalysisFragment -> String.Pos
+  | tactic i _ => (i.toElabInfo.stx.getTailPos? true).getD 0
+  | term i _ => (i.toElabInfo.stx.getTailPos? true).getD 0
+  | field i _ => (i.stx.getTailPos? true).getD 0
+
+  def size (f: AnalysisFragment) : Nat := 
+    return f.tailPos - f.headPos
+
   def toAlectryonFragment (fragment: AnalysisFragment) : Fragment := Fragment.text { contents := s!"{fragment.headPos}" }
 end AnalysisFragment
 
@@ -47,6 +54,60 @@ def mergeSortLists [Inhabited α] (f: α -> α -> Bool) : List α -> List α -> 
 
 def mergeSortedAF : List AnalysisFragment -> List AnalysisFragment -> List AnalysisFragment := mergeSortLists (λ x y => x.headPos < y.headPos)
 def joinSortedAF : List (List AnalysisFragment) -> List AnalysisFragment := List.foldl mergeSortedAF []
+
+-- TEXT_FRAGMENTATION
+structure AnnotationInfo where
+  head: String.Pos
+  tail: String.Pos
+
+structure CompoundInfo extends AnnotationInfo where
+  fragments: List AnalysisFragment
+
+inductive Annotation where
+  | compound (i: CompoundInfo) (next: Option Annotation)
+  | text (i: AnnotationInfo) (next: Option Annotation)
+
+structure AnnotationIntervalInfo where
+  head: String.Pos
+  tail: String.Pos
+  maxChildTail: String.Pos
+  fragment: AnalysisFragment
+
+inductive AnnotationIntervalTree where
+  | node (i: AnnotationIntervalInfo) (left: Option AnnotationIntervalTree) (right: Option AnnotationIntervalTree)
+
+namespace AnnotationIntervalTree
+
+def Fragment.createInfo (f: AnalysisFragment) (maxTail: Option String.Pos := none) : AnnotationIntervalInfo := do
+  match maxTail with
+  | some maxTail => return { head := f.headPos, tail :=  f.tailPos, maxChildTail := maxTail, fragment := f }
+  | none => return { head := f.headPos, tail :=  f.tailPos, maxChildTail := f.tailPos, fragment := f }
+
+def max (a b: Option AnnotationIntervalTree) : Option String.Pos := do
+  match a, b with
+  | none, none => none
+  | some (node ia _ _) , none => some ia.maxChildTail
+  | none , some (node ib _ _) => some ib.maxChildTail
+  | some (node ia _ _) , some (node ib _ _) =>
+    if ia.maxChildTail > ib.maxChildTail then
+      return some ia.maxChildTail 
+    else 
+      return some ib.maxChildTail
+
+-- We expect a sorted list, based on the head position of each fragment.
+partial def create : List AnalysisFragment -> Option AnnotationIntervalTree
+  | [] => none
+  | x::[] => node (Fragment.createInfo x) none none
+  | xs => do
+    let fragments := xs.toArray
+    let centerIndex := fragments.size / 2
+    let centerFragment := fragments[centerIndex]
+    let left := create (xs.take (centerIndex - 1))
+    let right := create (xs.drop centerIndex)
+    let maxValue := max left right
+    return node (Fragment.createInfo centerFragment maxValue) left right
+
+end AnnotationIntervalTree
 
 -- INFO TREE analysis
 def Info.toAnalysisFragment (info: Info) (ctx: ContextInfo) : Option AnalysisFragment := do
@@ -89,4 +150,6 @@ def analyzeInput (config: Configuration) : IO (List Fragment) := do
   IO.println s!"INFO! Gathered trees: {s.commandState.infoState.trees.size}"
 
   let fragments ← joinSortedAF (trees.toList.map (resolveLeafList))
-  return fragments.map (λ x => x.toAlectryonFragment)
+  let filteredFragments := fragments.filter (λ x => x.size > 0)
+  let annotationTree := AnnotationIntervalTree.create filteredFragments
+  return filteredFragments.map (λ x => x.toAlectryonFragment)
