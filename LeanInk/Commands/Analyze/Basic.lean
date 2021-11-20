@@ -60,8 +60,11 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
       Logger.logInfo "Loading Lean Context..."
       initializeLeanContext
       Logger.logInfo "Analyzing ..."
-      let annotationTree ← analyzeInput configuration
-      Logger.logInfo "Evaluate AnnotationTree"
+      let annotations ← analyzeInput configuration
+      
+      for annotation in annotations.toArray do
+        IO.println annotation.toString
+
       createOutputFile (← IO.currentDir) configuration.inputFileName (generateOutput #[])
       return 0
   | _ => Logger.logError s!"No input files provided"
