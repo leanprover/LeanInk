@@ -1,8 +1,9 @@
-import Lake
+import Lean.Util.Path
 
 namespace LeanInk.Commands.Analyze
 
+open System
+
 def initializeLeanContext : IO Unit := do
-  let lean <- Lake.findLeanInstall?
-  let lake <- Lake.findLakeInstall?
-  Lake.setupLeanSearchPath lean lake
+  let leanPath ← Lean.findSysroot?
+  Lean.initSearchPath leanPath
