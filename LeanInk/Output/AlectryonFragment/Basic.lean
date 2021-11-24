@@ -6,6 +6,7 @@ namespace LeanInk.Output.AlectryonFragment
 open Lean
 
 structure Hypothesis where
+  _type : String := "hypothesis"
   names : List String
   body : String
   type : String
@@ -15,7 +16,7 @@ structure Goal where
   _type : String := "goal"
   name : String
   conclusion : String
-  hyptheses : Array Hypothesis
+  hypotheses : Array Hypothesis
   deriving FromJson, ToJson
 
 structure Message where

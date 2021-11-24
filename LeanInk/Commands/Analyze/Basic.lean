@@ -7,8 +7,7 @@ import LeanInk.Commands.Analyze.LeanContext
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.FileHelper
 import LeanInk.Commands.Analyze.Analysis
-
-import LeanInk.Output.AlectryonFragment
+import LeanInk.Commands.Analyze.Annotation
 
 import Lean.Util.Path
 import Lean.Data.Json
@@ -43,6 +42,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   let path ← dirEntry.path
   IO.FS.writeFile path content
   IO.println s!"Results written to file: {path}!"
+  IO.println content
 
 open LeanInk.Output.AlectryonFragment in
 def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
@@ -56,11 +56,20 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
       Logger.logError s!"Provided file \"{a}\" is not lean file."
     else
       Logger.logInfo s!"Starting process with lean file: {a}"
-      let configuration ← _buildConfiguration arguments a
+      let config ← _buildConfiguration arguments a
+
       Logger.logInfo "Loading Lean Context..."
       initializeLeanContext
+
       Logger.logInfo "Analyzing ..."
-      let annotations ← analyzeInput configuration
-      createOutputFile (← IO.currentDir) configuration.inputFileName (generateOutput #[])
+      let annotations ← analyzeInput config
+
+      Logger.logInfo "Annotating..."
+      let outputFragments ← annotateFile config annotations
+
+      IO.println s!"FragmentSize: {outputFragments.length}"
+
+      Logger.logInfo "Outputting..."
+      createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)
       return 0
   | _ => Logger.logError s!"No input files provided"
