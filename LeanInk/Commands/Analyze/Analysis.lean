@@ -29,10 +29,12 @@ def analyzeInput (config: Configuration) : IO (List TacticFragment) := do
   IO.println s!"INFO! Trees enabled: {s.commandState.infoState.enabled}"
   IO.println s!"INFO! Gathered trees: {s.commandState.infoState.trees.size}"
 
-  let tacticFragments := resolveTacticList trees
+  let tacticFragments := trees.map _resolveTacticList
 
-  for fragment in tacticFragments do
-    let format ← fragment.toFormat
-    IO.println s!"{format}"
+  for fragmentList in tacticFragments do
+    IO.println s!"___NEW FRAGMENT_LIST___"
+    for fragment in fragmentList do
+      let format ← fragment.toFormat
+      IO.println s!"{format}"
 
-  return tacticFragments
+  return tacticFragments.foldl mergeSortFragments []

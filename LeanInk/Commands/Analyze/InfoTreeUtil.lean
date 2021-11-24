@@ -12,16 +12,21 @@ structure TacticFragment where
 
 namespace TacticFragment
   def headPos (f: TacticFragment) : String.Pos := 
-    (f.info.toElabInfo.stx.getPos? true).getD 0
+    (f.info.toElabInfo.stx.getPos? false).getD 0
 
   def tailPos (f: TacticFragment) : String.Pos := 
-    (f.info.toElabInfo.stx.getTailPos? true).getD 0
+    (f.info.toElabInfo.stx.getTailPos? false).getD 0
 
   def size (f: TacticFragment) : Nat := 
     f.tailPos - f.headPos
 
   def toFormat (f: TacticFragment) : IO Format := 
     TacticInfo.format f.ctx f.info
+
+  def isExpanded (f: TacticFragment) : Bool :=
+    match f.info.toElabInfo.stx.getHeadInfo, f.info.toElabInfo.stx.getTailInfo with
+    | SourceInfo.original .., SourceInfo.original .. => false
+    | _, _ => true
 end TacticFragment
 
 def mergeSort [Inhabited α] (f: α -> α -> Bool) : List α -> List α -> List α
@@ -36,9 +41,14 @@ def mergeSort [Inhabited α] (f: α -> α -> Bool) : List α -> List α -> List 
 def mergeSortFragments : List TacticFragment -> List TacticFragment -> List TacticFragment := 
   mergeSort (λ x y => x.headPos < y.headPos)
 
-def Info.toFragment (info: Info) (ctx: ContextInfo) : Option TacticFragment := do
+def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment := do
   match info with
-  | Info.ofTacticInfo i => some { info := i, ctx := ctx }
+  | Info.ofTacticInfo i => 
+    let fragment : TacticFragment := { info :=  i, ctx := ctx }
+    if fragment.isExpanded then
+      return none
+    else
+      return fragment
   | _ => none
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> List TacticFragment
