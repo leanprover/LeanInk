@@ -1,0 +1,52 @@
+[{"contents":
+  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=\n  by ",
+  "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name":
+    "Tactic @ ⟨2, 5⟩-⟨2, 20⟩ @ Lean.Elab.Tactic.evalApply\n(Tactic.apply \"apply\" `And.intro)\nbefore \np q : Prop\nhp : p\nhq : q\n⊢ p ∧ q ∧ p\nafter \ncase left\np q : Prop\nhp : p\nhq : q\n⊢ p\ncase right p q : Prop hp : p hq : q ⊢ q ∧ p",
+    "hypotheses": [],
+    "conclusion": "",
+    "_type": "goal"}],
+  "contents": "apply And.intro",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name":
+    "Tactic @ ⟨3, 5⟩-⟨3, 13⟩ @ Lean.Elab.Tactic.evalExact\n(Tactic.exact \"exact\" `hp)\nbefore \ncase left\np q : Prop\nhp : p\nhq : q\n⊢ p\ncase right\np q : Prop\nhp : p\nhq : q\n⊢ q ∧ p\nafter \ncase right p q : Prop hp : p hq : q ⊢ q ∧ p",
+    "hypotheses": [],
+    "conclusion": "",
+    "_type": "goal"}],
+  "contents": "exact hp",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name":
+    "Tactic @ ⟨4, 5⟩-⟨4, 20⟩ @ Lean.Elab.Tactic.evalApply\n(Tactic.apply \"apply\" `And.intro)\nbefore \ncase right\np q : Prop\nhp : p\nhq : q\n⊢ q ∧ p\nafter \ncase right.left\np q : Prop\nhp : p\nhq : q\n⊢ q\ncase right.right p q : Prop hp : p hq : q ⊢ p",
+    "hypotheses": [],
+    "conclusion": "",
+    "_type": "goal"}],
+  "contents": "apply And.intro",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name":
+    "Tactic @ ⟨5, 5⟩-⟨5, 13⟩ @ Lean.Elab.Tactic.evalExact\n(Tactic.exact \"exact\" `hq)\nbefore \ncase right.left\np q : Prop\nhp : p\nhq : q\n⊢ q\ncase right.right\np q : Prop\nhp : p\nhq : q\n⊢ p\nafter \ncase right.right p q : Prop hp : p hq : q ⊢ p",
+    "hypotheses": [],
+    "conclusion": "",
+    "_type": "goal"}],
+  "contents": "exact hq",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name":
+    "Tactic @ ⟨6, 5⟩-⟨6, 13⟩ @ Lean.Elab.Tactic.evalExact\n(Tactic.exact \"exact\" `hp)\nbefore \ncase right.right\np q : Prop\nhp : p\nhq : q\n⊢ p\nafter no goals",
+    "hypotheses": [],
+    "conclusion": "",
+    "_type": "goal"}],
+  "contents": "exact hp",
+  "_type": "sentence"}]

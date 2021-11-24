@@ -1,3 +1,5 @@
 /build
 /lean_packages
-/test
+/test/*/*.html
+/test/*/*.css
+/test/*/*.js

@@ -1,0 +1,2 @@
+[{"contents": "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=\n  s",
+  "_type": "text"}]
