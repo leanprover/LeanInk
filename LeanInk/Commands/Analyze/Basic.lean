@@ -42,7 +42,6 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   let path ← dirEntry.path
   IO.FS.writeFile path content
   IO.println s!"Results written to file: {path}!"
-  IO.println content
 
 open LeanInk.Output.AlectryonFragment in
 def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
@@ -62,10 +61,10 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
       initializeLeanContext
 
       Logger.logInfo "Analyzing ..."
-      let annotations ← analyzeInput config
+      let result ← analyzeInput config
 
       Logger.logInfo "Annotating..."
-      let outputFragments ← annotateFile config annotations
+      let outputFragments ← _annotateFile config result.tactics
 
       IO.println s!"FragmentSize: {outputFragments.length}"
 

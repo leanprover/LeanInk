@@ -1,5 +1,6 @@
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.InfoTreeUtil
+import LeanInk.Commands.Analyze.Analysis
 
 import LeanInk.Output.AlectryonFragment
 
@@ -12,6 +13,12 @@ open Output.AlectryonFragment
 open Lean
 open Lean.Elab
 
+structure CompoundFragment where
+  headPos: String.Pos
+  tailPos: String.Pos
+  tactic: List TacticFragment
+  messages: List MessageFragment
+
 namespace TacticFragment
   private def resolveGoalsAux (ctx: ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
     | [] => []
@@ -23,9 +30,16 @@ namespace TacticFragment
     let goalsBefore ← resolveGoalsAux self.ctx self.info.mctxBefore self.info.goalsBefore
     return ← goalsBefore.map (λ g => { name := "", conclusion := s!"{g}", hypotheses := #[] } )
 
+  def toCompoundFragment (self : TacticFragment) : CompoundFragment :=
+    { headPos := self.headPos, tailPos := self.tailPos, tactic := [self], messages := [] }
 end TacticFragment
 
-def annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) (f : List TacticFragment) : IO (List Fragment) := do
+namespace MessageFragment
+  def toCompoundFragment (self : MessageFragment) : CompoundFragment :=
+    { headPos := self.headPos, tailPos := self.tailPos, tactic := [], messages := [self] }
+end MessageFragment
+
+def _annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) (f : List TacticFragment) : IO (List Fragment) := do
   IO.println s!"Running Annotation (l: {l.length}) (pos: {pos}) (f: {f.length})"
 
   if contents.atEnd pos then
@@ -38,8 +52,12 @@ def annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) (
       let fragment := Fragment.sentence { contents := contents.extract t.headPos t.tailPos, messages := #[], goals := (← t.resolveGoals).toArray }
       if t.headPos > pos then
         let textFragment := Fragment.text { contents := contents.extract pos t.headPos }
-        return ← annotateFileAux (l.append [textFragment, fragment]) contents t.tailPos ts
+        return ← _annotateFileAux (l.append [textFragment, fragment]) contents t.tailPos ts
       else
-        return ← annotateFileAux (l.append [fragment]) contents t.tailPos ts
+        return ← _annotateFileAux (l.append [fragment]) contents t.tailPos ts
 
-def annotateFile (config: Configuration) (annotations: List TacticFragment) : IO (List Fragment) := annotateFileAux [] config.inputFileContents 0 annotations
+def _annotateFile (config: Configuration) (annotations: List TacticFragment) : IO (List Fragment) := _annotateFileAux [] config.inputFileContents 0 annotations
+
+def annotateFile (config : Configuration) (analysis : AnalysisResult) : IO (List Fragment) := do
+  let initialCompounds := analysis.tactics.map (λ t => t.toCompoundFragment)
+  return []

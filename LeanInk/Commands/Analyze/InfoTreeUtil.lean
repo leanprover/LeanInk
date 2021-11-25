@@ -1,10 +1,15 @@
 import Lean.Elab.Command
 
+import Lean.Data.Lsp
+
 namespace LeanInk.Commands.Analyze
 
 open Lean
 open Lean.Elab
 
+/-
+  TacticFragment
+-/
 structure TacticFragment where
   info: TacticInfo
   ctx: ContextInfo
@@ -17,8 +22,8 @@ namespace TacticFragment
   def tailPos (f: TacticFragment) : String.Pos := 
     (f.info.toElabInfo.stx.getTailPos? false).getD 0
 
-  def size (f: TacticFragment) : Nat := 
-    f.tailPos - f.headPos
+  def length (f: TacticFragment) : Nat := 
+    tailPos f - headPos f
 
   def toFormat (f: TacticFragment) : IO Format := 
     TacticInfo.format f.ctx f.info
@@ -28,6 +33,26 @@ namespace TacticFragment
     | SourceInfo.original .., SourceInfo.original .. => false
     | _, _ => true
 end TacticFragment
+
+/-
+  MessageFragment
+-/
+structure MessageFragment where
+  headPos: String.Pos
+  tailPos: String.Pos
+  msg: Message
+
+def Position.toStringPos (fileMap: FileMap) (pos: Position) : String.Pos :=
+    return FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
+
+namespace MessageFragment
+  def mkFragment (fileMap: FileMap) (msg: Message) : MessageFragment := do
+    let headPos := Position.toStringPos fileMap msg.pos
+    let tailPos := Position.toStringPos fileMap (msg.endPos.getD msg.pos)
+    return { headPos := headPos, tailPos := tailPos, msg := msg }
+
+  def length (f: MessageFragment) : Nat := f.tailPos - f.headPos
+end MessageFragment
 
 def mergeSort [Inhabited α] (f: α -> α -> Bool) : List α -> List α -> List α
   | [], x => (x.toArray.qsort f).toList
@@ -70,6 +95,3 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> 
 
 def resolveTacticList (trees: List InfoTree) : List TacticFragment :=
   return (trees.map _resolveTacticList).foldl mergeSortFragments []
-
-def configureCommandState (env : Environment) (msg : MessageLog) : Command.State := do 
-  return { Command.mkState env msg with infoState := { enabled := true }}
