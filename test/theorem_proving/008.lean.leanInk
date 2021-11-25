@@ -1,5 +1,5 @@
 [{"contents":
-  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=\n  by ",
+  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by\n  ",
   "_type": "text"},
  {"messages": [],
   "goals":
@@ -9,7 +9,7 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n  ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -17,9 +17,27 @@
     "conclusion":
     "\ncase left\np q : Prop\nhp : p\nhq : q\n⊢ p\ncase right p q : Prop hp : p hq : q ⊢ q ∧ p",
     "_type": "goal"}],
+  "contents": ".",
+  "_type": "sentence"},
+ {"contents": " ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "\ncase left p q : Prop hp : p hq : q ⊢ p",
+    "_type": "goal"}],
   "contents": "exact hp",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n  ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "\ncase right p q : Prop hp : p hq : q ⊢ q ∧ p",
+    "_type": "goal"}],
+  "contents": ".",
+  "_type": "sentence"},
+ {"contents": " ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -28,7 +46,7 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n    ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -36,9 +54,27 @@
     "conclusion":
     "\ncase right.left\np q : Prop\nhp : p\nhq : q\n⊢ q\ncase right.right p q : Prop hp : p hq : q ⊢ p",
     "_type": "goal"}],
+  "contents": ".",
+  "_type": "sentence"},
+ {"contents": " ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "\ncase right.left p q : Prop hp : p hq : q ⊢ q",
+    "_type": "goal"}],
   "contents": "exact hq",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n    ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "\ncase right.right p q : Prop hp : p hq : q ⊢ p",
+    "_type": "goal"}],
+  "contents": ".",
+  "_type": "sentence"},
+ {"contents": " ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",

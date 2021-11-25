@@ -1,5 +1,5 @@
 [{"contents":
-  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=\n  by ",
+  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by\n  ",
   "_type": "text"},
  {"messages": [],
   "goals":
@@ -9,7 +9,7 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n  ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -19,7 +19,7 @@
     "_type": "goal"}],
   "contents": "exact hp",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n  ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -28,7 +28,7 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n  ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -38,7 +38,7 @@
     "_type": "goal"}],
   "contents": "exact hq",
   "_type": "sentence"},
- {"contents": "\n     ", "_type": "text"},
+ {"contents": "\n  ", "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "",
