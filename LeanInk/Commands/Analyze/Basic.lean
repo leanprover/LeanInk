@@ -64,7 +64,7 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
       let result ← analyzeInput config
 
       Logger.logInfo "Annotating..."
-      let outputFragments ← _annotateFile config result.tactics
+      let outputFragments ← annotateFile config result
 
       IO.println s!"FragmentSize: {outputFragments.length}"
 

@@ -1,5 +1,6 @@
-import Lean.Elab.Command
+import LeanInk.Commands.Analyze.ListUtil
 
+import Lean.Elab.Command
 import Lean.Data.Lsp
 
 namespace LeanInk.Commands.Analyze
@@ -54,17 +55,8 @@ namespace MessageFragment
   def length (f: MessageFragment) : Nat := f.tailPos - f.headPos
 end MessageFragment
 
-def mergeSort [Inhabited α] (f: α -> α -> Bool) : List α -> List α -> List α
-  | [], x => (x.toArray.qsort f).toList
-  | x, [] => (x.toArray.qsort f).toList
-  | x::xs, y::ys => 
-    if f x y then
-      return x::y::mergeSort f xs ys
-    else
-      return y::x::mergeSort f xs ys
-
 def mergeSortFragments : List TacticFragment -> List TacticFragment -> List TacticFragment := 
-  mergeSort (λ x y => x.headPos < y.headPos)
+  List.mergeSort (λ x y => x.headPos < y.headPos)
 
 def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment := do
   match info with

@@ -1,6 +1,7 @@
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.InfoTreeUtil
 import LeanInk.Commands.Analyze.Analysis
+import LeanInk.Commands.Analyze.ListUtil
 
 import LeanInk.Output.AlectryonFragment
 
@@ -16,8 +17,7 @@ open Lean.Elab
 structure CompoundFragment where
   headPos: String.Pos
   tailPos: String.Pos
-  tactic: List TacticFragment
-  messages: List MessageFragment
+  fragments: List AnalysisFragment
 
 namespace TacticFragment
   private def resolveGoalsAux (ctx: ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
@@ -29,15 +29,18 @@ namespace TacticFragment
   def resolveGoals (self : TacticFragment) : IO (List Goal) := do
     let goalsBefore ← resolveGoalsAux self.ctx self.info.mctxBefore self.info.goalsBefore
     return ← goalsBefore.map (λ g => { name := "", conclusion := s!"{g}", hypotheses := #[] } )
-
-  def toCompoundFragment (self : TacticFragment) : CompoundFragment :=
-    { headPos := self.headPos, tailPos := self.tailPos, tactic := [self], messages := [] }
 end TacticFragment
 
-namespace MessageFragment
-  def toCompoundFragment (self : MessageFragment) : CompoundFragment :=
-    { headPos := self.headPos, tailPos := self.tailPos, tactic := [], messages := [self] }
-end MessageFragment
+inductive FragmentEvent where
+  | head (pos: String.Pos) (fragment: AnalysisFragment)
+  | tail (pos: String.Pos) (fragment: AnalysisFragment)
+  deriving Inhabited
+
+namespace FragmentEvent
+  def position: FragmentEvent -> String.Pos
+    | head p _ => p
+    | tail p _ => p
+end FragmentEvent
 
 def _annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) (f : List TacticFragment) : IO (List Fragment) := do
   IO.println s!"Running Annotation (l: {l.length}) (pos: {pos}) (f: {f.length})"
@@ -58,6 +61,11 @@ def _annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) 
 
 def _annotateFile (config: Configuration) (annotations: List TacticFragment) : IO (List Fragment) := _annotateFileAux [] config.inputFileContents 0 annotations
 
-def annotateFile (config : Configuration) (analysis : AnalysisResult) : IO (List Fragment) := do
-  let initialCompounds := analysis.tactics.map (λ t => t.toCompoundFragment)
+def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent := do
+  let headQueue := analysis.map (λ f => FragmentEvent.head f.headPos f)
+  let sortedTailList := List.sort (λ x y => x.tailPos < y.tailPos) analysis
+  let tailQueue := sortedTailList.map (λ f => FragmentEvent.tail f.tailPos f)
+  return List.mergeSort (λ x y => x.position < y.position) headQueue tailQueue
+
+def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Fragment) := do
   return []
