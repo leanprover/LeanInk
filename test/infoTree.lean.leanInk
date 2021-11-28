@@ -1,14 +1,1 @@
-[{"contents":
-  "import Lean\n\nopen Lean.Elab\n\nstructure A where\n  val : Nat → Nat\n\nstructure B where\n  pair : A × A\n\nset_option trace.Elab.info true\n\ndef f (x : Nat) : Nat × Nat :=\n  let y := ⟨x, x⟩\n  id y\n\ndef h : (x y : Nat) → (b : Bool) → x + 0 = x :=\n  fun x y b => by\n    ",
-  "_type": "text"},
- {"messages": [],
-  "goals":
-  [{"name": "",
-    "hypotheses": [],
-    "conclusion": "\nx y : Nat b : Bool ⊢ x + 0 = x",
-    "_type": "goal"}],
-  "contents": "simp",
-  "_type": "sentence"},
- {"contents":
-  "\n\ndef f2 : (x y : Nat) → (b : Bool) → Nat :=\n  fun x y b =>\n    let (z, w) := (x + y, x - y)\n    let z1 := z + w\n    z + z1\n\ndef f3 (s : Nat × Array (Array Nat)) : Array Nat :=\n  s.2[1].push s.1\n\ndef f4 (arg : B) : Nat :=\n  arg.pair.fst.val 0\n\ndef f5 (x : Nat) : B := {\n  pair := ({ val := id }, { val := id })\n}\n\nopen Nat in\n#print xor\ninstance : Inhabited",
-  "_type": "text"}]
+[]

@@ -43,7 +43,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   IO.FS.writeFile path content
   IO.println s!"Results written to file: {path}!"
 
-open LeanInk.Output.AlectryonFragment in
+open LeanInk.Output.Alectryon in
 def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
 
 -- EXECUTION

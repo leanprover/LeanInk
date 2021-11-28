@@ -1,7 +1,7 @@
 import Lean.Data.Json
 import Lean.Data.Json.FromToJson
 
-namespace LeanInk.Output.AlectryonFragment
+namespace LeanInk.Output.Alectryon
 
 open Lean
 
