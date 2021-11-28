@@ -1,8 +1,5 @@
-import LeanInk.CLI.GlobalArgument
-import LeanInk.CLI.ParsableArgument
-import LeanInk.CLI.Logger
+import LeanInk.CLI
 
-import LeanInk.Commands.Analyze.Argument
 import LeanInk.Commands.Analyze.LeanContext
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.FileHelper
@@ -22,7 +19,7 @@ open System
 private def _validateInputFile (file : FilePath) : Bool := do
   return isLeanFile file
 
-private def _buildConfiguration (arguments: List Argument) (file: FilePath) : IO Configuration := do
+private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
   let contents ← IO.FS.readFile file
 
   return { 
@@ -47,15 +44,14 @@ open LeanInk.Output.Alectryon in
 def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
 
 -- EXECUTION
-def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
-  let (arguments, files) : List Argument × List String := parseArgumentList args
+def exec (args: List ResolvedArgument) (files: List String) : IO UInt32 := do
   match files with
   | a::as =>
     if not (_validateInputFile a) then do
       Logger.logError s!"Provided file \"{a}\" is not lean file."
     else
       Logger.logInfo s!"Starting process with lean file: {a}"
-      let config ← _buildConfiguration arguments a
+      let config ← _buildConfiguration args a
 
       Logger.logInfo "Loading Lean Context..."
       initializeLeanContext

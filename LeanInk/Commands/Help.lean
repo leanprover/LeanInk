@@ -1,4 +1,3 @@
-import LeanInk.CLI.GlobalArgument
 import LeanInk.Commands.Version
 
 namespace LeanInk.Commands.Help
