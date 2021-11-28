@@ -60,7 +60,7 @@ def exec (globalArgs: List GlobalArgument) (args: List String) : IO UInt32 := do
       Logger.logInfo "Loading Lean Context..."
       initializeLeanContext
 
-      Logger.logInfo "Analyzing ..."
+      Logger.logInfo "Analyzing..."
       let result ← analyzeInput config
 
       Logger.logInfo "Annotating..."

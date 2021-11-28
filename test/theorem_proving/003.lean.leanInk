@@ -4,7 +4,11 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion": "\np q : Prop hp : p hq : q ⊢ p ∧ q ∧ p",
     "_type": "goal"}],
   "contents": "apply And.intro",
@@ -13,7 +17,11 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion":
     "\ncase left\np q : Prop\nhp : p\nhq : q\n⊢ p\ncase right p q : Prop hp : p hq : q ⊢ q ∧ p",
     "_type": "goal"}],
@@ -23,7 +31,11 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion": "\ncase right p q : Prop hp : p hq : q ⊢ q ∧ p",
     "_type": "goal"}],
   "contents": "apply And.intro",
@@ -32,7 +44,11 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion":
     "\ncase right.left\np q : Prop\nhp : p\nhq : q\n⊢ q\ncase right.right p q : Prop hp : p hq : q ⊢ p",
     "_type": "goal"}],
@@ -42,7 +58,11 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion": "\ncase right.right p q : Prop hp : p hq : q ⊢ p",
     "_type": "goal"}],
   "contents": "exact hp",

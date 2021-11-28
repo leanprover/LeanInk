@@ -14,24 +14,9 @@ open Output
 open Lean
 open Lean.Elab
 
-namespace TacticFragment
-  private def resolveGoalsAux (ctx : ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
-    | [] => []
-    | goals => do
-      let ctx := { ctx with mctx := mctx }
-      return [← ctx.runMetaM {} (return Std.Format.prefixJoin "\n" (← goals.mapM (Meta.ppGoal .)))]
-
-  def resolveGoals (self : TacticFragment) : IO (List Alectryon.Goal) := do
-    let goalsBefore ← resolveGoalsAux self.ctx self.info.mctxBefore self.info.goalsBefore
-    return ← goalsBefore.map (λ g => { name := "", conclusion := s!"{g}", hypotheses := #[] } )
-end TacticFragment
-
-namespace MessageFragment
-  def toAlectryonMessage (self : MessageFragment) : IO Alectryon.Message := do
-    let message ← self.msg.toString
-    return { contents := message }
-end MessageFragment
-
+/-
+  CompoundFragment
+-/
 structure CompoundFragment where
   headPos: String.Pos
   enumFragments: List (Nat × AnalysisFragment)
@@ -41,24 +26,23 @@ namespace CompoundFragment
 
   def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
 
-  private def mapIOContext (f : α -> IO β) : List α -> IO (List β)
-    | [] => []
-    | t::ts => do (← f t)::(← mapIOContext f ts)
-
   def toAlectryonFragment (self : CompoundFragment) (contents : String) : IO Alectryon.Fragment := do
     if self.enumFragments.isEmpty then
       return Alectryon.Fragment.text { contents := contents }
     else
       let tactics : List TacticFragment := self.fragments.filterMap (λ f => f.asTactic)
-      let tacticGoals ← mapIOContext (λ t => t.resolveGoals) tactics
+      let tacticGoals ← tactics.mapM (λ t => t.resolveGoals)
       let messages : List MessageFragment := self.fragments.filterMap (λ f => f.asMessage)
-      let stringMessages ← mapIOContext (λ m => m.toAlectryonMessage) messages
+      let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
       return Alectryon.Fragment.sentence { contents := contents, goals := tacticGoals.join.toArray, messages := stringMessages.toArray }
 end CompoundFragment
 
 instance : ToString CompoundFragment where
   toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)}"
 
+/-
+  FragmentEvent
+-/
 inductive FragmentEvent where
   | head (pos: String.Pos) (fragment: AnalysisFragment) (idx: Nat)
   | tail (pos: String.Pos) (fragment: AnalysisFragment) (idx: Nat)
@@ -91,6 +75,9 @@ end FragmentEvent
 instance : ToString FragmentEvent where
   toString (self : FragmentEvent) : String := s!"¬<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
 
+/-
+  Annotation
+-/
 def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent := do
   let filteredAnalysis := analysis.filter (λ f => f.headPos < f.tailPos)
   let enumerateAnalysis := filteredAnalysis.enum
@@ -147,9 +134,7 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
   let events := generateFragmentEventQueue analysis
   IO.println f!"Events: {events}"
-  /-
-    We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
-  -/
+  -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events
   IO.println f!"Compounds: {compounds}"
   return (← annotateFileWithCompounds [] config.inputFileContents compounds)

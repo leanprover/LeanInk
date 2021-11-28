@@ -1,4 +1,5 @@
 import LeanInk.Commands.Analyze.ListUtil
+import LeanInk.Output.Alectryon
 
 import Lean.Elab.Command
 import Lean.Data.Lsp
@@ -7,6 +8,7 @@ namespace LeanInk.Commands.Analyze
 
 open Lean
 open Lean.Elab
+open Output
 
 /-
   TacticFragment
@@ -33,6 +35,16 @@ namespace TacticFragment
     match f.info.toElabInfo.stx.getHeadInfo, f.info.toElabInfo.stx.getTailInfo with
     | SourceInfo.original .., SourceInfo.original .. => false
     | _, _ => true
+
+  private def resolveGoalsAux (ctx : ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
+    | [] => []
+    | goals => do
+      let ctx := { ctx with mctx := mctx }
+      return (← ctx.runMetaM {} (goals.mapM (Meta.ppGoal .)))
+
+  def resolveGoals (self : TacticFragment) : IO (List Alectryon.Goal) := do
+    let goalsBefore ← resolveGoalsAux self.ctx self.info.mctxBefore self.info.goalsBefore
+    return ← goalsBefore.map (λ g => { name := "", conclusion := s!"{g}", hypotheses := #[{ names := ["A", "B", "C"], body := "BODY", type := "TYPE" }] } )
 end TacticFragment
 
 /-
@@ -53,11 +65,15 @@ namespace MessageFragment
     return { headPos := headPos, tailPos := tailPos, msg := msg }
 
   def length (f: MessageFragment) : Nat := f.tailPos - f.headPos
+
+    def toAlectryonMessage (self : MessageFragment) : IO Alectryon.Message := do
+    let message ← self.msg.toString
+    return { contents := message }
 end MessageFragment
 
-def mergeSortFragments : List TacticFragment -> List TacticFragment -> List TacticFragment := 
-  List.mergeSort (λ x y => x.headPos < y.headPos)
-
+/-
+  InfoTree traversal
+-/
 def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment := do
   match info with
   | Info.ofTacticInfo i => 
@@ -67,6 +83,9 @@ def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment :=
     else
       return fragment
   | _ => none
+
+def mergeSortFragments : List TacticFragment -> List TacticFragment -> List TacticFragment := 
+  List.mergeSort (λ x y => x.headPos < y.headPos)
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> List TacticFragment
   | InfoTree.context ctx tree => _resolveTacticList ctx tree
