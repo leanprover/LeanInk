@@ -3,6 +3,12 @@ import LeanInk.Commands
 
 open LeanInk
 
+def app : CLI.AppInfo := {
+  name := "LeanInk"
+  version := { major := 0, minor := 1, patch := 0, suffix := "" }
+  description := "LeanInk is a code analysis tool for Lean 4 that extracts proof tactic information. It's main goal is to ease the support for Lean 4 in Alectryon."
+}
+
 def analyzeCommand : CLI.Command := {
   identifiers := ["analyze", "a"]
   help := ""
@@ -10,25 +16,11 @@ def analyzeCommand : CLI.Command := {
   run := Commands.Analyze.exec
 }
 
-def versionCommand : CLI.Command := {
-  identifiers := ["version", "-v"]
-  help := ""
-  arguments := []
-  run := λ _ _ => Commands.Version.printVersion
-}
-
 def leanVersionCommand : CLI.Command := {
-  identifiers := ["leanVersion", "-lV"]
-  help := ""
-  arguments := []
+  identifiers := ["leanVersion", "-lV"],
+  help := "",
+  arguments := [],
   run := λ _ _ => Commands.Version.printLeanVersion
 }
 
-def rootCommands := [
-  analyzeCommand, 
-  versionCommand, 
-  leanVersionCommand
-]
-
--- runCLI is the main entry point for the CLI argument parsing and command execution.
-def main := CLI.runCLI rootCommands
+def main : List String -> IO UInt32 := CLI.runCLI app [analyzeCommand, leanVersionCommand]

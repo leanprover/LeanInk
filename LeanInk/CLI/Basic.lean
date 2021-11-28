@@ -1,5 +1,24 @@
 namespace LeanInk.CLI
 
+-- APPLICATION INFO
+structure AppVersion where
+  major : Nat
+  minor : Nat
+  patch : Nat
+  suffix : String
+
+instance : ToString AppVersion where
+  toString (self : AppVersion) : String := s!"{self.major}.{self.minor}.{self.patch}{self.suffix}"
+
+structure AppInfo where
+  name : String
+  version : AppVersion
+  description : String
+
+namespace AppInfo
+  def versionString (self : AppInfo) : String := s!"{self.name} ({self.version})"
+end AppInfo
+
 -- ARGUMENTS + ENVIRONMENT VARIABLES
 structure Flag where
   identifiers : List String
@@ -110,6 +129,14 @@ private def resolveArguments (command: Command) (args: List String) : ResolvedCo
     let arg := command.getConfig.arguments.elem 
 -/
 
+-- VERSION COMMAND
+def versionCommand : CLI.Command := {
+  identifiers := ["version", "-v"]
+  help := ""
+  arguments := []
+  run := λ _ _ => return 0
+}
+
 -- HELP COMMAND
 -- The help command is always available
 def helpCommand : Command := {
@@ -129,11 +156,15 @@ def runHelp (available: List Command) (arguments : List String) : IO UInt32 := d
     return 0
 
 -- ENTRY
-def runCLI (commands: List Command) (args: List String) : IO UInt32 := do
-  match (← _resolveCommandList (helpCommand::commands) args) with -- We automatically add the help command internally for command resolution.
+def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt32 := do
+  match (← _resolveCommandList (helpCommand::versionCommand::commands) args) with -- We automatically add the help and version command internally for command resolution.
   | Result.failure error => return 1
-  | Result.success result => do 
-    if result.1.identifiers == helpCommand.identifiers then
+  | Result.success result => do
+    let identifiers := result.1.identifiers
+    if identifiers == helpCommand.identifiers then
       return (← runHelp commands args.reverse.dropLast.reverse) -- We escape the actual command execution and handle the help command ourselves.
-    else 
+    else if identifiers == versionCommand.identifiers then
+      IO.println app.versionString
+      return 0
+    else
       return (← result.1.run [] result.2) -- TODO: Resolve arguments
