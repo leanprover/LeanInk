@@ -16,24 +16,11 @@ inductive ResolvedArgument where
   | argument (self: Argument)
 
 -- COMMANDS
-structure CommandConfig where
+structure Command where
   identifiers : List String
   help: String
   arguments : List Argument
   run: (List ResolvedArgument) -> IO UInt32
-
-inductive Command where
-  | command (self: CommandConfig) (subcommands: List Command)
-
-namespace Command
-
-def getConfig : Command -> CommandConfig
-  | command self _ => self
-
-def getSubcommands : Command -> List Command
-  | command _ subcommands => subcommands
-
-end Command
 
 structure ResolvedCommand where
   command: Command
@@ -66,43 +53,23 @@ end CLIError
 
 -- METHODS
 /-
-Resolves a command list given the initial root commands.
-Every following command is a subcommand of the previous command.
-Is the given list of root commands, then this method will always return none.
+Resolves a command list given the available commands.
 
-Example:
-
-> help command
-returns `[help, execute]`. Every command is a subcommand of the `help` command.
-
-> command subcommand subsubcommand
-return `[command, subcommand, subsubcommand]` where `command` is a root command, 
-`subcommand` a subcommand of `command` and `subsubcommand` a subcommand of `subcommand`
-
-> command unknown
-returns: [command], because `command` is known, but `unknown` is not a valid subcommand and therefore considered as an argument.
-
-> unknown command
-return: none, because `unknown` is not a known root command and therefore `command` will not be evaluated.
-
-As you can see, command resolution uses a strict rule of order. 
+Errors:
+- throws CLIError.noCommandsProvided if available commands is empty
+- throws CLIError.noArgumentsProvided if the argument list is empty
+- throws CLIError.unknownCommand if the first argument cannot be resolved to any of the available commands.
 -/
-private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (List Command × List String) := do
+open Result in
+private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (Command × List String) := do
   if available.isEmpty then 
-    return Result.failure CLIError.noCommandsProvided -- If no root commands are available we return none
+    return failure CLIError.noCommandsProvided -- If no root commands are available we throw an error
   match args with
-  | [] => return Result.failure CLIError.noArgumentsProvided -- If no arguments were provided, we cannot resolve anything
+  | [] => return failure CLIError.noArgumentsProvided -- If no arguments were provided, we cannot resolve anything
   | a::as =>
-    let command := List.find? (fun x => x.getConfig.identifiers.elem a) available
-    match command with
-    | none => return Result.failure (CLIError.unknownCommand a)
-    | some c =>
-      let subcommands := c.getSubcommands
-      if subcommands.isEmpty then 
-        return Result.success (c::[], as) 
-      match _resolveCommandList subcommands as with
-      | Result.failure err => return Result.failure err
-      | Result.success (subcommands, unresolved) => return Result.success (c::subcommands, unresolved)
+    match List.find? (fun x => x.identifiers.elem a) available with
+    | none => return failure (CLIError.unknownCommand a)
+    | some c => return success (c, as)
 
 /-
 private def resolveArgumentList (available: List Argument) (args: List String) : List ResolvedArgument × List String := do
@@ -137,15 +104,39 @@ private def resolveArguments (command: Command) (args: List String) : ResolvedCo
     let arg := command.getConfig.arguments.elem 
 -/
 
+-- HELP COMMAND
+-- The help command is always available
+def helpCommand : Command := {
+  identifiers := ["help", "-h"]
+  help := ""
+  arguments := []
+  run := (fun _ => return 0)
+}
+
+def runHelp (available: List Command) (arguments : List String) : IO UInt32 := do
+  match _resolveCommandList available arguments with
+  | Result.failure error => do
+    IO.println s!"{error}"
+    return 1
+  | Result.success (command, unresolvedArgs) => do
+    IO.println "PRINTING HELP!"
+    return 0
+
 private def resolveCommand (available: List Command) (args: List String) : IO (Option ResolvedCommand) := do
-  let commandResolution := _resolveCommandList available args
-  IO.println s!"{commandResolution}"
-  return none
+  match _resolveCommandList available args with
+  | Result.failure error => do
+    IO.println s!"{error}"
+    return none
+  | Result.success (command, unresolvedArgs) => do
+    IO.println "SUCCESS!"
+    return some { command := command, arguments := [] }
 
 -- ENTRY
-
 def runCLI (commands: List Command) (args: List String) : IO UInt32 := do
-  let command <- resolveCommand commands args
-  match command with
+  match (← resolveCommand (helpCommand::commands) args) with -- We automatically add the help command internally for command resolution.
   | none => return 1
-  | some _ => return 0
+  | some result => do 
+    if result.command.identifiers == helpCommand.identifiers then
+      return (← runHelp commands args) -- We escape the actual command execution and handle the help command ourselves.
+    else 
+      return (← result.command.run result.arguments)
