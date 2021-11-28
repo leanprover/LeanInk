@@ -18,12 +18,12 @@ structure CompoundFragment where
   headPos: String.Pos
   fragments: List (Nat × AnalysisFragment)
 
+namespace CompoundFragment
+  def tailPos (self: CompoundFragment) : Option String.Pos := (self.fragments.map (λ f => f.2.tailPos)).maximum?
+end CompoundFragment
+
 instance : ToString CompoundFragment where
   toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.fragments.map (λ x => x.1)}"
-
-namespace CompoundFragment
- -- TODO: Implement to AlectryonFragment
-end CompoundFragment
 
 namespace TacticFragment
   private def resolveGoalsAux (ctx: ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
@@ -67,7 +67,7 @@ namespace FragmentEvent
 end FragmentEvent
 
 instance : ToString FragmentEvent where
-  toString (self : FragmentEvent) : String := s!"\n<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
+  toString (self : FragmentEvent) : String := s!"¬<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
 
 /-
 def _annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) (f : List TacticFragment) : IO (List Fragment) := do
@@ -123,18 +123,14 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
           IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH HEAD {e.idx}\n-> {newCompound}"
           return (← generateCompoundFragments (l.append [newCompound]) es)
       | _ => do
-        let newFragments := c.fragments.filter (λ x => x.1 == e.enumerateFragment.1) -- Remove all fragments with the same idx
-        if newFragments.isEmpty then
-          IO.println s!"FOUND COMPOUND {c} \n-> NO FRAGMENTS LEFT AFTER REMOVAL OF {e.idx}"
-          return (← generateCompoundFragments l es)
-        else
-          let newCompound : CompoundFragment := { headPos := e.position, fragments := newFragments }
-          IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
-          return (← generateCompoundFragments (l.append [newCompound]) es)
+        let newFragments := c.fragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
+        let newCompound : CompoundFragment := { headPos := e.position, fragments := newFragments }
+        IO.println s!"FOUND COMPOUND {c} ¬-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
+        return (← generateCompoundFragments (l.append [newCompound]) es)   
 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
   let events := generateFragmentEventQueue analysis
   IO.println s!"Events: {events}"
-  let compounds ← generateCompoundFragments [] events
+  let compounds ← generateCompoundFragments [{ headPos := 0, fragments := [] }] events
   IO.println s!"Compounds: {compounds}"
   return compounds.map (λ _ => Alectryon.Fragment.text { contents := "Test" })
