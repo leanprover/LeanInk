@@ -18,15 +18,21 @@ structure CompoundFragment where
   headPos: String.Pos
   fragments: List (Nat × AnalysisFragment)
 
-namespace CompoundFragment
-  def tailPos (self: CompoundFragment) : Option String.Pos := (self.fragments.map (λ f => f.2.tailPos)).maximum?
-end CompoundFragment
-
 instance : ToString CompoundFragment where
   toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.fragments.map (λ x => x.1)}"
 
+namespace CompoundFragment
+  def tailPos (self : CompoundFragment) : Option String.Pos := (self.fragments.map (λ f => f.2.tailPos)).maximum?
+
+  def toAlectryonFragment (self : CompoundFragment) (contents : String) : Alectryon.Fragment := do
+    if self.fragments.isEmpty then
+      return Alectryon.Fragment.text { contents := contents }
+    else
+      return Alectryon.Fragment.text { contents := "SENTENCE" }
+end CompoundFragment
+
 namespace TacticFragment
-  private def resolveGoalsAux (ctx: ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
+  private def resolveGoalsAux (ctx : ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
     | [] => []
     | goals => do
       let ctx := { ctx with mctx := mctx }
@@ -115,18 +121,8 @@ Generates AlectryonFragments for the given CompoundFragments and input file cont
 -/
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List CompoundFragment -> List Alectryon.Fragment
   | [] => l
-  | x::xs => do
-    match xs with
-    | [] => do
-      if x.fragments.isEmpty then
-        return l.append [Alectryon.Fragment.text { contents := contents.extract x.headPos contents.length }]
-      else
-        return l.append [Alectryon.Fragment.text { contents := "SENTENCE TO END" }]
-    | y::ys => do
-      if x.fragments.isEmpty then
-        return annotateFileWithCompounds (l.append [Alectryon.Fragment.text { contents := contents.extract x.headPos y.headPos }]) contents xs
-      else
-        return annotateFileWithCompounds (l.append [Alectryon.Fragment.text { contents := "SENTENCE" }]) contents xs
+  | x::[] => l.append [x.toAlectryonFragment (contents.extract x.headPos contents.length)]
+  | x::y::ys => annotateFileWithCompounds (l.append [x.toAlectryonFragment (contents.extract x.headPos y.headPos)]) contents (y::ys)
 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
   let events := generateFragmentEventQueue analysis
