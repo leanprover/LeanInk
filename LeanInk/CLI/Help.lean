@@ -1,11 +1,13 @@
-import LeanInk.CLI.GlobalArgument
 import LeanInk.Commands.Version
+import LeanInk.CLI.Command
 
 namespace LeanInk.Commands.Help
 
 def header := s!"  {Version.cliVersionOutput}
   LeanInk is a code analysis tool for Lean 4 that extracts proof tactic information. It's main goal is to ease the support for Lean 4 in Alectryon.
 "
+
+def generateHelp (command: Command)
 
 def generalHelp := s!"{header}
   USAGE:

@@ -4,9 +4,13 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion":
-    "\nα : Sort u₁\nβ : Sort u₂\nφ : Sort u₃\nδ : Sort u₄\nζ : Sort u₁\nf : α → β\ng : β → α\nsurjf : surjective f\nrfg : right_inverse f g\ny : β\n : ∃ a, f a = y\nx : α\nhx : f x = y\n⊢ f (g y) = y",
+    "α : Sort u₁\nβ : Sort u₂\nφ : Sort u₃\nδ : Sort u₄\nζ : Sort u₁\nf : α → β\ng : β → α\nsurjf : surjective f\nrfg : right_inverse f g\ny : β\n : ∃ a, f a = y\nx : α\nhx : f x = y\n⊢ f (g y) = y",
     "_type": "goal"}],
   "contents": "← hx,",
   "_type": "sentence"},
@@ -14,18 +18,26 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion":
-    "\nα : Sort u₁\nβ : Sort u₂\nφ : Sort u₃\nδ : Sort u₄\nζ : Sort u₁\nf : α → β\ng : β → α\nsurjf : surjective f\nrfg : right_inverse f g\ny : β\n : ∃ a, f a = y\nx : α\nhx : f x = y\n⊢ f (g (f x)) = f x",
+    "α : Sort u₁\nβ : Sort u₂\nφ : Sort u₃\nδ : Sort u₄\nζ : Sort u₁\nf : α → β\ng : β → α\nsurjf : surjective f\nrfg : right_inverse f g\ny : β\n : ∃ a, f a = y\nx : α\nhx : f x = y\n⊢ f (g (f x)) = f x",
     "_type": "goal"}],
   "contents": "rfg",
   "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "TYPE",
+      "names": ["A", "B", "C"],
+      "body": "BODY",
+      "_type": "hypothesis"}],
     "conclusion":
-    "\nα : Sort u₁\nβ : Sort u₂\nφ : Sort u₃\nδ : Sort u₄\nζ : Sort u₁\nf : α → β\ng : β → α\nsurjf : surjective f\nrfg : right_inverse f g\ny : β\n : ∃ a, f a = y\nx : α\nhx : f x = y\n⊢ f x = f x",
+    "α : Sort u₁\nβ : Sort u₂\nφ : Sort u₃\nδ : Sort u₄\nζ : Sort u₁\nf : α → β\ng : β → α\nsurjf : surjective f\nrfg : right_inverse f g\ny : β\n : ∃ a, f a = y\nx : α\nhx : f x = y\n⊢ f x = f x",
     "_type": "goal"}],
   "contents": "]",
   "_type": "sentence"},

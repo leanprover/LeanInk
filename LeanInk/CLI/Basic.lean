@@ -1,16 +1,115 @@
-import LeanInk.CLI.GlobalArgument
+import LeanInk.CLI.Argument
 import LeanInk.CLI.Command
-import LeanInk.CLI.Logger
+import LeanInk.CLI.Result
 
 namespace LeanInk.CLI
 
--- runCLI is the main entry point for the CLI argument parsing and command execution.
-def runCLI (args: List String) : IO UInt32 := do
+-- APPLICATION INFO
+structure AppVersion where
+  major : Nat
+  minor : Nat
+  patch : Nat
+  suffix : String
+
+instance : ToString AppVersion where
+  toString (self : AppVersion) : String := s!"{self.major}.{self.minor}.{self.patch}{self.suffix}"
+
+structure AppInfo where
+  name : String
+  version : AppVersion
+  description : String
+
+namespace AppInfo
+  def versionString (self : AppInfo) : String := s!"{self.name} ({self.version})"
+end AppInfo
+
+inductive CLIError where
+  | unknownCommand (arg: String): CLIError
+  | noArgumentsProvided : CLIError
+  | noCommandsProvided : CLIError
+
+namespace CLIError
+
+instance : ToString CLIError where
+  toString
+    | unknownCommand c => s!"Unknown command: {c}"
+    | noArgumentsProvided => s!"Please choose a command for execution!"
+    | noCommandsProvided => s!"Implementation error: No root commands available!"
+
+end CLIError
+
+-- METHODS
+/-
+Resolves a command list given the available commands.
+
+Errors:
+- throws CLIError.noCommandsProvided if available commands is empty
+- throws CLIError.noArgumentsProvided if the argument list is empty
+- throws CLIError.unknownCommand if the first argument cannot be resolved to any of the available commands.
+-/
+open Result in
+private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (Command × List String) := do
+  if available.isEmpty then 
+    return failure CLIError.noCommandsProvided -- If no root commands are available we throw an error
   match args with
-  | [] => Logger.logError s!"No command provided!"
+  | [] => return failure CLIError.noArgumentsProvided -- If no arguments were provided, we cannot resolve anything
+  | a::as =>
+    match List.find? (fun x => x.identifiers.elem a) available with
+    | none => return failure (CLIError.unknownCommand a)
+    | some c => return success (c, as)
+
+/-
+private def resolveArgumentList (available: List Argument) (args: List String) : List ResolvedArgument × List String := do
+  if available.isEmpty then
+    return ([], args)
+  else
+    match args with
+    | [] => return ([], []) -- No arguments left
+    | a::[] => return ([], []) -- Single argument left
+    | a::b::as => -- Maybe environment left
+      let argument := List.find? (fun x => x.identifiers.elem a) available
+      match argument with
+      | none => return resolveArgumentList available as
+      | some c =>
+        let resolvedArg := ResolvedArgument.mk 
+        let (otherArgs, unresolved) := resolveArgumentList (available.erase c) as
+        return (c::otherArgs, unresolved)
+
+private def resolveArgumentList : List String -> List ResolvedArgument × List String
+  | [] => ([], [])
   | a::as => do
-    let (globalArgs, args) : List GlobalArgument × List String := parseArgumentList as
-    let command : Option Command := parseArgument a
-    match command with
-    | some command => Command.execute command globalArgs args
-    | none => Logger.logError s!"Unknown command: '{a}'"
+    let (globalArgs, args) := resolveArgumentList as
+    let argument := 
+    match parseArgument a with
+    | some a => (a::globalArgs, args)
+    | none => (globalArgs, a::args)
+
+private def resolveArguments (command: Command) (args: List String) : ResolvedCommandTree := do
+  match args with
+  | [] =>  return ResolvedCommandTree.command (ResolvedCommand.mk command []) none
+  | a::as => 
+    let arg := command.getConfig.arguments.elem 
+-/
+
+def runHelp (available: List Command) (arguments : List String) : IO UInt32 := do
+  match _resolveCommandList available arguments with
+  | Result.failure error => do
+    IO.println s!"{error}"
+    return 1
+  | Result.success (command, unresolvedArgs) => do
+    IO.println "PRINTING HELP!"
+    return 0
+
+-- ENTRY
+def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt32 := do
+  match (← _resolveCommandList (helpCommand::versionCommand::commands) args) with -- We automatically add the help and version command internally for command resolution.
+  | Result.failure error => return 1
+  | Result.success result => do
+    let identifiers := result.1.identifiers
+    if identifiers == helpCommand.identifiers then
+      return (← runHelp commands args.reverse.dropLast.reverse) -- We escape the actual command execution and handle the help command ourselves.
+    else if identifiers == versionCommand.identifiers then
+      IO.println app.versionString
+      return 0
+    else
+      return (← result.1.run [] result.2) -- TODO: Resolve arguments
