@@ -17,4 +17,5 @@
     "conclusion": "\np q : Prop hp : p hq : q ⊢ q ∧ p",
     "_type": "goal"}],
   "contents": "exact And.intro hq hp",
-  "_type": "sentence"}]
+  "_type": "sentence"},
+ {"contents": "", "_type": "text"}]

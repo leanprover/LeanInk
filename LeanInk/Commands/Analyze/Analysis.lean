@@ -27,6 +27,14 @@ namespace AnalysisFragment
   def tailPos : AnalysisFragment -> String.Pos
     | tactic f => f.tailPos
     | message f => f.tailPos
+
+  def asTactic : AnalysisFragment -> Option TacticFragment
+    | tactic f => f
+    | _ => none
+
+  def asMessage : AnalysisFragment -> Option MessageFragment
+    | message f => f
+    | _ => none
 end AnalysisFragment
 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State := do 

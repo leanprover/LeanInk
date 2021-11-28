@@ -82,4 +82,5 @@
     "conclusion": "\ncase right.right p q : Prop hp : p hq : q ⊢ p",
     "_type": "goal"}],
   "contents": "exact hp",
-  "_type": "sentence"}]
+  "_type": "sentence"},
+ {"contents": "", "_type": "text"}]

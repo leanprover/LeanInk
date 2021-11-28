@@ -14,23 +14,6 @@ open Output
 open Lean
 open Lean.Elab
 
-structure CompoundFragment where
-  headPos: String.Pos
-  fragments: List (Nat × AnalysisFragment)
-
-instance : ToString CompoundFragment where
-  toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.fragments.map (λ x => x.1)}"
-
-namespace CompoundFragment
-  def tailPos (self : CompoundFragment) : Option String.Pos := (self.fragments.map (λ f => f.2.tailPos)).maximum?
-
-  def toAlectryonFragment (self : CompoundFragment) (contents : String) : Alectryon.Fragment := do
-    if self.fragments.isEmpty then
-      return Alectryon.Fragment.text { contents := contents }
-    else
-      return Alectryon.Fragment.text { contents := "SENTENCE" }
-end CompoundFragment
-
 namespace TacticFragment
   private def resolveGoalsAux (ctx : ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
     | [] => []
@@ -42,6 +25,39 @@ namespace TacticFragment
     let goalsBefore ← resolveGoalsAux self.ctx self.info.mctxBefore self.info.goalsBefore
     return ← goalsBefore.map (λ g => { name := "", conclusion := s!"{g}", hypotheses := #[] } )
 end TacticFragment
+
+namespace MessageFragment
+  def toAlectryonMessage (self : MessageFragment) : IO Alectryon.Message := do
+    let message ← self.msg.toString
+    return { contents := message }
+end MessageFragment
+
+structure CompoundFragment where
+  headPos: String.Pos
+  enumFragments: List (Nat × AnalysisFragment)
+
+namespace CompoundFragment
+  def tailPos (self : CompoundFragment) : Option String.Pos := (self.enumFragments.map (λ f => f.2.tailPos)).maximum?
+
+  def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
+
+  private def mapIOContext (f : α -> IO β) : List α -> IO (List β)
+    | [] => []
+    | t::ts => do (← f t)::(← mapIOContext f ts)
+
+  def toAlectryonFragment (self : CompoundFragment) (contents : String) : IO Alectryon.Fragment := do
+    if self.enumFragments.isEmpty then
+      return Alectryon.Fragment.text { contents := contents }
+    else
+      let tactics : List TacticFragment := self.fragments.filterMap (λ f => f.asTactic)
+      let tacticGoals ← mapIOContext (λ t => t.resolveGoals) tactics
+      let messages : List MessageFragment := self.fragments.filterMap (λ f => f.asMessage)
+      let stringMessages ← mapIOContext (λ m => m.toAlectryonMessage) messages
+      return Alectryon.Fragment.sentence { contents := contents, goals := tacticGoals.join.toArray, messages := stringMessages.toArray }
+end CompoundFragment
+
+instance : ToString CompoundFragment where
+  toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)}"
 
 inductive FragmentEvent where
   | head (pos: String.Pos) (fragment: AnalysisFragment) (idx: Nat)
@@ -89,7 +105,7 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
     match l.getLast? with
     | none => do
       if e.isHead then
-        let newCompound : CompoundFragment := { headPos := e.position, fragments := [e.enumerateFragment]}
+        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment]}
         IO.println s!"NO COMPOUND\n-> GENERATING NEW FROM HEAD AT {e.position}\n-> {newCompound}"
         return (← generateCompoundFragments [newCompound] es)
       else
@@ -98,20 +114,20 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
     | some c => do
       if e.isHead then
         if c.headPos == e.position then
-          let updatedCompound := { c with fragments := c.fragments.append [e.enumerateFragment] }
+          let updatedCompound := { c with enumFragments := c.enumFragments.append [e.enumerateFragment] }
           IO.println s!"FOUND COMPOUND {c} \n-> UPDATING CURRENT WITH HEAD {e.idx}\n-> {updatedCompound}"
           return (← generateCompoundFragments (l.dropLast.append [updatedCompound]) es)
         else
-          let newCompound := { c with headPos := e.position, fragments := c.fragments.append [e.enumerateFragment] }
+          let newCompound := { c with headPos := e.position, enumFragments := c.enumFragments.append [e.enumerateFragment] }
           IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH HEAD {e.idx}\n-> {newCompound}"
           return (← generateCompoundFragments (l.append [newCompound]) es)
       else
-        let newFragments := c.fragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
+        let newFragments := c.enumFragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
         /-
           It may be the case that the newFragments list isEmpty. This is totally fine as we need to
           insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
         -/
-        let newCompound : CompoundFragment := { headPos := e.position, fragments := newFragments }
+        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments }
         IO.println s!"FOUND COMPOUND {c} ¬-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
         return (← generateCompoundFragments (l.append [newCompound]) es)
 
@@ -119,10 +135,14 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
 Expects a list of sorted CompoundFragments (sorted by headPos).
 Generates AlectryonFragments for the given CompoundFragments and input file content.
 -/
-def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List CompoundFragment -> List Alectryon.Fragment
+def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List CompoundFragment -> IO (List Alectryon.Fragment)
   | [] => l
-  | x::[] => l.append [x.toAlectryonFragment (contents.extract x.headPos contents.length)]
-  | x::y::ys => annotateFileWithCompounds (l.append [x.toAlectryonFragment (contents.extract x.headPos y.headPos)]) contents (y::ys)
+  | x::[] => do
+    let fragment ← x.toAlectryonFragment (contents.extract x.headPos contents.length)
+    return l.append [fragment]
+  | x::y::ys => do
+    let fragment ← x.toAlectryonFragment (contents.extract x.headPos y.headPos)
+    return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
   let events := generateFragmentEventQueue analysis
@@ -130,6 +150,6 @@ def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : I
   /-
     We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   -/
-  let compounds ← generateCompoundFragments [{ headPos := 0, fragments := [] }] events
+  let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events
   IO.println f!"Compounds: {compounds}"
-  return annotateFileWithCompounds [] config.inputFileContents compounds
+  return (← annotateFileWithCompounds [] config.inputFileContents compounds)
