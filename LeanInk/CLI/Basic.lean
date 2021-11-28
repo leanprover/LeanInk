@@ -1,3 +1,7 @@
+import LeanInk.CLI.Argument
+import LeanInk.CLI.Command
+import LeanInk.CLI.Result
+
 namespace LeanInk.CLI
 
 -- APPLICATION INFO
@@ -18,48 +22,6 @@ structure AppInfo where
 namespace AppInfo
   def versionString (self : AppInfo) : String := s!"{self.name} ({self.version})"
 end AppInfo
-
--- ARGUMENTS + ENVIRONMENT VARIABLES
-structure Flag where
-  identifiers : List String
-  optional : Bool
-  help : String
-  deriving BEq
-
-structure Environment where
-  identifiers : List String
-  optional : Bool
-  help : String
-  deriving BEq
-
-inductive Argument where
-  | flag (i : Flag)
-  | env (i : Environment)
-
-inductive ResolvedArgument where
-  | flag (self: Argument)
-  | env (self: Environment) (val: String)
-
--- COMMANDS
-structure Command where
-  identifiers : List String
-  help : String
-  arguments : List Argument
-  run: (List ResolvedArgument) -> (List String) -> IO UInt32
-
-structure ResolvedCommand where
-  command: Command
-  arguments: List ResolvedArgument
-
--- Result
-inductive Result (error : Type) (result: Type) where
-  | failure (err: error)
-  | success (res: result)
-
-instance [ToString e] : ToString (Result e r) where
-  toString
-    | Result.failure error => s!"ERROR: {error}"
-    | Result.success result => "SUCCESS!"
 
 inductive CLIError where
   | unknownCommand (arg: String): CLIError
@@ -128,23 +90,6 @@ private def resolveArguments (command: Command) (args: List String) : ResolvedCo
   | a::as => 
     let arg := command.getConfig.arguments.elem 
 -/
-
--- VERSION COMMAND
-def versionCommand : CLI.Command := {
-  identifiers := ["version", "-v"]
-  help := ""
-  arguments := []
-  run := λ _ _ => return 0
-}
-
--- HELP COMMAND
--- The help command is always available
-def helpCommand : Command := {
-  identifiers := ["help", "-h"]
-  help := ""
-  arguments := []
-  run := λ _ _ => return 0
-}
 
 def runHelp (available: List Command) (arguments : List String) : IO UInt32 := do
   match _resolveCommandList available arguments with
