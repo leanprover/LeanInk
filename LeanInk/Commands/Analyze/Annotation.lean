@@ -69,27 +69,6 @@ end FragmentEvent
 instance : ToString FragmentEvent where
   toString (self : FragmentEvent) : String := s!"¬<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
 
-/-
-def _annotateFileAux (l : List Fragment) (contents : String) (pos : String.Pos) (f : List TacticFragment) : IO (List Fragment) := do
-  IO.println s!"Running Annotation (l: {l.length}) (pos: {pos}) (f: {f.length})"
-
-  if contents.atEnd pos then
-    return l
-  else
-    match f with
-    -- We don't have any further tactics to annotate so we just return the rest of the contents as a text fragment.
-    | [] => l.append [Fragment.text { contents := contents.extract pos contents.length }]
-    | t::ts =>
-      let fragment := Fragment.sentence { contents := contents.extract t.headPos t.tailPos, messages := #[], goals := (← t.resolveGoals).toArray }
-      if t.headPos > pos then
-        let textFragment := Fragment.text { contents := contents.extract pos t.headPos }
-        return ← _annotateFileAux (l.append [textFragment, fragment]) contents t.tailPos ts
-      else
-        return ← _annotateFileAux (l.append [fragment]) contents t.tailPos ts
-
-def _annotateFile (config: Configuration) (annotations: List TacticFragment) : IO (List Fragment) := _annotateFileAux [] config.inputFileContents 0 annotations
--/
-
 def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent := do
   let filteredAnalysis := analysis.filter (λ f => f.headPos < f.tailPos)
   let enumerateAnalysis := filteredAnalysis.enum
