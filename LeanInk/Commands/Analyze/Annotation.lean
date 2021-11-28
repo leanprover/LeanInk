@@ -103,17 +103,15 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
   | e::es => do
     match l.getLast? with
     | none => do
-      match e.isHead with
-      | true => do
+      if e.isHead then
         let newCompound : CompoundFragment := { headPos := e.position, fragments := [e.enumerateFragment]}
         IO.println s!"NO COMPOUND\n-> GENERATING NEW FROM HEAD AT {e.position}\n-> {newCompound}"
         return (← generateCompoundFragments [newCompound] es)
-      | _ => do
+      else
         IO.println s!"NO COMPOUND\n-> UNEXPECTED TAIL"
         return [] -- TODO: handle error
     | some c => do
-      match e.isHead with
-      | true => do
+      if e.isHead then
         if c.headPos == e.position then
           let updatedCompound := { c with fragments := c.fragments.append [e.enumerateFragment] }
           IO.println s!"FOUND COMPOUND {c} \n-> UPDATING CURRENT WITH HEAD {e.idx}\n-> {updatedCompound}"
@@ -122,15 +120,41 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
           let newCompound := { c with headPos := e.position, fragments := c.fragments.append [e.enumerateFragment] }
           IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH HEAD {e.idx}\n-> {newCompound}"
           return (← generateCompoundFragments (l.append [newCompound]) es)
-      | _ => do
+      else
         let newFragments := c.fragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
+        /-
+          It may be the case that the newFragments list isEmpty. This is totally fine as we need to
+          insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
+        -/
         let newCompound : CompoundFragment := { headPos := e.position, fragments := newFragments }
         IO.println s!"FOUND COMPOUND {c} ¬-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
-        return (← generateCompoundFragments (l.append [newCompound]) es)   
+        return (← generateCompoundFragments (l.append [newCompound]) es)
+
+/-
+Expects a list of sorted CompoundFragments (sorted by headPos).
+Generates AlectryonFragments for the given CompoundFragments and input file content.
+-/
+def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List CompoundFragment -> List Alectryon.Fragment
+  | [] => l
+  | x::xs => do
+    match xs with
+    | [] => do
+      if x.fragments.isEmpty then
+        return l.append [Alectryon.Fragment.text { contents := contents.extract x.headPos contents.length }]
+      else
+        return l.append [Alectryon.Fragment.text { contents := "SENTENCE TO END" }]
+    | y::ys => do
+      if x.fragments.isEmpty then
+        return annotateFileWithCompounds (l.append [Alectryon.Fragment.text { contents := contents.extract x.headPos y.headPos }]) contents xs
+      else
+        return annotateFileWithCompounds (l.append [Alectryon.Fragment.text { contents := "SENTENCE" }]) contents xs
 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
   let events := generateFragmentEventQueue analysis
-  IO.println s!"Events: {events}"
+  IO.println f!"Events: {events}"
+  /-
+    We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
+  -/
   let compounds ← generateCompoundFragments [{ headPos := 0, fragments := [] }] events
-  IO.println s!"Compounds: {compounds}"
-  return compounds.map (λ _ => Alectryon.Fragment.text { contents := "Test" })
+  IO.println f!"Compounds: {compounds}"
+  return annotateFileWithCompounds [] config.inputFileContents compounds
