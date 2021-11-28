@@ -4,7 +4,7 @@ import LeanInk.Commands.Version
 namespace LeanInk.Commands.Help
 
 def header := s!"  {Version.cliVersionOutput}
-  LeanInk is a tool for Lean which generates static code visualization through the integration of Alectryon.
+  LeanInk is a code analysis tool for Lean 4 that extracts proof tactic information. It's main goal is to ease the support for Lean 4 in Alectryon.
 "
 
 def generalHelp := s!"{header}
@@ -58,10 +58,9 @@ def helpHelp := s!"{header}
       leanInk help [COMMAND]
 
   COMMANDS:
-      g, generate          Generates LeanInk and Alectryon annotated files. 
-      a, analyze           Analyzes the Lean code files and returns the result of its analysis.
-      v, version           Prints the version number of LeanInk and it's supported Lean4 version
-      l, licenses          Prints all licenses of third-party code used by LeanInk and it's own license.
+      a, analyze
+      v, version
+      lV, leanVersion
   
   DISCUSSION: Prints the help message for the specified command or the general help message.
 "
