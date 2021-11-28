@@ -9,8 +9,9 @@ def analyzeCommand : Command := {
   identifiers := ["analyze", "a"]
   help := ""
   arguments := []
-  run := λ _ => do
+  run := λ _ args => do
     IO.println s!"EXECUTING ANALYSIS"
+    let a := (<- Commands.Analyze.exec [] args)
     return 0
 }
 
@@ -18,14 +19,14 @@ def versionCommand : Command := {
   identifiers := ["version", "-v"]
   help := ""
   arguments := []
-  run := λ _ => Commands.Version.printVersion
+  run := λ _ _ => Commands.Version.printVersion
 }
 
 def leanVersionCommand : Command := {
   identifiers := ["leanVersion", "-lV"]
   help := ""
   arguments := []
-  run := λ _ => Commands.Version.printLeanVersion
+  run := λ _ _ => Commands.Version.printLeanVersion
 }
 
 def rootCommands := [

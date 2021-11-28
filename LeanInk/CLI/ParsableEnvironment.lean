@@ -1,26 +1,32 @@
 namespace LeanInk.NEW_CLI
 
 -- ARGUMENTS + ENVIRONMENT VARIABLES
-structure Argument where
+structure Flag where
   identifiers : List String
-  help: String
+  optional : Bool
+  help : String
   deriving BEq
 
 structure Environment where
   identifiers : List String
-  help: String
+  optional : Bool
+  help : String
   deriving BEq
 
+inductive Argument where
+  | flag (i : Flag)
+  | env (i : Environment)
+
 inductive ResolvedArgument where
-  | environment (self: Environment) (val: String)
-  | argument (self: Argument)
+  | flag (self: Argument)
+  | env (self: Environment) (val: String)
 
 -- COMMANDS
 structure Command where
   identifiers : List String
-  help: String
+  help : String
   arguments : List Argument
-  run: (List ResolvedArgument) -> IO UInt32
+  run: (List ResolvedArgument) -> (List String) -> IO UInt32
 
 structure ResolvedCommand where
   command: Command
@@ -110,7 +116,7 @@ def helpCommand : Command := {
   identifiers := ["help", "-h"]
   help := ""
   arguments := []
-  run := (fun _ => return 0)
+  run := λ _ _ => return 0
 }
 
 def runHelp (available: List Command) (arguments : List String) : IO UInt32 := do
@@ -122,21 +128,12 @@ def runHelp (available: List Command) (arguments : List String) : IO UInt32 := d
     IO.println "PRINTING HELP!"
     return 0
 
-private def resolveCommand (available: List Command) (args: List String) : IO (Option ResolvedCommand) := do
-  match _resolveCommandList available args with
-  | Result.failure error => do
-    IO.println s!"{error}"
-    return none
-  | Result.success (command, unresolvedArgs) => do
-    IO.println "SUCCESS!"
-    return some { command := command, arguments := [] }
-
 -- ENTRY
 def runCLI (commands: List Command) (args: List String) : IO UInt32 := do
-  match (← resolveCommand (helpCommand::commands) args) with -- We automatically add the help command internally for command resolution.
-  | none => return 1
-  | some result => do 
-    if result.command.identifiers == helpCommand.identifiers then
-      return (← runHelp commands args) -- We escape the actual command execution and handle the help command ourselves.
+  match (← _resolveCommandList (helpCommand::commands) args) with -- We automatically add the help command internally for command resolution.
+  | Result.failure error => return 1
+  | Result.success result => do 
+    if result.1.identifiers == helpCommand.identifiers then
+      return (← runHelp commands args.reverse.dropLast.reverse) -- We escape the actual command execution and handle the help command ourselves.
     else 
-      return (← result.command.run result.arguments)
+      return (← result.1.run [] result.2) -- TODO: Resolve arguments
