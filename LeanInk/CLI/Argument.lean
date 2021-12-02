@@ -41,6 +41,21 @@ inductive ResolvedArgument where
   | flag (self: Flag)
   | env (self: Environment) (val: String)
 
+namespace ResolvedArgument
+  def toArgumentInfo : ResolvedArgument -> ArgumentInfo
+    | flag i => i.toArgumentInfo
+    | env i _ => i.toArgumentInfo
+
+  def identifiers (self: ResolvedArgument) : List String := 
+    self.toArgumentInfo.identifiers
+
+  def help (self: ResolvedArgument) : String := 
+    self.toArgumentInfo.help
+
+  def isOptional (self: ResolvedArgument) : Bool := 
+    self.toArgumentInfo.isOptional
+end ResolvedArgument
+
 instance : ToString ResolvedArgument where
   toString : ResolvedArgument -> String
     | ResolvedArgument.flag i => s!"\n<FLAG>[{i.identifiers}]"

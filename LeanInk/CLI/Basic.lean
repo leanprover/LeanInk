@@ -20,6 +20,20 @@ instance : ToString CLIError where
 
 end CLIError
 
+-- HELPER METHODS
+def argument (args : List ResolvedArgument) (identifier : String) : Option ResolvedArgument :=
+  List.find? (λ x => x.identifiers.elem identifier) args
+
+def environmentValue (args : List ResolvedArgument) (identifier : String) : Option String :=
+  match argument args identifier with
+  | ResolvedArgument.env _ a => a
+  | _ => none
+
+def containsFlag (args : List ResolvedArgument) (identifier : String) : Bool :=
+  match argument args identifier with
+  | ResolvedArgument.flag _ => true
+  | _ => false
+
 -- METHODS
 /-
 Resolves a command list given the available commands.

@@ -53,9 +53,8 @@ def exec (args: List ResolvedArgument) (files: List String) : IO UInt32 := do
       Logger.logInfo s!"Starting process with lean file: {a}"
       let config ← _buildConfiguration args a
 
-      Logger.logInfo "Loading Lean Context..."
-      initializeLeanContext
-
+      initializeSearchPaths (environmentValue args "--lake")
+      
       Logger.logInfo "Analyzing..."
       let result ← analyzeInput config
 
