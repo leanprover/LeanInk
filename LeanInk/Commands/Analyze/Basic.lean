@@ -1,6 +1,5 @@
 import LeanInk.CLI
 
-import LeanInk.Commands.Analyze.LeanContext
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.FileHelper
 import LeanInk.Commands.Analyze.Analysis
@@ -21,16 +20,20 @@ private def _validateInputFile (file : FilePath) : Bool := do
 
 private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
   let contents ← IO.FS.readFile file
-
   return { 
-    inputFilePath := file,
-    inputFileContents := contents,
-    outputType := OutputType.alectryonFragments 
+    inputFilePath := file
+    inputFileContents := contents
+    outputType := OutputType.alectryonFragments
+    lakeFile := getLakeFile? arguments
   }
+where
+  getLakeFile? (arguments : List ResolvedArgument) : Option FilePath := do
+    match environmentValue arguments "--lake" with
+    | none => none
+    | some string => some (FilePath.mk string)
 
 -- OUTPUT
 open IO.FS
-
 def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : IO Unit := do
   let dirEntry : DirEntry := { 
     root := folderPath,
@@ -53,8 +56,6 @@ def exec (args: List ResolvedArgument) (files: List String) : IO UInt32 := do
       Logger.logInfo s!"Starting process with lean file: {a}"
       let config ← _buildConfiguration args a
 
-      initializeSearchPaths (environmentValue args "--lake")
-      
       Logger.logInfo "Analyzing..."
       let result ← analyzeInput config
 

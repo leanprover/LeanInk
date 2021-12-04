@@ -1,6 +1,7 @@
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.InfoTreeUtil
 import LeanInk.Commands.Analyze.ListUtil
+import LeanInk.Commands.Analyze.LeanContext
 
 import Lean.Elab.Frontend
 import Lean.Elab.Import
@@ -49,6 +50,8 @@ def configureCommandState (env : Environment) (msg : MessageLog) : Command.State
 def analyzeInput (config: Configuration) : IO (List AnalysisFragment) := do
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
+  initializeSearchPaths header config 
+
   let options := Options.empty.setBool `trace.Elab.info true
   let (environment, messages) ← processHeader header options messages context 0
   let commandState := configureCommandState environment messages

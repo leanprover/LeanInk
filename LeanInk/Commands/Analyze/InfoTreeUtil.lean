@@ -66,9 +66,7 @@ namespace TacticFragment
             | some type => do
               let typeFmt ← ppExpr type
               let names ← ids.reverse.map (λ n => n.toString)
-              let hypothesis : Alectryon.Hypothesis := { names := names, body := "", type := s!"{typeFmt}" }
-              return (hypothesis::(list.reverse)).reverse
-
+              return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
         let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Alectryon.Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Alectryon.Hypothesis)) := do
           if hiddenProp.contains localDecl.fvarId then
             let newHypotheses ← pushPending [] prevType? varNames
@@ -93,15 +91,12 @@ namespace TacticFragment
               let val  ← instantiateMVars val
               let typeFmt ← ppExpr type
               let valFmt ← ppExpr val
-              let hypothesis : Alectryon.Hypothesis := { names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }
-              pure ([], none, (hypothesis::(hypotheses.reverse)).reverse)
-    
+              pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
         let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
           if !auxDecl && localDecl.isAuxDecl || hidden.contains localDecl.fvarId then
             pure (varNames, prevType?, hypotheses)
           else
             evalVar varNames prevType? hypotheses localDecl
-
         let hypotheses ← pushPending hypotheses type? varNames 
         let typeFmt ← ppExpr (← instantiateMVars decl.type)
         return (← buildGoal typeFmt hypotheses decl.userName)

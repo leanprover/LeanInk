@@ -15,6 +15,7 @@ structure Configuration where
   inputFilePath : FilePath
   inputFileContents : String
   outputType : OutputType
+  lakeFile : Option FilePath
 
 namespace Configuration
 
