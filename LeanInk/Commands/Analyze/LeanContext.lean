@@ -63,7 +63,6 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := d
     | 2 => return
     | _ => Logger.logInfo s!"Using lake failed! Make sure that lake is installed!"
     return
-    
 
 def initializeSearchPaths (header : Syntax) (config : Configuration) : IO Unit := do
   Logger.logInfo "Loading Lean Context..."

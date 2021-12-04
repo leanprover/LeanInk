@@ -1,0 +1,22 @@
+[{"contents": "import mathlib\n\n#check ", "_type": "text"},
+ {"messages":
+  [{"contents": "Dep.lean:3:7: error: unknown identifier 'Nat'\n",
+    "_type": "message"}],
+  "goals": [],
+  "contents": "",
+  "_type": "sentence"},
+ {"messages":
+  [{"contents": "Dep.lean:3:7: error: unknown identifier 'Nat'\n",
+    "_type": "message"},
+   {"contents": "Dep.lean:3:0: error: unknown constant 'sorryAx'\n",
+    "_type": "message"}],
+  "goals": [],
+  "contents": "#check Nat",
+  "_type": "sentence"},
+ {"messages":
+  [{"contents": "Dep.lean:3:7: error: unknown identifier 'Nat'\n",
+    "_type": "message"}],
+  "goals": [],
+  "contents": "",
+  "_type": "sentence"},
+ {"contents": "", "_type": "text"}]

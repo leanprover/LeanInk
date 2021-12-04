@@ -1,2 +1,0 @@
-[{"contents": "set_option trace.Elab.info true\n\ndef add (x y : Nat) := x + y",
-  "_type": "text"}]
