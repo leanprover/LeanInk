@@ -44,7 +44,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := d
       stdin := Process.Stdio.null
       stdout := Process.Stdio.piped
       stderr := Process.Stdio.piped
-      cmd := (← getLakePath)
+      cmd := ← getLakePath
       args := arguments
     }
     let stdout := String.trim (← lakeProcess.stdout.readToEnd)
@@ -56,17 +56,29 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := d
       | Except.ok val => match fromJson? val with
         | Except.error _ => Logger.logInfo s!"Failed to decode lake output: {stdout}"
         | Except.ok paths => do
-          let paths : LeanPaths := paths
-          Lean.initSearchPath (← getBuildDir) paths.oleanPath
+          let paths : LeanPaths := paths 
+          initializeLeanContext
+          initSearchPath (← findSysroot?) paths.oleanPath
           Logger.logInfo s!"Successfully loaded lake search paths"
-          return
-    | 2 => return
+    | 2 => Logger.logInfo s!"No search paths required!"
     | _ => Logger.logInfo s!"Using lake failed! Make sure that lake is installed!"
-    return
+
+def buildLakeDep : IO Unit := do
+  let lakeProcess ← Process.spawn {
+      stdin := Process.Stdio.null
+      stdout := Process.Stdio.piped
+      stderr := Process.Stdio.piped
+      cmd := ← getLakePath
+      args := #["build"]
+    }
+    let stdout := String.trim (← lakeProcess.stdout.readToEnd)
+    match (← lakeProcess.wait) with
+    | _ => return 
 
 def initializeSearchPaths (header : Syntax) (config : Configuration) : IO Unit := do
-  Logger.logInfo "Loading Lean Context..."
-  initializeLeanContext
   match config.lakeFile with
-  | some lakeFile => initializeLakeContext lakeFile header
-  | none => return
+  | some lakeFile => do 
+    initializeLakeContext lakeFile header
+    buildLakeDep
+  | none => initializeLeanContext
+  

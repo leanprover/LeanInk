@@ -50,8 +50,7 @@ def configureCommandState (env : Environment) (msg : MessageLog) : Command.State
 def analyzeInput (config: Configuration) : IO (List AnalysisFragment) := do
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
-  initializeSearchPaths header config 
-
+  initializeSearchPaths header config
   let options := Options.empty.setBool `trace.Elab.info true
   let (environment, messages) ← processHeader header options messages context 0
   let commandState := configureCommandState environment messages
@@ -61,10 +60,11 @@ def analyzeInput (config: Configuration) : IO (List AnalysisFragment) := do
   let tactics := (resolveTacticList trees).map (λ f => AnalysisFragment.tactic f)
   let messages := s.commandState.messages.msgs.toList.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment context.fileMap m))
   let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
+  let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
 
   IO.println f!"TACTICS:\n {tactics}"
-  IO.println f!"MESSAGES:\n {filteredMessages}"
+  IO.println f!"MESSAGES:\n {sortedMessages}"
 
-  let result := List.mergeSort (λ x y => x.headPos < y.headPos) tactics filteredMessages
+  let result := List.mergeSort (λ x y => x.headPos < y.headPos) tactics sortedMessages
   IO.println f!"RESULT:\n {result}"
   return result

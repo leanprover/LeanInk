@@ -38,7 +38,7 @@ namespace CompoundFragment
 end CompoundFragment
 
 instance : ToString CompoundFragment where
-  toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)}"
+  toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)}>"
 
 /-
   FragmentEvent
@@ -73,7 +73,7 @@ namespace FragmentEvent
 end FragmentEvent
 
 instance : ToString FragmentEvent where
-  toString (self : FragmentEvent) : String := s!"¬<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
+  toString (self : FragmentEvent) : String := s!"<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
 
 /-
   Annotation
@@ -92,30 +92,35 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
     | none => do
       if e.isHead then
         let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment]}
-        -- IO.println s!"NO COMPOUND\n-> GENERATING NEW FROM HEAD AT {e.position}\n-> {newCompound}"
+        IO.println s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
         return (← generateCompoundFragments [newCompound] es)
       else
-        -- IO.println s!"NO COMPOUND\n-> UNEXPECTED TAIL"
+        IO.println s!"NO COMPOUND -> UNEXPECTED TAIL"
         return [] -- TODO: handle error
     | some c => do
       if e.isHead then
         if c.headPos == e.position then
           let updatedCompound := { c with enumFragments := c.enumFragments.append [e.enumerateFragment] }
-          -- IO.println s!"FOUND COMPOUND {c} \n-> UPDATING CURRENT WITH HEAD {e.idx}\n-> {updatedCompound}"
+          IO.println s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH HEAD {e.idx} -> {updatedCompound}"
           return (← generateCompoundFragments (l.dropLast.append [updatedCompound]) es)
         else
           let newCompound := { c with headPos := e.position, enumFragments := c.enumFragments.append [e.enumerateFragment] }
-          -- IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH HEAD {e.idx}\n-> {newCompound}"
+          IO.println s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH HEAD {e.idx} -> {newCompound}"
           return (← generateCompoundFragments (l.append [newCompound]) es)
       else
-        let newFragments := c.enumFragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
-        /-
-          It may be the case that the newFragments list isEmpty. This is totally fine as we need to
-          insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
-        -/
-        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments }
-        -- IO.println s!"FOUND COMPOUND {c} ¬-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
-        return (← generateCompoundFragments (l.append [newCompound]) es)
+        if c.headPos == e.position then
+          let updatedCompound := { c with enumFragments := c.enumFragments.filter (λ x => x.1 != e.idx)}
+          IO.println s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
+          return (← generateCompoundFragments (l.dropLast.append [updatedCompound]) es)
+        else 
+          let newFragments := c.enumFragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
+          /-
+            It may be the case that the newFragments list isEmpty. This is totally fine as we need to
+            insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
+          -/
+          let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments }
+          IO.println s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
+          return (← generateCompoundFragments (l.append [newCompound]) es)
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).
@@ -133,8 +138,8 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
   -- IO.println f!"Annotation-Input: {analysis}"
   let events := generateFragmentEventQueue analysis
-  -- IO.println f!"Events: {events}"
+  IO.println f!"Events: {events}"
   -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events
-  -- IO.println f!"Compounds: {compounds}"
+  IO.println f!"Compounds: {compounds}"
   return (← annotateFileWithCompounds [] config.inputFileContents compounds)
