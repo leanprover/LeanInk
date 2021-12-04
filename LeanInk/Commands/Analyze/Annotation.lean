@@ -79,9 +79,7 @@ instance : ToString FragmentEvent where
   Annotation
 -/
 def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent := do
-  let sortedAnalysis := List.sort (λ x y => x.headPos < y.headPos) analysis
-  let filteredAnalysis := sortedAnalysis.filter (λ f => f.headPos < f.tailPos)
-  let enumerateAnalysis := filteredAnalysis.enum
+  let enumerateAnalysis := analysis.enum
   let headQueue := enumerateAnalysis.map (λ (idx, f) => FragmentEvent.head f.headPos f idx)
   let sortedTailList := List.sort (λ x y => x.2.tailPos < y.2.tailPos) enumerateAnalysis
   let tailQueue := sortedTailList.map (λ (idx, f) => FragmentEvent.tail f.tailPos f idx)

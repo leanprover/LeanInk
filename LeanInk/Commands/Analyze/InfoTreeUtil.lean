@@ -3,11 +3,13 @@ import LeanInk.Output.Alectryon
 
 import Lean.Elab.Command
 import Lean.Data.Lsp
+import Lean.Meta
 
 namespace LeanInk.Commands.Analyze
 
 open Lean
 open Lean.Elab
+open Lean.Meta
 open Output
 
 /-
@@ -36,15 +38,84 @@ namespace TacticFragment
     | SourceInfo.original .., SourceInfo.original .. => false
     | _, _ => true
 
-  private def resolveGoalsAux (ctx : ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Format)
+  /-
+  This method is a adjusted version of the Meta.ppGoal function. As we do not want to generate a Format type
+  result, but a TacticFragment.
+  -/
+  private def evalGoal (mvarId : MVarId) : MetaM (Option Alectryon.Goal) := do
+    match (← getMCtx).findDecl? mvarId with
+    | none => return none
+    | some decl => do
+      let auxDecl := pp.auxDecls.get (<- getOptions)
+      let lctx := decl.lctx.sanitizeNames.run' { options := (← getOptions) }
+      withLCtx lctx decl.localInstances do
+        let (hidden, hiddenProp) ← ToHide.collect decl.type
+        -- The followint two `let rec`s are being used to control the generated code size.
+        -- Then should be remove after we rewrite the compiler in Lean
+        let rec pushPending (ids : List Name) (type? : Option Expr) (list : List Alectryon.Hypothesis) : MetaM (List Alectryon.Hypothesis) :=
+          if ids.isEmpty then
+            pure list
+          else
+            match type? with
+            | none      => pure list
+            | some type => do
+              let typeFmt ← ppExpr type
+              let names ← ids.reverse.map (λ n => n.toString)
+              let hypothesis : Alectryon.Hypothesis := { names := names, body := "", type := s!"{typeFmt}" }
+              return (hypothesis::(list.reverse)).reverse
+
+        let rec ppVars (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Alectryon.Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Alectryon.Hypothesis)) := do
+          if hiddenProp.contains localDecl.fvarId then
+            let fmt ← pushPending varNames prevType? hypotheses
+            let type ← instantiateMVars localDecl.type
+            let typeFmt ← ppExpr type
+            let hypothesis : Alectryon.Hypothesis := { names := ["ERROR"], body := "", type := s!"{typeFmt}" }
+            -- let fmt  := fmt ++ " : " ++ typeFmt
+            pure ([], none, fmt)
+          else
+            match localDecl with
+            | LocalDecl.cdecl _ _ varName type _   =>
+              let varName := varName.simpMacroScopes
+              let type ← instantiateMVars type
+              if prevType? == none || prevType? == some type then
+                pure (varName :: varNames, some type, hypotheses)
+              else do
+                let fmt ← pushPending varNames prevType? hypotheses
+                pure ([varName], some type, fmt)
+            | LocalDecl.ldecl _ _ varName type val _ => do
+              let varName := varName.simpMacroScopes
+              let fmt ← pushPending varNames prevType? hypotheses
+              let type ← instantiateMVars type
+              let val  ← instantiateMVars val
+              let typeFmt ← ppExpr type
+              let valFmt ← ppExpr val
+              let hypothesis : Alectryon.Hypothesis := { names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }
+              pure ([], none, (hypothesis::(fmt.reverse)).reverse)
+    
+        let (varNames, type?, fmt) ← lctx.foldlM (init := ([], none, [])) fun (varNames, prevType?, fmt) (localDecl : LocalDecl) =>
+          if !auxDecl && localDecl.isAuxDecl || hidden.contains localDecl.fvarId then
+            pure (varNames, prevType?, fmt)
+          else
+            ppVars varNames prevType? fmt localDecl
+
+        let fmt ← pushPending varNames type? fmt
+        let typeFmt ← ppExpr (← instantiateMVars decl.type)
+        match decl.userName with
+        | Name.anonymous => do
+          return some { name := "", conclusion := s!"{typeFmt}", hypotheses := fmt.toArray }
+        | name           => do
+          let goalFormatName := format name.eraseMacroScopes
+          let goalName := s!"case {goalFormatName}"
+          return some { name := goalName, conclusion := s!"{typeFmt}", hypotheses := fmt.toArray }
+
+  private def resolveGoalsAux (ctx : ContextInfo) (mctx : MetavarContext) : List MVarId -> IO (List Alectryon.Goal)
     | [] => []
     | goals => do
       let ctx := { ctx with mctx := mctx }
-      return (← ctx.runMetaM {} (goals.mapM (Meta.ppGoal .)))
+      return (← ctx.runMetaM {} (goals.mapM (evalGoal .))).filterMap (λ x => x)
 
   def resolveGoals (self : TacticFragment) : IO (List Alectryon.Goal) := do
-    let goalsBefore ← resolveGoalsAux self.ctx self.info.mctxBefore self.info.goalsBefore
-    return ← goalsBefore.map (λ g => { name := "", conclusion := s!"{g}", hypotheses := #[{ names := ["A", "B", "C"], body := "BODY", type := "TYPE" }] } )
+    return ← resolveGoalsAux self.ctx self.info.mctxAfter self.info.goalsAfter
 end TacticFragment
 
 /-
