@@ -25,7 +25,7 @@ def analyzeCommand : Command := {
 }
 
 def leanVersionCommand : Command := {
-  identifiers := ["leanVersion", "-lV"],
+  identifiers := ["leanVersion", "lV"],
   help := "",
   arguments := [],
   run := λ _ _ => Commands.Version.printLeanVersion

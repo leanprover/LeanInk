@@ -37,6 +37,12 @@ namespace AnalysisFragment
     | _ => none
 end AnalysisFragment
 
+instance : ToFormat AnalysisFragment where
+  format (self : AnalysisFragment) : Format :=
+    match self with
+    | AnalysisFragment.tactic _ => f!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
+    | AnalysisFragment.message _ => f!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
+
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State := do 
   return { Command.mkState env msg with infoState := { enabled := true }}
 
@@ -51,5 +57,11 @@ def analyzeInput (config: Configuration) : IO (List AnalysisFragment) := do
   let trees := s.commandState.infoState.trees.toList
   let tactics := (resolveTacticList trees).map (λ f => AnalysisFragment.tactic f)
   let messages := s.commandState.messages.msgs.toList.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment context.fileMap m))
+  let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
 
-  return List.mergeSort (λ x y => x.headPos < y.headPos) tactics messages
+  IO.println f!"TACTICS:\n {tactics}"
+  IO.println f!"MESSAGES:\n {filteredMessages}"
+
+  let result := List.mergeSort (λ x y => x.headPos < y.headPos) tactics filteredMessages
+  IO.println f!"RESULT:\n {result}"
+  return result

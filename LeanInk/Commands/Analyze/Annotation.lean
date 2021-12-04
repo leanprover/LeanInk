@@ -22,7 +22,7 @@ structure CompoundFragment where
   enumFragments: List (Nat × AnalysisFragment)
 
 namespace CompoundFragment
-  def tailPos (self : CompoundFragment) : Option String.Pos := (self.enumFragments.map (λ f => f.2.tailPos)).maximum?
+  def tailPos (self : CompoundFragment) : Option String.Pos := (self.enumFragments.map (λ f => f.2.tailPos)).minimum?
 
   def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
 
@@ -79,7 +79,8 @@ instance : ToString FragmentEvent where
   Annotation
 -/
 def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent := do
-  let filteredAnalysis := analysis.filter (λ f => f.headPos < f.tailPos)
+  let sortedAnalysis := List.sort (λ x y => x.headPos < y.headPos) analysis
+  let filteredAnalysis := sortedAnalysis.filter (λ f => f.headPos < f.tailPos)
   let enumerateAnalysis := filteredAnalysis.enum
   let headQueue := enumerateAnalysis.map (λ (idx, f) => FragmentEvent.head f.headPos f idx)
   let sortedTailList := List.sort (λ x y => x.2.tailPos < y.2.tailPos) enumerateAnalysis
@@ -93,20 +94,20 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
     | none => do
       if e.isHead then
         let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment]}
-        IO.println s!"NO COMPOUND\n-> GENERATING NEW FROM HEAD AT {e.position}\n-> {newCompound}"
+        -- IO.println s!"NO COMPOUND\n-> GENERATING NEW FROM HEAD AT {e.position}\n-> {newCompound}"
         return (← generateCompoundFragments [newCompound] es)
       else
-        IO.println s!"NO COMPOUND\n-> UNEXPECTED TAIL"
+        -- IO.println s!"NO COMPOUND\n-> UNEXPECTED TAIL"
         return [] -- TODO: handle error
     | some c => do
       if e.isHead then
         if c.headPos == e.position then
           let updatedCompound := { c with enumFragments := c.enumFragments.append [e.enumerateFragment] }
-          IO.println s!"FOUND COMPOUND {c} \n-> UPDATING CURRENT WITH HEAD {e.idx}\n-> {updatedCompound}"
+          -- IO.println s!"FOUND COMPOUND {c} \n-> UPDATING CURRENT WITH HEAD {e.idx}\n-> {updatedCompound}"
           return (← generateCompoundFragments (l.dropLast.append [updatedCompound]) es)
         else
           let newCompound := { c with headPos := e.position, enumFragments := c.enumFragments.append [e.enumerateFragment] }
-          IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH HEAD {e.idx}\n-> {newCompound}"
+          -- IO.println s!"FOUND COMPOUND {c} \n-> CREATING NEW COMPOUND WITH HEAD {e.idx}\n-> {newCompound}"
           return (← generateCompoundFragments (l.append [newCompound]) es)
       else
         let newFragments := c.enumFragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
@@ -115,7 +116,7 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
           insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
         -/
         let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments }
-        IO.println s!"FOUND COMPOUND {c} ¬-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
+        -- IO.println s!"FOUND COMPOUND {c} ¬-> CREATING NEW COMPOUND WITH TAIL {e.idx}\n-> {newCompound}"
         return (← generateCompoundFragments (l.append [newCompound]) es)
 
 /-
@@ -132,9 +133,10 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
     return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
 def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : IO (List Alectryon.Fragment) := do
+  -- IO.println f!"Annotation-Input: {analysis}"
   let events := generateFragmentEventQueue analysis
-  IO.println f!"Events: {events}"
+  -- IO.println f!"Events: {events}"
   -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events
-  IO.println f!"Compounds: {compounds}"
+  -- IO.println f!"Compounds: {compounds}"
   return (← annotateFileWithCompounds [] config.inputFileContents compounds)

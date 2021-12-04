@@ -60,11 +60,13 @@ private partial def resolveArgumentList (available: List Argument) (args: List S
     return ([], args)
   else
     match args with
-    | [] => return ([], []) -- No arguments left
+    | [] => return ([], args) -- No arguments left
     | a::as =>
       let argument := List.find? (λ x => x.identifiers.elem a) available
       match argument with
-      | none => return resolveArgumentList available as
+      | none => 
+        let (res, unres) := resolveArgumentList available as
+        return (res, a::unres)
       | some argument =>
         match argument with
         | Argument.flag i =>
@@ -73,7 +75,9 @@ private partial def resolveArgumentList (available: List Argument) (args: List S
           return (resolvedArg::otherArgs, unresolved)
         | Argument.environment i =>
           match as with 
-          | [] => return resolveArgumentList available as
+          | [] => 
+            let (res, unres) := resolveArgumentList available as
+            return (res, a::unres)
           | b::bs => 
             let resolvedArg := ResolvedArgument.env i b
             let (otherArgs, unresolved) := resolveArgumentList (available.erase argument) bs
