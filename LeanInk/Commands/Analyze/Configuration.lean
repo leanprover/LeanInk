@@ -16,6 +16,7 @@ structure Configuration where
   inputFileContents : String
   outputType : OutputType
   lakeFile : Option FilePath
+  verbose: Bool
 
 namespace Configuration
 
@@ -23,3 +24,5 @@ def inputFileName (self : Configuration) : String :=
   self.inputFilePath.toString
 
 end Configuration
+
+abbrev AnalysisM := ReaderT Configuration $ IO

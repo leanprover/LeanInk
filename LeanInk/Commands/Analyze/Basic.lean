@@ -1,9 +1,10 @@
-import LeanInk.CLI
-
 import LeanInk.Commands.Analyze.Configuration
 import LeanInk.Commands.Analyze.FileHelper
 import LeanInk.Commands.Analyze.Analysis
 import LeanInk.Commands.Analyze.Annotation
+import LeanInk.Commands.Analyze.Logger
+
+import LeanInk.CLI
 
 import Lean.Util.Path
 import Lean.Data.Json
@@ -25,6 +26,7 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     inputFileContents := contents
     outputType := OutputType.alectryonFragments
     lakeFile := getLakeFile? arguments
+    verbose := containsFlag arguments "--verbose"
   }
 where
   getLakeFile? (arguments : List ResolvedArgument) : Option FilePath := do
@@ -34,17 +36,30 @@ where
 
 -- OUTPUT
 open IO.FS
-def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : IO Unit := do
+def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : AnalysisM Unit := do
   let dirEntry : DirEntry := { 
     root := folderPath,
     fileName := fileName ++ ".leanInk"
   }
   let path ← dirEntry.path
   IO.FS.writeFile path content
-  IO.println s!"Results written to file: {path}!"
+  Logger.logInfo s!"Results written to file: {path}!"
 
 open LeanInk.Output.Alectryon in
 def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
+
+def runAnalysis : AnalysisM UInt32 := do
+  let config ← read
+  Logger.logInfo s!"Starting process with lean file: {config.inputFileName}"
+  Logger.logInfo "Analyzing..."
+  let result ← analyzeInput config
+
+  Logger.logInfo "Annotating..."
+  let outputFragments ← annotateFile config result
+
+  Logger.logInfo "Outputting..."
+  createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)
+  return 0
 
 -- EXECUTION
 def exec (args: List ResolvedArgument) (files: List String) : IO UInt32 := do
@@ -53,18 +68,6 @@ def exec (args: List ResolvedArgument) (files: List String) : IO UInt32 := do
     if not (_validateInputFile a) then do
       Logger.logError s!"Provided file \"{a}\" is not lean file."
     else
-      Logger.logInfo s!"Starting process with lean file: {a}"
       let config ← _buildConfiguration args a
-
-      Logger.logInfo "Analyzing..."
-      let result ← analyzeInput config
-
-      Logger.logInfo "Annotating..."
-      let outputFragments ← annotateFile config result
-
-      IO.println s!"FragmentSize: {outputFragments.length}"
-
-      Logger.logInfo "Outputting..."
-      createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)
-      return 0
+      return ← (runAnalysis.run config)
   | _ => Logger.logError s!"No input files provided"

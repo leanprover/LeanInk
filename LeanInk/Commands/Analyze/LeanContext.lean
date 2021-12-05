@@ -3,7 +3,7 @@ import Lean.Parser.Module
 import Lean.Elab
 import Lean.Util.Paths
 
-import LeanInk.CLI
+import LeanInk.Commands.Analyze.Logger
 import LeanInk.Commands.Analyze.Configuration
 
 namespace LeanInk.Commands.Analyze
@@ -29,7 +29,7 @@ def getLakePath : IO String := do
   | none => return lakeCmdName
 
 open IO
-def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := do
+def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
     Logger.logInfo s!"lakefile does not exist: {lakeFile}"
   else if lakeFile.fileName != some "lakefile.lean" then
@@ -59,26 +59,27 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := d
           let paths : LeanPaths := paths 
           initializeLeanContext
           initSearchPath (← findSysroot?) paths.oleanPath
+          Logger.logInfo s!"{paths.oleanPath}"
           Logger.logInfo s!"Successfully loaded lake search paths"
     | 2 => Logger.logInfo s!"No search paths required!"
     | _ => Logger.logInfo s!"Using lake failed! Make sure that lake is installed!"
 
-def buildLakeDep : IO Unit := do
+def configureLake : AnalysisM Unit := do
   let lakeProcess ← Process.spawn {
       stdin := Process.Stdio.null
       stdout := Process.Stdio.piped
       stderr := Process.Stdio.piped
       cmd := ← getLakePath
-      args := #["build"]
+      args := #["configure"]
     }
     let stdout := String.trim (← lakeProcess.stdout.readToEnd)
     match (← lakeProcess.wait) with
-    | _ => return 
+    | _ => Logger.logInfo s!"Lake configured dependencies!"
 
-def initializeSearchPaths (header : Syntax) (config : Configuration) : IO Unit := do
+def initializeSearchPaths (header : Syntax) (config : Configuration) : AnalysisM Unit := do
   match config.lakeFile with
   | some lakeFile => do 
+    configureLake
     initializeLakeContext lakeFile header
-    buildLakeDep
   | none => initializeLeanContext
   

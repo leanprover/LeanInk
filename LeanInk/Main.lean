@@ -18,7 +18,11 @@ def analyzeCommand : Command := {
   arguments := [
     environment {
       identifiers := ["--lake"]
-      help := "Specify path to lakefile.lean, so dependencies can be resolved during analysis."
+      help := "Specify path to lakefile.lean, so dependencies can be resolved during analysis. Default: none"
+    },
+    flag {
+      identifiers := ["--verbose"]
+      help := "Enables verbose output."
     }
   ]
   run := Commands.Analyze.exec
