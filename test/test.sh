@@ -4,6 +4,19 @@ if diff --color --help >/dev/null 2>&1; then
     DIFF="diff --color";
 fi
 
+realpath () (
+  OURPWD=$PWD
+  cd "$(dirname "$1")"
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")"
+    LINK=$(readlink "$(basename "$1")")
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD"
+  echo "$REALPATH"
+)
+
 LEANINK=$(realpath "../build/bin/leanInk")
 
 error () {
