@@ -1,4 +1,4 @@
-# LeanInk
+![LeanInkLogo](https://user-images.githubusercontent.com/24965150/145307859-30350f23-4f7f-4aab-a1ab-34889ad44d9a.png)
 
 [![CI](https://github.com/insightmind/LeanInk/actions/workflows/build.yml/badge.svg)](https://github.com/insightmind/LeanInk/actions/workflows/build.yml)
 
