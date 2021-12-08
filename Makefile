@@ -6,5 +6,5 @@ build:
 capture: 
 	./test/test.sh run_capture
 
-test:
+run_tests:
 	./test/test.sh run_tests
