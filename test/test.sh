@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ulimit -s 8192
 DIFF=diff
 if diff --color --help >/dev/null 2>&1; then
