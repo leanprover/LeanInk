@@ -1,0 +1,2 @@
+[{"contents": "def main : IO Unit :=\n  IO.println s!\"Hello, world!\"",
+  "_type": "text"}]

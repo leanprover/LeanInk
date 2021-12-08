@@ -4,18 +4,17 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses": [],
-    "conclusion": "\np q : Prop hp : p hq : q ⊢ p ∧ q ∧ p",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents": "apply And.intro hp",
   "_type": "sentence"},
  {"contents": "\n  ", "_type": "text"},
  {"messages": [],
-  "goals":
-  [{"name": "",
-    "hypotheses": [],
-    "conclusion": "\np q : Prop hp : p hq : q ⊢ q ∧ p",
-    "_type": "goal"}],
+  "goals": [],
   "contents": "exact And.intro hq hp",
   "_type": "sentence"},
  {"contents": "", "_type": "text"}]

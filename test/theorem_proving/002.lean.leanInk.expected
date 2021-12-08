@@ -1,0 +1,67 @@
+[{"contents":
+  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=\n  by ",
+  "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "left",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p",
+    "_type": "goal"},
+   {"name": "right",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q ∧ p",
+    "_type": "goal"}],
+  "contents": "apply And.intro",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "right",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q ∧ p",
+    "_type": "goal"}],
+  "contents": "exact hp",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "right.left",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q",
+    "_type": "goal"},
+   {"name": "right.right",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p",
+    "_type": "goal"}],
+  "contents": "apply And.intro",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "right.right",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p",
+    "_type": "goal"}],
+  "contents": "exact hq",
+  "_type": "sentence"},
+ {"contents": "\n     ", "_type": "text"},
+ {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
+ {"contents": "", "_type": "text"}]

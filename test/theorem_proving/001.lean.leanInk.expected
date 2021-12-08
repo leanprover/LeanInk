@@ -1,8 +1,7 @@
 [{"contents": "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=\n  ",
   "_type": "text"},
  {"messages":
-  [{"contents":
-    "test/theorem_proving/001.lean:2:2: warning: declaration uses 'sorry'\n",
+  [{"contents": "001.lean:2:2: warning: declaration uses 'sorry'\n",
     "_type": "message"}],
   "goals": [],
   "contents": "sorry",
