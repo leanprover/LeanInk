@@ -6,3 +6,4 @@
 /test/**/*.js
 /test/**/lean_packages
 /test/**/.git
+/test/**/*.leanInk
