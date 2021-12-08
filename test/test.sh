@@ -4,32 +4,32 @@ if diff --color --help >/dev/null 2>&1; then
     DIFF="diff --color";
 fi
 
-LEANINK="../build/bin/leanInk"
+LEANINK=$(realpath "../build/bin/leanInk")
 
-function error {
+error () {
     echo $1
     exit 1
 }
 
-function build_leanink {
+build_leanink () {
     lake build || error "Failed to compile leanInk"zsh -df
 }
 
-function run_leanink {
+run_leanink () {
     file=$1
     directory=${file%/*}
     filename=${file##*/}
     # If the folder in which the file resides contains a lakefile we will use it to resolve any dependencies for the file
     if [[ -f "$directory/lakefile.lean" ]]; then
         echo "Running LeanInk with lakefile.lean - $file"
-        (cd $directory && LEANINK analyze $filename --lake lakefile.lean || error "LeanInk failed - $file")
+        (cd $directory && $LEANINK analyze $filename --lake lakefile.lean) || error "LeanInk failed - $file"
     else
         echo "Running LeanInk - $file"
-        (cd $directory && LEANINK analyze $filename || error "LeanInk failed - $file")
+        (cd $directory && $LEANINK analyze $filename) || error "LeanInk failed - $file"
     fi
 }
 
-function run_tests {
+run_tests () {
     echo "Running diff tests for leanInk"
     retVal=0
     for file in $(find . -name '*.lean'); do
@@ -51,7 +51,7 @@ function run_tests {
     exit $retVal
 }
 
-function run_capture {
+run_capture () {
     echo "Create new expected output files for leanInk tests. Overriding previous output files!"
     for file in $(find . -name '*.lean'); do
         if [[ ${file##*/} != "lakefile.lean" ]] && [[ $file != *"/lean_packages/"* ]]; then 
