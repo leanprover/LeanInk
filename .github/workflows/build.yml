@@ -62,4 +62,4 @@ jobs:
         run: lake build
 
       - name: Run tests
-        run: make run_tests
+        run: make -C test run_tests

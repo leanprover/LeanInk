@@ -32,7 +32,7 @@ function run_leanink {
 function run_tests {
     echo "Running diff tests for leanInk"
     retVal=0
-    for file in $(find test -name '*.lean'); do
+    for file in $(find . -name '*.lean'); do
         if [[ ${file##*/} != "lakefile.lean" ]] && [[ $file != *"/lean_packages/"* ]]; then 
             if test "$file.leanInk.expected"; then
                 run_leanink $file
@@ -53,7 +53,7 @@ function run_tests {
 
 function run_capture {
     echo "Create new expected output files for leanInk tests. Overriding previous output files!"
-    for file in $(find test -name '*.lean'); do
+    for file in $(find . -name '*.lean'); do
         if [[ ${file##*/} != "lakefile.lean" ]] && [[ $file != *"/lean_packages/"* ]]; then 
             run_leanink $file
             mv "$file.leanInk" "$file.leanInk.expected"
