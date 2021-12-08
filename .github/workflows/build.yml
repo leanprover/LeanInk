@@ -32,7 +32,7 @@ jobs:
 
       # Install elan with nightly toolchain
       - name: Install Elan (macOS || Ubuntu)
-        if: matrix.os == "ubuntu-lates" || matrix.os == "macos-latest"
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: |
           set -o pipefail
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain leanprover/lean4:nightly -y
