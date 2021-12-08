@@ -4,7 +4,7 @@ if diff --color --help >/dev/null 2>&1; then
     DIFF="diff --color";
 fi
 
-realpath () (
+_realpath () (
   OURPWD=$PWD
   cd "$(dirname "$1")"
   LINK=$(readlink "$(basename "$1")")
@@ -17,7 +17,13 @@ realpath () (
   echo "$REALPATH"
 )
 
-LEANINK=$(realpath "../build/bin/leanInk")
+REALPATH=realpath
+
+if ! command -v realpath &> /dev/null; then
+    REALPATH=_realpath
+fi
+
+LEANINK=$($REALPATH "../build/bin/leanInk")
 
 error () {
     echo $1
