@@ -52,7 +52,7 @@ run_tests () {
     echo "Running diff tests for leanInk"
     retVal=0
     for file in $(find . -name '*.lean'); do
-        if [[ ${file##*/} != "lakefile.lean" ]] && [[ $file != *"/lean_packages/"* ]]; then 
+        if [[ ${file##*/} != "lakefile.lean" && $file != *"/lean_packages/"* ]]; then 
             if test "$file.leanInk.expected"; then
                 run_leanink $file
                 if $DIFF -au --strip-trailing-cr "$file.leanInk" "$file.leanInk.expected"; then
