@@ -9,37 +9,51 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-Ubuntu:
-    runs-on: [ ubuntu-latest ]
-
+  build: 
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell || 'sh' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - name: Ubuntu
+          os: ubuntu-latest
+        - name: macOS
+          os: macos-latest
+        - name: Windows
+          os: windows-latest
+          shell: msys2 {0}
     steps:
       # Checkout repository
       - uses: actions/checkout@v2
-        
+
       # Install elan with nightly toolchain
-      - name: install elan
+      - name: Install Elan (macOS || Ubuntu)
+        if: matrix.os == "ubuntu-lates" || matrix.os == "macos-latest"
         run: |
           set -o pipefail
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain leanprover/lean4:nightly -y
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
-          
-      - name: build LeanInk
-        run: lake build
-        
-  build-macOS:
-    # We use macos-11 because macos-latest is still 10.15
-    runs-on: [ macos-11 ]
 
-    steps:
-      # Checkout repository
-      - uses: actions/checkout@v2
-        
-      # Install elan with nightly toolchain
-      - name: install elan
+      - name: Install MSYS2 (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: msys2/setup-msys2@v2
+        with:
+          path-type: inherit
+          install: curl unzip make mingw-w64-x86_64-gcc mingw-w64-x86_64-gmp
+      - name: Install Elan (Windows)
+        if: matrix.os == 'windows-latest'
         run: |
-          set -o pipefail
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain leanprover/lean4:nightly -y
-          echo "$HOME/.elan/bin" >> $GITHUB_PATH
-          
-      - name: build LeanInk
+          curl -sSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh > elan-init.sh
+          ./elan-init.sh -y
+          cygpath -w "$USERPROFILE/.elan/bin" >> $GITHUB_PATH
+
+      # Build and test
+      - name: Build LeanInk
         run: lake build
+
+      - name: Run tests
+        run: make test
