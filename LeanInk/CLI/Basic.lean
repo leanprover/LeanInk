@@ -87,15 +87,16 @@ private partial def resolveArgumentList (available: List Argument) (args: List S
 def runHelp (app: AppInfo)  (available: List Command) (arguments : List String) : IO UInt32 := do
   match _resolveCommandList available arguments with
   | Result.failure error => do
-    IO.println s!"{error}"
+    IO.println (generateDefaultHelp app available)
     return 1
   | Result.success (command, unresolvedArgs) => do
-    IO.println (generateHelp app command)
+      IO.println (generateCommandHelp app command)
     return 0
 
 -- ENTRY
 def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt32 := do
-  match (← _resolveCommandList (helpCommand::versionCommand::commands) args) with -- We automatically add the help and version command internally for command resolution.
+  let commands := helpCommand::versionCommand::commands
+  match (← _resolveCommandList commands args) with -- We automatically add the help and version command internally for command resolution.
   | Result.failure error => return 1
   | Result.success result => do
     let (command, args) := result

@@ -7,6 +7,7 @@ namespace LeanInk.CLI
 structure Command where
   identifiers : List String
   help : String
+  additionalUsageInfo : String := ""
   arguments : List Argument
   run: (List ResolvedArgument) -> (List String) -> IO UInt32
 
@@ -17,7 +18,7 @@ structure ResolvedCommand where
 -- VERSION COMMAND
 def versionCommand : CLI.Command := {
   identifiers := ["version", "-v"]
-  help := ""
+  help := "Returns the version info of this instance."
   arguments := []
   run := λ _ _ => return 0
 }
@@ -26,7 +27,8 @@ def versionCommand : CLI.Command := {
 -- The help command is always available
 def helpCommand : Command := {
   identifiers := ["help", "-h"]
-  help := ""
+  help := "Displays a help page."
+  additionalUsageInfo := "<COMMAND>"
   arguments := []
   run := λ _ _ => return 0
 }

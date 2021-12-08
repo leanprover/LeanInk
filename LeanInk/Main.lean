@@ -14,7 +14,8 @@ def app : AppInfo := {
 
 def analyzeCommand : Command := {
   identifiers := ["analyze", "a"]
-  help := ""
+  help := "Analyzes the given input file and outputs the results in Alectryons fragment json format."
+  additionalUsageInfo := "<INPUT_FILE>"
   arguments := [
     environment {
       identifiers := ["--lake"]
@@ -30,7 +31,7 @@ def analyzeCommand : Command := {
 
 def leanVersionCommand : Command := {
   identifiers := ["leanVersion", "lV"],
-  help := "",
+  help := "Returns the lean version supported by this leanInk instance.",
   arguments := [],
   run := λ _ _ => Commands.Version.printLeanVersion
 }
