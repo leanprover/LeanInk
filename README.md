@@ -3,11 +3,11 @@
 [![CI](https://github.com/insightmind/LeanInk/actions/workflows/build.yml/badge.svg)](https://github.com/insightmind/LeanInk/actions/workflows/build.yml)
 [![LƎⱯN - 4](https://img.shields.io/static/v1?label=LƎⱯN&message=4&color=black)](https://github.com/leanprover/lean4)
 
-LeanInk is a command line helper tool for [Alectryon](https://github.com/cpitclaudel/alectryon) which aims to ease the integration of [Lean 4](https://github.com/leanprover/lean4).
-Alectryon uses the information provided by LeanInk to create a static code visualization of Lean 4 code.
-For more information on Alectryon make sure to take a look at their repository.
+LeanInk is a command line helper tool for [Alectryon](https://github.com/cpitclaudel/alectryon) which aims to ease the integration and support of [Lean 4](https://github.com/leanprover/lean4).
+Alectryon uses the information provided by LeanInk to create a static code visualization for Lean 4 code.
+For more information about Alectryon make sure to take a look at their repository.
 
-> The official version of Alectryon does not yet support LeanInk, as LeanInk is still in development. Please use our [Alectryon Fork](https://github.com/insightmind/alectryon/tree/lean4) to test LeanInk.
+> The official version of Alectryon does not yet support LeanInk, as LeanInk is still in active development. Please use our [Alectryon Fork](https://github.com/insightmind/alectryon/tree/lean4) to test LeanInk.
 
 # Installation
 
@@ -49,7 +49,7 @@ leanInk analyze Input.lean
 leanInk a Input.lean
 ```
 
-The `analyze` command will generate a output file `Input.lean.leanInk` with the annotate lean program, encoded using Alectryons fragment json format. (For more information about the json format take a look at [Alectryon.lean](https://github.com/insightmind/LeanInk/blob/main/LeanInk/Output/Alectryon.lean))
+The `analyze` command will generate an output file `Input.lean.leanInk` with the annotate lean program, encoded using Alectryons fragment json format. (For more information about the json format take a look at [Alectryon.lean](https://github.com/insightmind/LeanInk/blob/main/LeanInk/Output/Alectryon.lean))
 
 --- 
 
@@ -73,10 +73,10 @@ leanInk lV
 
 ## Usage in Alectryon
 
-Alectryon automatically integrates LeanInk internally to analyze your Lean program or documentation file with Lean 4 code blocks.
-To embed Lean 4 in code blocks you have to use the `lean4::` directive for RestructuredText and `{lean4}` directive for myST markdown files. This is to distinguish simultaneous support of Lean 3 and Lean 4 in Alectryon.
+Alectryon automatically integrates LeanInk internally to analyze a Lean 4 code file or a documentation file with Lean 4 code blocks.
+To embed Lean 4 in code blocks you have to use the `lean4::` directive for reStructuredText and `{lean4}` directive for myST markdown files. This is to distinguish the support of Lean 3 and Lean 4 in Alectryon.
 
-For more information on Alectryon make sure to take a look at their repository.
+For more information about Alectryon make sure to take a look at their repository.
 
 # Development
 
