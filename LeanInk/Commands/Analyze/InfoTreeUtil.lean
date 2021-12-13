@@ -149,6 +149,14 @@ namespace TermFragment
 
   def tailPos (f: TermFragment) : String.Pos := 
     (f.info.toElabInfo.stx.getTailPos? false).getD 0
+
+  def toFormat (f: TermFragment) : IO Format := 
+    TermInfo.format f.ctx f.info
+
+  def isExpanded (f: TermFragment) : Bool :=
+    match f.info.toElabInfo.stx.getHeadInfo, f.info.toElabInfo.stx.getTailInfo with
+    | SourceInfo.original .., SourceInfo.original .. => false
+    | _, _ => true
 end TermFragment
 
 inductive Fragment where
@@ -181,7 +189,10 @@ def Info.toFragment (info : Info) (ctx : ContextInfo) : Option Fragment :=
       Fragment.tactic fragment
   | Info.ofTermInfo i =>
     let fragment : TermFragment := { info :=  i, ctx := ctx }
-    Fragment.term fragment
+    if fragment.isExpanded then
+      none
+    else
+      Fragment.term fragment
   | _ => none
 
 def mergeSortFragments (x y : TraversalResult) : TraversalResult := { 
@@ -198,13 +209,18 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> 
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs := children.toList.map (_resolveTacticList ctx?)
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl mergeSortFragments TraversalResult.empty
-      if sortedChildrenLeafs.isEmpty then
-        match Info.toFragment info ctx with
-        | some (Fragment.tactic f) => { tactics := [f], terms := [] }
-        | some (Fragment.term f) => { tactics := [], terms := [f] }
-        | none => TraversalResult.empty
-      else
-        sortedChildrenLeafs    
+      match Info.toFragment info ctx with
+      | some (Fragment.tactic f) => 
+        if sortedChildrenLeafs.tactics.isEmpty then 
+          { sortedChildrenLeafs with tactics := [f] }
+        else 
+          sortedChildrenLeafs
+      | some (Fragment.term f) => 
+        if sortedChildrenLeafs.terms.isEmpty then 
+          { sortedChildrenLeafs with terms := [f] }
+        else 
+          sortedChildrenLeafs
+      | none => sortedChildrenLeafs  
   | _ => TraversalResult.empty
 
 def resolveTacticList (trees: List InfoTree) : TraversalResult :=
