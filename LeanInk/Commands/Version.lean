@@ -12,4 +12,3 @@ def leanVersion : String :=
 def printLeanVersion : IO UInt32 := do
   IO.println leanVersion
   return 0
-
