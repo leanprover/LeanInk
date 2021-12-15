@@ -120,17 +120,17 @@ structure MessageFragment where
   msg: Message
 
 def Position.toStringPos (fileMap: FileMap) (pos: Position) : String.Pos :=
-    return FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
+  FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
 
 namespace MessageFragment
-  def mkFragment (fileMap: FileMap) (msg: Message) : MessageFragment := do
+  def mkFragment (fileMap: FileMap) (msg: Message) : MessageFragment :=
     let headPos := Position.toStringPos fileMap msg.pos
     let tailPos := Position.toStringPos fileMap (msg.endPos.getD msg.pos)
-    return { headPos := headPos, tailPos := tailPos, msg := msg }
+    { headPos := headPos, tailPos := tailPos, msg := msg }
 
   def length (f: MessageFragment) : Nat := f.tailPos - f.headPos
 
-    def toAlectryonMessage (self : MessageFragment) : IO Alectryon.Message := do
+  def toAlectryonMessage (self : MessageFragment) : IO Alectryon.Message := do
     let message ← self.msg.toString
     return { contents := message }
 end MessageFragment
@@ -138,14 +138,14 @@ end MessageFragment
 /-
   InfoTree traversal
 -/
-def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment := do
+def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment :=
   match info with
   | Info.ofTacticInfo i => 
     let fragment : TacticFragment := { info :=  i, ctx := ctx }
     if fragment.isExpanded then
-      return none
+      none
     else
-      return fragment
+      fragment
   | _ => none
 
 def mergeSortFragments : List TacticFragment -> List TacticFragment -> List TacticFragment := 
@@ -155,7 +155,7 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> 
   | InfoTree.context ctx tree => _resolveTacticList ctx tree
   | InfoTree.node info children =>
     match ctx? with
-    | none => return []
+    | none => []
     | some ctx =>
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs := children.toList.map (_resolveTacticList ctx?)
@@ -165,8 +165,8 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> 
         | some f => [f]
         | none => []
       else
-        return sortedChildrenLeafs    
+        sortedChildrenLeafs    
   | _ => []
 
 def resolveTacticList (trees: List InfoTree) : List TacticFragment :=
-  return (trees.map _resolveTacticList).foldl mergeSortFragments []
+  (trees.map _resolveTacticList).foldl mergeSortFragments []

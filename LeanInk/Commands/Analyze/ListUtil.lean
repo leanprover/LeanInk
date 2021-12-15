@@ -9,6 +9,6 @@ partial def mergeSort [Inhabited α] (f: α -> α -> Bool) : List α -> List α 
   | xs, [] => xs
   | x::xs, y::ys => 
     if f x y then
-      return x::mergeSort f xs (y::ys)
+      x::mergeSort f xs (y::ys)
     else
-      return y::mergeSort f (x::xs) ys
+      y::mergeSort f (x::xs) ys

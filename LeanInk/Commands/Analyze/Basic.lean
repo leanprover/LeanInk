@@ -16,8 +16,7 @@ open LeanInk.CLI
 open Lean
 open System
 
-private def _validateInputFile (file : FilePath) : Bool := do
-  return isLeanFile file
+private def _validateInputFile (file : FilePath) : Bool := isLeanFile file
 
 private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
   let contents ← IO.FS.readFile file
@@ -29,7 +28,7 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     verbose := containsFlag arguments "--verbose"
   }
 where
-  getLakeFile? (arguments : List ResolvedArgument) : Option FilePath := do
+  getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=
     match environmentValue arguments "--lake" with
     | none => none
     | some string => some (FilePath.mk string)

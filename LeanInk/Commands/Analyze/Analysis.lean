@@ -45,8 +45,8 @@ instance : ToFormat AnalysisFragment where
     | AnalysisFragment.tactic _ => f!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
     | AnalysisFragment.message _ => f!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
 
-def configureCommandState (env : Environment) (msg : MessageLog) : Command.State := do 
-  return { Command.mkState env msg with infoState := { enabled := true }}
+def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
+  { Command.mkState env msg with infoState := { enabled := true }}
 
 def analyzeInput (config: Configuration) : AnalysisM (List AnalysisFragment) := do
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName

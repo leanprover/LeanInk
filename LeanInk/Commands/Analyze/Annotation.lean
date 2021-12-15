@@ -79,12 +79,12 @@ instance : ToString FragmentEvent where
 /-
   Annotation
 -/
-def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent := do
+def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent :=
   let enumerateAnalysis := analysis.enum
   let headQueue := enumerateAnalysis.map (λ (idx, f) => FragmentEvent.head f.headPos f idx)
   let sortedTailList := List.sort (λ x y => x.2.tailPos < y.2.tailPos) enumerateAnalysis
   let tailQueue := sortedTailList.map (λ (idx, f) => FragmentEvent.tail f.tailPos f idx)
-  return List.mergeSort (λ x y => x.position < y.position) headQueue tailQueue
+  List.mergeSort (λ x y => x.position < y.position) headQueue tailQueue
 
 def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -> AnalysisM (List CompoundFragment)
   | [] => l -- No events left, so we just return!

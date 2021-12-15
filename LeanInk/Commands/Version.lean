@@ -1,13 +1,13 @@
 namespace LeanInk.Commands.Version
 
-def leanVersion : String := do
+def leanVersion : String :=
   let versionString := s!"{Lean.version.major}.{Lean.version.minor}.{Lean.version.patch}"
   if Lean.version.isRelease then
-    return versionString
+    versionString
   else if !String.isEmpty Lean.version.specialDesc then
-    return versionString ++ s!"-" ++ Lean.version.specialDesc
+    versionString ++ s!"-" ++ Lean.version.specialDesc
   else
-    return versionString ++ s!"-unknown"
+    versionString ++ s!"-unknown"
 
 def version := s!"0.0.1"
 def cliVersionOutput := s!"LeanInk ({version}) for Lean ({leanVersion})"

@@ -44,44 +44,45 @@ Errors:
 - throws CLIError.unknownCommand if the first argument cannot be resolved to any of the available commands.
 -/
 open Result in
-private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (Command × List String) := do
+private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (Command × List String) :=
   if available.isEmpty then 
-    return failure CLIError.noCommandsProvided -- If no root commands are available we throw an error
-  match args with
-  | [] => return failure CLIError.noArgumentsProvided -- If no arguments were provided, we cannot resolve anything
-  | a::as =>
-    match List.find? (λ x => x.identifiers.elem a) available with
-    | none => return failure (CLIError.unknownCommand a)
-    | some c => return success (c, as)
-
-
-private partial def resolveArgumentList (available: List Argument) (args: List String) : List ResolvedArgument × List String := do
-  if available.isEmpty then
-    return ([], args)
+    failure CLIError.noCommandsProvided -- If no root commands are available we throw an error
   else
     match args with
-    | [] => return ([], args) -- No arguments left
+    | [] => failure CLIError.noArgumentsProvided -- If no arguments were provided, we cannot resolve anything
+    | a::as =>
+      match List.find? (λ x => x.identifiers.elem a) available with
+      | none => failure (CLIError.unknownCommand a)
+      | some c => success (c, as)
+
+
+private partial def resolveArgumentList (available: List Argument) (args: List String) : List ResolvedArgument × List String :=
+  if available.isEmpty then
+    ([], args)
+  else
+    match args with
+    | [] => ([], args) -- No arguments left
     | a::as =>
       let argument := List.find? (λ x => x.identifiers.elem a) available
       match argument with
       | none => 
         let (res, unres) := resolveArgumentList available as
-        return (res, a::unres)
+        (res, a::unres)
       | some argument =>
         match argument with
         | Argument.flag i =>
           let resolvedArg := ResolvedArgument.flag i
           let (otherArgs, unresolved) := resolveArgumentList (available.erase argument) as
-          return (resolvedArg::otherArgs, unresolved)
+          (resolvedArg::otherArgs, unresolved)
         | Argument.environment i =>
           match as with 
           | [] => 
             let (res, unres) := resolveArgumentList available as
-            return (res, a::unres)
+            (res, a::unres)
           | b::bs => 
             let resolvedArg := ResolvedArgument.env i b
             let (otherArgs, unresolved) := resolveArgumentList (available.erase argument) bs
-            return (resolvedArg::otherArgs, unresolved)
+            (resolvedArg::otherArgs, unresolved)
         
 
 def runHelp (app: AppInfo)  (available: List Command) (arguments : List String) : IO UInt32 := do
