@@ -17,7 +17,7 @@ if [[ -f "$ELAN_BIN/leanInk" ]]; then
     OLD_LEAN_INK=$(eval "$ELAN_BIN/leanInk -v")
     NEW_LEAN_INK=$(eval "./build/bin/leanInk -v")
     echo "LeanInk ($OLD_LEAN_INK) already installed. Do you want to overwrite it with LeanInk ($NEW_LEAN_INK) [Y|n]?"
-    read
+    read < /dev/stdin
     SHOULD_OVERWRITE="$(tr '[:upper:]' '[:lower:]' <<< "${REPLY}")"
     if [[ "${SHOULD_OVERWRITE}" == "y" ]]; then 
         cp -f ./build/bin/leanInk ~/.elan/bin/ || error "Failed copying LeanInk to .elan/bin!"
