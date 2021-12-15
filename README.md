@@ -11,22 +11,11 @@ For more information about Alectryon make sure to take a look at their repositor
 
 # Installation
 
-## Linux
+You can either build LeanInk and install it yourself or use the build script to install a LeanInk release version:
 
-> Not yet supported
-
-## macOS
-
-> Not yet supported
-
-You can install LeanInk using Homebrew
 ```bash
-brew install LeanInk
+curl -s https://github.com/insightmind/LeanInk/releases/latest/init.sh | sh
 ```
-
-## Windows
-
-> Not yet supported
 
 ## Building from source
 
