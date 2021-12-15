@@ -44,8 +44,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   IO.FS.writeFile path content
   Logger.logInfo s!"Results written to file: {path}!"
 
-open LeanInk.Output.Alectryon in
-def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
+def generateOutput (fragments : Array Output.Alectryon.Fragment) : String := s!"{toJson fragments}"
 
 def runAnalysis : AnalysisM UInt32 := do
   let config ← read

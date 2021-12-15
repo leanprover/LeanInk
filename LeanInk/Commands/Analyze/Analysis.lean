@@ -59,7 +59,7 @@ def analyzeInput (config: Configuration) : AnalysisM (List AnalysisFragment) := 
   let commandState := configureCommandState environment messages
   let s ← IO.processCommands context state commandState
   let trees := s.commandState.infoState.trees.toList
-  let tactics := (resolveTacticList trees).map (λ f => AnalysisFragment.tactic f)
+  let tactics := (resolveTacticList trees).tactics.map (λ f => AnalysisFragment.tactic f)
   let messages := s.commandState.messages.msgs.toList.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment context.fileMap m))
   let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
   let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
