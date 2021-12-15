@@ -56,17 +56,17 @@ jobs:
           curl -sSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh > elan-init.sh
           ./elan-init.sh -y
           cygpath -w "$USERPROFILE/.elan/bin" >> $GITHUB_PATH
-          
+
+      # Build and test
+      - name: Build LeanInk
+        run: lake build
+        
       # Upload artifact
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}
           path: build
-
-      # Build and test
-      - name: Build LeanInk
-        run: lake build
 
       - name: Run tests
         run: make -C test run_tests
