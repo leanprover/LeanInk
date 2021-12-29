@@ -59,7 +59,7 @@ def fragments (self : TraversalResult) : AnalysisM (List AnalysisFragment) := do
   if (← read).experimentalTokens then
     let tactics := self.tactics.map (λ f => AnalysisFragment.tactic f)
     let terms := self.terms.map (λ f => AnalysisFragment.type f)
-    List.mergeSort (λ x y => x.headPos < y.headPos) tactics terms
+    List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics terms
   else
     self.tactics.map (λ f => AnalysisFragment.tactic f)
 
@@ -91,6 +91,6 @@ def analyzeInput : AnalysisM (List AnalysisFragment) := do
   let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
   let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
   Logger.logInfo f!"MESSAGES:\n {sortedMessages}"
-  let result := List.mergeSort (λ x y => x.headPos < y.headPos) traversalFragments sortedMessages
+  let result := List.mergeSortedLists (λ x y => x.headPos < y.headPos) traversalFragments sortedMessages
   Logger.logInfo f!"RESULT:\n {result}"
   return result

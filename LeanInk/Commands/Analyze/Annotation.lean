@@ -42,7 +42,7 @@ namespace CompoundFragment
         let typeinfo : Alectryon.TypeInfo := { 
           name := "Name"
           type := "Type"
-          docstring := "Documentation blah blah"
+          docstring := "Documentation"
         }
         return Alectryon.Fragment.sentence { 
           contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] 
@@ -103,7 +103,7 @@ def generateFragmentEventQueue (analysis : List AnalysisFragment) : List Fragmen
   let headQueue := enumerateAnalysis.map (λ (idx, f) => FragmentEvent.head f.headPos f idx)
   let sortedTailList := List.sort (λ x y => x.2.tailPos < y.2.tailPos) enumerateAnalysis
   let tailQueue := sortedTailList.map (λ (idx, f) => FragmentEvent.tail f.tailPos f idx)
-  List.mergeSort (λ x y => x.position < y.position) headQueue tailQueue
+  List.mergeSortedLists (λ x y => x.position < y.position) headQueue tailQueue
 
 def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -> AnalysisM (List CompoundFragment)
   | [] => l -- No events left, so we just return!

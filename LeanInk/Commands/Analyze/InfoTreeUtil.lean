@@ -196,8 +196,8 @@ def Info.toFragment (info : Info) (ctx : ContextInfo) : Option Fragment :=
   | _ => none
 
 def mergeSortFragments (x y : TraversalResult) : TraversalResult := { 
-  tactics := List.mergeSort (λ x y => x.headPos < y.headPos) x.tactics y.tactics
-  terms := List.mergeSort (λ x y => x.headPos < y.headPos) x.terms y.terms
+  tactics := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.tactics y.tactics
+  terms := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.terms y.terms
 }
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> TraversalResult
