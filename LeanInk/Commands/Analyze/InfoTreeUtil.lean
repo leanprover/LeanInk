@@ -173,7 +173,7 @@ structure TraversalResult where
 
 namespace TraversalResult
   def empty : TraversalResult := {  tactics := [], terms := [] }
-  def isEmpty (x : TraversalResult) : Bool := x.tactics.isEmpty ∧ x.terms.isEmpty 
+  def isEmpty (x : TraversalResult) : Bool := x.tactics.isEmpty ∧ x.terms.isEmpty
 end TraversalResult
 
 /-

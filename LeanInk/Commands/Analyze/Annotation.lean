@@ -27,15 +27,34 @@ namespace CompoundFragment
 
   def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
 
-  def toAlectryonFragment (self : CompoundFragment) (contents : String) : IO Alectryon.Fragment := do
+  def toAlectryonFragment (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Fragment := do
     if self.enumFragments.isEmpty then
-      return Alectryon.Fragment.text { contents := contents }
+      if (← read).experimentalTokens then
+        return Alectryon.Fragment.text { contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] }
+      else
+        return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
     else
       let tactics : List TacticFragment := self.fragments.filterMap (λ f => f.asTactic)
       let tacticGoals ← tactics.mapM (λ t => t.resolveGoals)
       let messages : List MessageFragment := self.fragments.filterMap (λ f => f.asMessage)
       let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
-      return Alectryon.Fragment.sentence { contents := contents, goals := tacticGoals.join.toArray, messages := stringMessages.toArray }
+      if (← read).experimentalTokens then
+        let typeinfo : Alectryon.TypeInfo := { 
+          name := "Name"
+          type := "Type"
+          docstring := "Documentation blah blah"
+        }
+        return Alectryon.Fragment.sentence { 
+          contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] 
+          goals := tacticGoals.join.toArray
+          messages := stringMessages.toArray 
+        }
+      else
+        return Alectryon.Fragment.sentence { 
+          contents := Alectryon.Contents.string contents
+          goals := tacticGoals.join.toArray
+          messages := stringMessages.toArray 
+        }
 end CompoundFragment
 
 instance : ToString CompoundFragment where
@@ -136,11 +155,11 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
     let fragment ← x.toAlectryonFragment (contents.extract x.headPos y.headPos)
     return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
-def annotateFile (config : Configuration) (analysis : List AnalysisFragment) : AnalysisM (List Alectryon.Fragment) := do
+def annotateFile (analysis : List AnalysisFragment) : AnalysisM (List Alectryon.Fragment) := do
   Logger.logInfo f!"Annotation-Input: {analysis}"
   let events := generateFragmentEventQueue analysis
   Logger.logInfo f!"Events: {events}"
   -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events
   Logger.logInfo f!"Compounds: {compounds}"
-  return (← annotateFileWithCompounds [] config.inputFileContents compounds)
+  return (← annotateFileWithCompounds [] (← read).inputFileContents compounds)

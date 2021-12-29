@@ -26,6 +26,7 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     outputType := OutputType.alectryonFragments
     lakeFile := getLakeFile? arguments
     verbose := containsFlag arguments "--verbose"
+    experimentalTokens := containsFlag arguments "--experimental-type-tokens"
   }
 where
   getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=
@@ -53,7 +54,7 @@ def runAnalysis : AnalysisM UInt32 := do
   let result ← analyzeInput config
 
   Logger.logInfo "Annotating..."
-  let outputFragments ← annotateFile config result
+  let outputFragments ← annotateFile result
 
   Logger.logInfo "Outputting..."
   createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)
