@@ -26,6 +26,7 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     outputType := OutputType.alectryonFragments
     lakeFile := getLakeFile? arguments
     verbose := containsFlag arguments "--verbose"
+    experimentalTokens := containsFlag arguments "--experimental-type-tokens"
   }
 where
   getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=
@@ -44,8 +45,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   IO.FS.writeFile path content
   Logger.logInfo s!"Results written to file: {path}!"
 
-open LeanInk.Output.Alectryon in
-def generateOutput (fragments : Array Fragment) : String := s!"{toJson fragments}"
+def generateOutput (fragments : Array Output.Alectryon.Fragment) : String := s!"{toJson fragments}"
 
 def runAnalysis : AnalysisM UInt32 := do
   let config ← read
@@ -54,7 +54,7 @@ def runAnalysis : AnalysisM UInt32 := do
   let result ← analyzeInput config
 
   Logger.logInfo "Annotating..."
-  let outputFragments ← annotateFile config result
+  let outputFragments ← annotateFile result
 
   Logger.logInfo "Outputting..."
   createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)

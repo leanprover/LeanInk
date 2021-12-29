@@ -136,37 +136,92 @@ namespace MessageFragment
 end MessageFragment
 
 /-
+  Term Fragment
+-/
+structure TermFragment where
+  ctx : ContextInfo
+  info : TermInfo
+  deriving Inhabited
+
+namespace TermFragment
+  def headPos (f: TermFragment) : String.Pos := 
+    (f.info.toElabInfo.stx.getPos? false).getD 0
+
+  def tailPos (f: TermFragment) : String.Pos := 
+    (f.info.toElabInfo.stx.getTailPos? false).getD 0
+
+  def toFormat (f: TermFragment) : IO Format := 
+    TermInfo.format f.ctx f.info
+
+  def isExpanded (f: TermFragment) : Bool :=
+    match f.info.toElabInfo.stx.getHeadInfo, f.info.toElabInfo.stx.getTailInfo with
+    | SourceInfo.original .., SourceInfo.original .. => false
+    | _, _ => true
+end TermFragment
+
+inductive Fragment where
+  | tactic (f : TacticFragment)
+  | term (f : TermFragment)
+
+/-
+  Traversal Result
+-/
+structure TraversalResult where
+  tactics : List TacticFragment
+  terms : List TermFragment
+  deriving Inhabited
+
+namespace TraversalResult
+  def empty : TraversalResult := {  tactics := [], terms := [] }
+  def isEmpty (x : TraversalResult) : Bool := x.tactics.isEmpty ∧ x.terms.isEmpty
+end TraversalResult
+
+/-
   InfoTree traversal
 -/
-def Info.toFragment (info : Info) (ctx : ContextInfo) : Option TacticFragment :=
+def Info.toFragment (info : Info) (ctx : ContextInfo) : Option Fragment :=
   match info with
   | Info.ofTacticInfo i => 
     let fragment : TacticFragment := { info :=  i, ctx := ctx }
     if fragment.isExpanded then
       none
     else
-      fragment
+      Fragment.tactic fragment
+  | Info.ofTermInfo i =>
+    let fragment : TermFragment := { info :=  i, ctx := ctx }
+    if fragment.isExpanded then
+      none
+    else
+      Fragment.term fragment
   | _ => none
 
-def mergeSortFragments : List TacticFragment -> List TacticFragment -> List TacticFragment := 
-  List.mergeSort (λ x y => x.headPos < y.headPos)
+def mergeSortFragments (x y : TraversalResult) : TraversalResult := { 
+  tactics := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.tactics y.tactics
+  terms := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.terms y.terms
+}
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> List TacticFragment
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> TraversalResult
   | InfoTree.context ctx tree => _resolveTacticList ctx tree
   | InfoTree.node info children =>
     match ctx? with
-    | none => []
+    | none => TraversalResult.empty
     | some ctx =>
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs := children.toList.map (_resolveTacticList ctx?)
-      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl mergeSortFragments []
-      if sortedChildrenLeafs.isEmpty then
-        match Info.toFragment info ctx with
-        | some f => [f]
-        | none => []
-      else
-        sortedChildrenLeafs    
-  | _ => []
+      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl mergeSortFragments TraversalResult.empty
+      match Info.toFragment info ctx with
+      | some (Fragment.tactic f) => 
+        if sortedChildrenLeafs.tactics.isEmpty then 
+          { sortedChildrenLeafs with tactics := [f] }
+        else 
+          sortedChildrenLeafs
+      | some (Fragment.term f) => 
+        if sortedChildrenLeafs.terms.isEmpty then 
+          { sortedChildrenLeafs with terms := [f] }
+        else 
+          sortedChildrenLeafs
+      | none => sortedChildrenLeafs  
+  | _ => TraversalResult.empty
 
-def resolveTacticList (trees: List InfoTree) : List TacticFragment :=
-  (trees.map _resolveTacticList).foldl mergeSortFragments []
+def resolveTacticList (trees: List InfoTree) : TraversalResult :=
+  (trees.map _resolveTacticList).foldl mergeSortFragments TraversalResult.empty

@@ -24,6 +24,10 @@ def analyzeCommand : Command := {
     flag {
       identifiers := ["--verbose"]
       help := "Enables verbose output."
+    },
+    flag {
+      identifiers := ["--experimental-type-tokens"]
+      help := "Enables output of experimental tokens in Alectryon with additonal type information"
     }
   ]
   run := Commands.Analyze.exec
