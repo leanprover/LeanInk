@@ -55,10 +55,13 @@ instance : ToFormat AnalysisFragment where
     | AnalysisFragment.type _ => f!"TYPE [{self.headPos}]->[{self.tailPos}]"
 
 namespace TraversalResult
-def fragments (self : TraversalResult) : List AnalysisFragment :=
-  let tactics := self.tactics.map (λ f => AnalysisFragment.tactic f)
-  let terms := self.terms.map (λ f => AnalysisFragment.type f)
-  List.mergeSort (λ x y => x.headPos < y.headPos) tactics terms
+def fragments (self : TraversalResult) : AnalysisM (List AnalysisFragment) := do
+  if (← read).experimentalTokens then
+    let tactics := self.tactics.map (λ f => AnalysisFragment.tactic f)
+    let terms := self.terms.map (λ f => AnalysisFragment.type f)
+    List.mergeSort (λ x y => x.headPos < y.headPos) tactics terms
+  else
+    self.tactics.map (λ f => AnalysisFragment.tactic f)
 
 end TraversalResult
 
@@ -83,7 +86,7 @@ def analyzeInput : AnalysisM (List AnalysisFragment) := do
     let format ← term.toFormat
     IO.println format
 
-  let traversalFragments := traversalResult.fragments
+  let traversalFragments ← traversalResult.fragments
   let messages := s.commandState.messages.msgs.toList.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment context.fileMap m))
   let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
   let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
