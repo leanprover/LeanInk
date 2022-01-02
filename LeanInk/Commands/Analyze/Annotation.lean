@@ -28,9 +28,15 @@ namespace CompoundFragment
   def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
 
   def toAlectryonFragment (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Fragment := do
+    let typeinfo : Alectryon.TypeInfo := { 
+      name := "Name"
+      type := "Type"
+      docstring := "Documentation"
+    }
+
     if self.enumFragments.isEmpty then
       if (← read).experimentalTokens then
-        return Alectryon.Fragment.text { contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] }
+        return Alectryon.Fragment.text { contents := Alectryon.Contents.experimentalTokens #[{ raw := contents, typeinfo := typeinfo, link := "https://apple.com" }] }
       else
         return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
     else
@@ -39,13 +45,8 @@ namespace CompoundFragment
       let messages : List MessageFragment := self.fragments.filterMap (λ f => f.asMessage)
       let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
       if (← read).experimentalTokens then
-        let typeinfo : Alectryon.TypeInfo := { 
-          name := "Name"
-          type := "Type"
-          docstring := "Documentation"
-        }
         return Alectryon.Fragment.sentence { 
-          contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] 
+          contents := Alectryon.Contents.experimentalTokens #[{ raw := contents, typeinfo := typeinfo, link := "https://apple.com" }] 
           goals := tacticGoals.join.toArray
           messages := stringMessages.toArray 
         }
@@ -111,7 +112,7 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
     match l.getLast? with
     | none => do
       if e.isHead then
-        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment]}
+        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment] }
         Logger.logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
         return (← generateCompoundFragments [newCompound] es)
       else
@@ -155,9 +156,9 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
     let fragment ← x.toAlectryonFragment (contents.extract x.headPos y.headPos)
     return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
-def annotateFile (analysis : List AnalysisFragment) : AnalysisM (List Alectryon.Fragment) := do
-  Logger.logInfo f!"Annotation-Input: {analysis}"
-  let events := generateFragmentEventQueue analysis
+def annotateFile (analysis : AnalysisResult) : AnalysisM (List Alectryon.Fragment) := do
+  Logger.logInfo f!"Annotation-Input: {analysis.sentenceFragments}"
+  let events := generateFragmentEventQueue analysis.sentenceFragments
   Logger.logInfo f!"Events: {events}"
   -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events

@@ -54,21 +54,32 @@ instance : ToFormat AnalysisFragment where
     | AnalysisFragment.message _ => f!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
     | AnalysisFragment.type _ => f!"TYPE [{self.headPos}]->[{self.tailPos}]"
 
-namespace TraversalResult
-def fragments (self : TraversalResult) : AnalysisM (List AnalysisFragment) := do
-  if (← read).experimentalTokens then
-    let tactics := self.tactics.map (λ f => AnalysisFragment.tactic f)
-    let terms := self.terms.map (λ f => AnalysisFragment.type f)
-    List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics terms
-  else
-    self.tactics.map (λ f => AnalysisFragment.tactic f)
+structure AnalysisResult where
+  sentenceFragments: List AnalysisFragment
+  hoverFragments: List AnalysisFragment
 
-end TraversalResult
+namespace AnalysisResult
+
+def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileMap) : AnalysisM AnalysisResult := do
+  let tactics := traversal.tactics.map (λ f => AnalysisFragment.tactic f)
+  let messages := messages.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment fileMap m))
+  let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
+  let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
+  Logger.logInfo f!"MESSAGES:\n {sortedMessages}"
+  let sentenceFragments := List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics sortedMessages
+  Logger.logInfo f!"RESULT:\n {sentenceFragments}"
+  if (← read).experimentalTokens then
+    let terms := traversal.terms.map (λ f => AnalysisFragment.type f)
+    return { sentenceFragments := sentenceFragments, hoverFragments := terms }
+  else
+    return { sentenceFragments := sentenceFragments, hoverFragments := [] }
+
+end AnalysisResult
 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
   { Command.mkState env msg with infoState := { enabled := true }}
 
-def analyzeInput : AnalysisM (List AnalysisFragment) := do
+def analyzeInput : AnalysisM AnalysisResult := do
   let config := ← read
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
@@ -81,11 +92,5 @@ def analyzeInput : AnalysisM (List AnalysisFragment) := do
   let s ← IO.processCommands context state commandState
   let trees := s.commandState.infoState.trees.toList
   let traversalResult := resolveTacticList trees
-  let traversalFragments ← traversalResult.fragments
-  let messages := s.commandState.messages.msgs.toList.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment context.fileMap m))
-  let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
-  let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
-  Logger.logInfo f!"MESSAGES:\n {sortedMessages}"
-  let result := List.mergeSortedLists (λ x y => x.headPos < y.headPos) traversalFragments sortedMessages
-  Logger.logInfo f!"RESULT:\n {result}"
-  return result
+  let messages := s.commandState.messages.msgs.toList
+  return ← AnalysisResult.create traversalResult messages context.fileMap
