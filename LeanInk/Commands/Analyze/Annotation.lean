@@ -29,14 +29,14 @@ namespace CompoundFragment
 
   def toAlectryonFragment (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Fragment := do
     let typeinfo : Alectryon.TypeInfo := { 
-      name := "Name"
+      name := contents
       type := "Type"
       docstring := "Documentation"
     }
 
     if self.enumFragments.isEmpty then
       if (← read).experimentalTokens then
-        return Alectryon.Fragment.text { contents := Alectryon.Contents.experimentalTokens #[{ raw := contents, typeinfo := typeinfo, link := "https://apple.com" }] }
+        return Alectryon.Fragment.text { contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] }
       else
         return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
     else
@@ -46,7 +46,7 @@ namespace CompoundFragment
       let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
       if (← read).experimentalTokens then
         return Alectryon.Fragment.sentence { 
-          contents := Alectryon.Contents.experimentalTokens #[{ raw := contents, typeinfo := typeinfo, link := "https://apple.com" }] 
+          contents := Alectryon.Contents.experimentalTokens #[{ raw := contents, typeinfo := typeinfo }] 
           goals := tacticGoals.join.toArray
           messages := stringMessages.toArray 
         }
