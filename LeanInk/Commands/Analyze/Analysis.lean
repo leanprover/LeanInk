@@ -16,22 +16,35 @@ namespace LeanInk.Commands.Analyze
 open Lean
 open Lean.Elab
 
+inductive Token where 
+  | term (term: TermFragment)
+
+namespace Token
+  def headPos : Token -> String.Pos
+    | term f => f.headPos
+
+  def tailPos : Token -> String.Pos
+    | term f => f.tailPos
+end Token
+
+instance : ToFormat Token where
+  format (self : Token) : Format :=
+    match self with
+    | Token.term fragment => f!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
+
 inductive AnalysisFragment where
   | tactic (fragment: TacticFragment)
   | message (fragment: MessageFragment)
-  | type (fragment: TermFragment)
   deriving Inhabited
 
 namespace AnalysisFragment
   def headPos : AnalysisFragment -> String.Pos
     | tactic f => f.headPos
     | message f => f.headPos
-    | type f => f.headPos
-
+    
   def tailPos : AnalysisFragment -> String.Pos
     | tactic f => f.tailPos
     | message f => f.tailPos
-    | type f => f.tailPos
 
   def asTactic : AnalysisFragment -> Option TacticFragment
     | tactic f => f
@@ -40,11 +53,6 @@ namespace AnalysisFragment
   def asMessage : AnalysisFragment -> Option MessageFragment
     | message f => f
     | _ => none
-
-  def asType : AnalysisFragment -> Option TermFragment
-    | type f => f
-    | _ => none
-
 end AnalysisFragment
 
 instance : ToFormat AnalysisFragment where
@@ -52,13 +60,21 @@ instance : ToFormat AnalysisFragment where
     match self with
     | AnalysisFragment.tactic _ => f!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
     | AnalysisFragment.message _ => f!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
-    | AnalysisFragment.type _ => f!"TYPE [{self.headPos}]->[{self.tailPos}]"
 
 structure AnalysisResult where
   sentenceFragments: List AnalysisFragment
-  hoverFragments: List AnalysisFragment
+  tokens: List Token
 
 namespace AnalysisResult
+
+def removeTermDuplicatesFromSorted : List TermFragment -> List TermFragment
+  | [] => []
+  | x::[] => [x]
+  | x::y::xs => 
+    if x.headPos == y.headPos then
+      x::removeTermDuplicatesFromSorted xs
+    else
+      x::removeTermDuplicatesFromSorted (y::xs)
 
 def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileMap) : AnalysisM AnalysisResult := do
   let tactics := traversal.tactics.map (λ f => AnalysisFragment.tactic f)
@@ -69,10 +85,11 @@ def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileM
   let sentenceFragments := List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics sortedMessages
   Logger.logInfo f!"RESULT:\n {sentenceFragments}"
   if (← read).experimentalTokens then
-    let terms := traversal.terms.map (λ f => AnalysisFragment.type f)
-    return { sentenceFragments := sentenceFragments, hoverFragments := terms }
+    let terms := (removeTermDuplicatesFromSorted traversal.terms).map (λ f => Token.term f)
+    Logger.logInfo f!"Terms:n {terms}"
+    return { sentenceFragments := sentenceFragments, tokens := terms }
   else
-    return { sentenceFragments := sentenceFragments, hoverFragments := [] }
+    return { sentenceFragments := sentenceFragments, tokens := [] }
 
 end AnalysisResult
 

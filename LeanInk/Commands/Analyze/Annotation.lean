@@ -3,6 +3,7 @@ import LeanInk.Commands.Analyze.InfoTreeUtil
 import LeanInk.Commands.Analyze.Analysis
 import LeanInk.Commands.Analyze.ListUtil
 import LeanInk.Commands.Analyze.Logger
+import LeanInk.Commands.Analyze.AlectryonUtil
 
 import LeanInk.Output.Alectryon
 
@@ -21,22 +22,48 @@ open Lean.Elab
 structure CompoundFragment where
   headPos: String.Pos
   enumFragments: List (Nat × AnalysisFragment)
+  tokens: List Token
 
 namespace CompoundFragment
   def tailPos (self : CompoundFragment) : Option String.Pos := (self.enumFragments.map (λ f => f.2.tailPos)).minimum?
 
   def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
 
-  def toAlectryonFragment (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Fragment := do
-    let typeinfo : Alectryon.TypeInfo := { 
-      name := contents
-      type := "Type"
-      docstring := "Documentation"
-    }
+  partial def generateTokens (contents: String) (head: String.Pos) (offset: String.Pos) (aux: List Alectryon.Token): List Token -> AnalysisM (List Alectryon.Token)
+    | [] => do
+      let text := contents.extract (head - offset) contents.utf8ByteSize
+      Logger.logInfo s!"generateTokens last >> '{text}' | {head - offset} - {contents.utf8ByteSize}"
+      if text.isEmpty then return aux
+      let lastToken : Alectryon.Token := { raw := text }
+      return aux.append [lastToken]
+    | token::ts => do
+      let head := head - offset
+      let tokenHead := token.headPos - offset
+      let tokenTail := token.tailPos - offset
+      if head >= tokenHead then
+        let text := contents.extract head tokenTail
+        Logger.logInfo s!"generateTokens token >> '{text}' | {head} - {tokenTail}"
+        if text.isEmpty then 
+          return ← generateTokens contents token.tailPos offset aux ts
+        else
+          let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo token text) }
+          return ← generateTokens contents token.tailPos offset (aux.append [aToken]) ts
+      else
+        let text := contents.extract head tokenHead
+        Logger.logInfo s!"generateTokens token >> '{text}' | {head} - {tokenHead}"
+        if text.isEmpty then 
+          return ← generateTokens contents token.tailPos offset aux (token::ts)
+        else
+          let aToken : Alectryon.Token := { raw := text }
+          return ← generateTokens contents token.headPos offset (aux.append [aToken]) (token::ts)
 
+  def toAlectryonTokens (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Contents := do
+    return Alectryon.Contents.experimentalTokens (← generateTokens contents self.headPos self.headPos [] self.tokens).toArray
+
+  def toAlectryonFragment (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Fragment := do
     if self.enumFragments.isEmpty then
       if (← read).experimentalTokens then
-        return Alectryon.Fragment.text { contents := Alectryon.Contents.experimentalTokens #[{ raw := contents }] }
+        return Alectryon.Fragment.text { contents := (← toAlectryonTokens self contents) }
       else
         return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
     else
@@ -46,7 +73,7 @@ namespace CompoundFragment
       let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
       if (← read).experimentalTokens then
         return Alectryon.Fragment.sentence { 
-          contents := Alectryon.Contents.experimentalTokens #[{ raw := contents, typeinfo := typeinfo }] 
+          contents := (← toAlectryonTokens self contents)
           goals := tacticGoals.join.toArray
           messages := stringMessages.toArray 
         }
@@ -59,7 +86,9 @@ namespace CompoundFragment
 end CompoundFragment
 
 instance : ToString CompoundFragment where
-  toString (self : CompoundFragment) : String := s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)}>"
+  toString (self : CompoundFragment) : String := 
+    let tokens := f!"{self.tokens}"
+    s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)} tokens:{tokens}>"
 
 /-
   FragmentEvent
@@ -106,13 +135,33 @@ def generateFragmentEventQueue (analysis : List AnalysisFragment) : List Fragmen
   let tailQueue := sortedTailList.map (λ (idx, f) => FragmentEvent.tail f.tailPos f idx)
   List.mergeSortedLists (λ x y => x.position < y.position) headQueue tailQueue
 
+def tokensBetween (aux : List Token) (head : String.Pos) (tail : Option String.Pos)  : List Token -> List Token
+  | [] => aux
+  | x::xs =>
+    match tail with
+    | some tail =>
+      if x.headPos <= tail && x.tailPos > head then
+        tokensBetween (aux.append [x]) head tail xs
+      else
+        tokensBetween aux head tail xs
+    | none => 
+      if x.tailPos > head then
+        tokensBetween (aux.append [x]) head tail xs
+      else
+        tokensBetween aux head tail xs
+
+def matchTokensToCompounds (tokens : List Token) (aux : List CompoundFragment) : List CompoundFragment -> List CompoundFragment
+  | [] => aux
+  | x::y::xs => matchTokensToCompounds tokens (aux.append [{ x with tokens := tokensBetween [] x.headPos y.headPos tokens }]) (y::xs)
+  | x::xs => matchTokensToCompounds tokens (aux.append [{ x with tokens := tokensBetween [] x.headPos none tokens }]) xs
+
 def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -> AnalysisM (List CompoundFragment)
   | [] => l -- No events left, so we just return!
   | e::es => do
     match l.getLast? with
     | none => do
       if e.isHead then
-        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment] }
+        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment], tokens := [] }
         Logger.logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
         return (← generateCompoundFragments [newCompound] es)
       else
@@ -139,7 +188,7 @@ def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -
             It may be the case that the newFragments list isEmpty. This is totally fine as we need to
             insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
           -/
-          let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments }
+          let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments, tokens := [] }
           Logger.logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
           return (← generateCompoundFragments (l.append [newCompound]) es)
 
@@ -150,7 +199,7 @@ Generates AlectryonFragments for the given CompoundFragments and input file cont
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List CompoundFragment -> AnalysisM (List Alectryon.Fragment)
   | [] => l
   | x::[] => do
-    let fragment ← x.toAlectryonFragment (contents.extract x.headPos contents.length)
+    let fragment ← x.toAlectryonFragment (contents.extract x.headPos contents.utf8ByteSize)
     return l.append [fragment]
   | x::y::ys => do
     let fragment ← x.toAlectryonFragment (contents.extract x.headPos y.headPos)
@@ -161,6 +210,8 @@ def annotateFile (analysis : AnalysisResult) : AnalysisM (List Alectryon.Fragmen
   let events := generateFragmentEventQueue analysis.sentenceFragments
   Logger.logInfo f!"Events: {events}"
   -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
-  let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [] }] events
-  Logger.logInfo f!"Compounds: {compounds}"
-  return (← annotateFileWithCompounds [] (← read).inputFileContents compounds)
+  let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [], tokens := [] }] events
+  Logger.logInfo f!"Tokens: {analysis.tokens}"
+  let matchedCompounds := matchTokensToCompounds analysis.tokens [] compounds
+  Logger.logInfo f!"Compounds: {matchedCompounds}"
+  return (← annotateFileWithCompounds [] (← read).inputFileContents matchedCompounds)

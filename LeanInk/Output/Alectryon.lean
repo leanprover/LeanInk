@@ -9,7 +9,7 @@ structure TypeInfo where
   _type : String := "typeinfo"
   name : String
   type : String
-  docstring : String
+  docstring : Option String
   deriving ToJson
 
 structure Token where
