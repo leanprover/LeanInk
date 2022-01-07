@@ -44,4 +44,4 @@
  {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
  {"contents": "\n  case left => ", "_type": "text"},
  {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
- {"contents": "", "_type": "text"}]
+ {"contents": "\n", "_type": "text"}]

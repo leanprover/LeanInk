@@ -11,4 +11,4 @@
   "goals": [],
   "contents": "#print",
   "_type": "sentence"},
- {"contents": " xor\ninstance : Inhabited", "_type": "text"}]
+ {"contents": " xor\ninstance : Inhabited Nat where\n\nmacro", "_type": "text"}]

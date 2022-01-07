@@ -1,5 +1,5 @@
 [{"contents":
-  "import Mathlib.Tactic.Basic\n\nexample : ∀ a b : Nat, a = b → b = a := by\n  ",
+  "import Mathlib.Tactic.Basic\n\nset_option trace.Elab.info true\n\nexample : ∀ a b : Nat, a = b → b = a := by\n  ",
   "_type": "text"},
  {"messages": [],
   "goals":
