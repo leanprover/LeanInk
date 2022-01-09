@@ -8,6 +8,7 @@ import LeanInk.Logger
 import Lean.Data.Json
 import Lean.Data.Json.FromToJson
 import Lean.Meta
+import Lean.Elab
 
 open Lean
 open Lean.Elab
@@ -20,7 +21,6 @@ structure TypeInfo where
   _type : String := "typeinfo"
   name : String
   type : String
-  docstring : Option String
   deriving ToJson
 
 structure Token where
@@ -28,6 +28,7 @@ structure Token where
   raw : String
   typeinfo : Option TypeInfo := Option.none
   link : Option String := Option.none
+  docstring : Option String := Option.none
   deriving ToJson
 
 /--
@@ -117,8 +118,9 @@ namespace Token
     | term termFragment => do
       let format ← Meta.ppExpr (← Meta.inferType termFragment.info.expr)
       return s!"{format}"
+    | _ => ""
 
-  partial def generateDocString? (self : Token) : MetaM (Option String) := do
+  partial def auxGenerateDocString? (self : Token) : MetaM (Option String) := do
     let env ← getEnv
     match self with
       | term termFragment =>
@@ -126,9 +128,13 @@ namespace Token
           return ← findDocString? env name
         else
           return none
+      | field fieldFragment => findDocString? env fieldFragment.info.projName
+      | tactic fragment =>
+        let elabInfo := fragment.info.toElabInfo
+        return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
 
   private def generateTypeInfoAux (self : Token) (name : String) : MetaM (Option Alectryon.TypeInfo) :=
-    return some { name :=  name, type := (← inferType self), docstring := (← generateDocString? self) }
+    return some { name :=  name, type := (← inferType self) }
 
   def getSmallestToken? (compound : Compound Token) : Option Token := List.foldl (λ x y => 
     match x, y with -- We make a match over both, otherwise Lean thinks y : Option Token instead of y : Token
@@ -136,11 +142,25 @@ namespace Token
     | some x, y => if x.length < y.length then x else y
   ) none compound.getFragments
 
+  def generateDocString? (self : Compound Token) : AnalysisM (Option String) :=
+    match getSmallestToken? self with -- Select the most useful token
+      | none => none
+      | some (term fragment) => do
+        return ← fragment.ctx.runMetaM fragment.info.lctx (auxGenerateDocString? (Token.term fragment))
+      | some (tactic fragment) => do
+        return ← fragment.ctx.runMetaM {} (auxGenerateDocString? (Token.tactic fragment))
+      | some (field fragment) => do
+        return ← fragment.ctx.runMetaM fragment.info.lctx (auxGenerateDocString? (Token.field fragment)) 
+
   def generateTypeInfo (self : Compound Token) (name : String) : AnalysisM (Option Alectryon.TypeInfo) :=
     match getSmallestToken? self with -- Select the most useful token
       | none => none
       | some (term fragment) => do
         return ← fragment.ctx.runMetaM fragment.info.lctx (generateTypeInfoAux (Token.term fragment) name)
+      | some (tactic fragment) => do
+        return ← fragment.ctx.runMetaM {} (generateTypeInfoAux (Token.tactic fragment) name)
+      | some (field fragment) => do
+        return ← fragment.ctx.runMetaM fragment.info.lctx (generateTypeInfoAux (Token.field fragment) name)
 end Token
 
 namespace TacticFragment

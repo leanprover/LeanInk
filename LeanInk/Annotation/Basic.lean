@@ -31,31 +31,59 @@ partial def generateTokens (contents: String) (head: String.Pos) (offset: String
     if text.isEmpty then return aux
     let lastToken : Alectryon.Token := { raw := text }
     return aux.append [lastToken]
-  | tokens::ts => do
+  | tokens::[] => do
+    match tokens.tailPos with
+    | none => generateTokens contents head offset aux []
+    | some tail => do
+      let head := head - offset
+      let tokenHead := tokens.headPos - offset
+      let tokenTail := tail - offset
+      if head >= tokenTail then
+        return ← generateTokens contents (head + offset) offset aux []
+      if head >= tokenHead then
+        let text := contents.extract head tokenTail
+        logInfo s!"generateTokens token - tail >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
+        if text.isEmpty then 
+          return ← generateTokens contents tail offset aux []
+        else
+          let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo tokens text) }
+          return ← generateTokens contents tail offset (aux.append [aToken]) []
+      else
+        let text := contents.extract head tokenHead
+        logInfo s!"generateTokens token - nextHead >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
+        if text.isEmpty then 
+          return ← generateTokens contents tail offset aux (tokens::[])
+        else
+          let aToken : Alectryon.Token := { raw := text }
+          return ← generateTokens contents tokens.headPos offset (aux.append [aToken]) (tokens::[])
+  | tokens::follow::ts => do
     match tokens.tailPos with
     | none => generateTokens contents head offset aux ts
     | some tail => do
       let head := head - offset
       let tokenHead := tokens.headPos - offset
       let tokenTail := tail - offset
-      if head >= tokenTail then
-        return ← generateTokens contents (head + offset) offset aux ts
+      let followHead := follow.headPos - offset
+      let nextTail := if tokenTail < followHead then tokenTail else followHead
+      if head >= nextTail then
+        return ← generateTokens contents (head + offset) offset aux (follow::ts)
       if head >= tokenHead then
-        let text := contents.extract head tokenTail
-        logInfo s!"generateTokens token - tail >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
+        let text := contents.extract head nextTail
+        let fullText :=  contents.extract tokenHead tokenTail
+        logInfo s!"generateTokens token - tail >> '{text}' | {head} - {tokenHead}<>{nextTail}"
         if text.isEmpty then 
-          return ← generateTokens contents tail offset aux ts
+          return ← generateTokens contents (nextTail + offset) offset aux (follow::ts)
         else
-          let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo tokens text) }
-          return ← generateTokens contents tail offset (aux.append [aToken]) ts
+          let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo tokens fullText) }
+          return ← generateTokens contents (nextTail + offset) offset (aux.append [aToken]) (follow::ts)
       else
         let text := contents.extract head tokenHead
         logInfo s!"generateTokens token - nextHead >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
         if text.isEmpty then 
-          return ← generateTokens contents tail offset aux (tokens::ts)
+          return ← generateTokens contents tokens.headPos offset aux (tokens::follow::ts)
         else
           let aToken : Alectryon.Token := { raw := text }
-          return ← generateTokens contents tokens.headPos offset (aux.append [aToken]) (tokens::ts)
+          return ← generateTokens contents tokens.headPos offset (aux.append [aToken]) (tokens::follow::ts)
 
 def toAlectryonTokens (self : Annotation) (contents : String) : AnalysisM Alectryon.Contents := do
   return Alectryon.Contents.experimentalTokens (← generateTokens contents self.sentenceCompound.headPos self.sentenceCompound.headPos [] self.tokenCompound).toArray 

@@ -1,5 +1,7 @@
 import Mathlib.Tactic.Basic
 
+set_option trace.Elab.info true
+
 example : ∀ a b : Nat, a = b → b = a := by
   introv h
   exact h.symm

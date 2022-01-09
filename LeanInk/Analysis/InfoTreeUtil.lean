@@ -80,6 +80,30 @@ namespace TermFragment
     | _, _ => true
 end TermFragment
 
+/-
+  Term Fragment
+-/
+structure FieldFragment where
+  ctx : ContextInfo
+  info : FieldInfo
+  deriving Inhabited
+
+namespace FieldFragment
+  def headPos (f: FieldFragment) : String.Pos := 
+    (f.info.stx.getPos? false).getD 0
+
+  def tailPos (f: FieldFragment) : String.Pos := 
+    (f.info.stx.getTailPos? false).getD 0
+
+  def toFormat (f: FieldFragment) : IO Format := 
+    FieldInfo.format f.ctx f.info
+
+  def isExpanded (f: FieldFragment) : Bool :=
+    match f.info.stx.getHeadInfo, f.info.stx.getTailInfo with
+    | SourceInfo.original .., SourceInfo.original .. => false
+    | _, _ => true
+end FieldFragment
+
 /- 
   Fragment
 -/
@@ -87,6 +111,7 @@ end TermFragment
 inductive Fragment where
   | tactic (f : TacticFragment)
   | term (f : TermFragment)
+  | field (f : FieldFragment)
 
 /-
   InfoTree traversal
@@ -105,6 +130,12 @@ def Info.toFragment (info : Info) (ctx : ContextInfo) : Option Fragment :=
       none
     else
       Fragment.term fragment
+  | Info.ofFieldInfo i =>
+    let fragment : FieldFragment := { info :=  i, ctx := ctx }
+    if fragment.isExpanded then
+      none
+    else
+      Fragment.field fragment
   | _ => none
 
 /-
@@ -113,16 +144,18 @@ def Info.toFragment (info : Info) (ctx : ContextInfo) : Option Fragment :=
 structure TraversalResult where
   tactics : List TacticFragment
   terms : List TermFragment
+  fields : List FieldFragment
   deriving Inhabited
 
 namespace TraversalResult
-  def empty : TraversalResult := {  tactics := [], terms := [] }
+  def empty : TraversalResult := {  tactics := [], terms := [], fields := [] }
   def isEmpty (x : TraversalResult) : Bool := x.tactics.isEmpty ∧ x.terms.isEmpty
 end TraversalResult
 
 def mergeSortFragments (x y : TraversalResult) : TraversalResult := { 
   tactics := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.tactics y.tactics
   terms := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.terms y.terms
+  fields := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.fields y.fields
 }
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> TraversalResult
@@ -143,6 +176,11 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> 
       | some (Fragment.term f) => 
         if sortedChildrenLeafs.terms.isEmpty then 
           { sortedChildrenLeafs with terms := [f] }
+        else 
+          sortedChildrenLeafs
+      | some (Fragment.field f) =>
+        if sortedChildrenLeafs.fields.isEmpty then 
+          { sortedChildrenLeafs with fields := [f] }
         else 
           sortedChildrenLeafs
       | none => sortedChildrenLeafs  

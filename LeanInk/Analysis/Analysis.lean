@@ -19,25 +19,35 @@ open Lean.Elab
 
 inductive Token where 
   | term (term: TermFragment)
+  | tactic (tactic: TacticFragment)
+  | field (field: FieldFragment)
   deriving Inhabited
 
 namespace Token
   def headPos : Token -> String.Pos
     | term f => f.headPos
+    | tactic f => f.headPos
+    | field f => f.headPos
 
   def tailPos : Token -> String.Pos
     | term f => f.tailPos
+    | tactic f => f.tailPos
+    | field f => f.tailPos
 end Token
 
 instance : ToFormat Token where
   format (self : Token) : Format :=
     match self with
     | Token.term fragment => f!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
+    | Token.tactic fragment => f!"TACTIC<>  [{self.headPos}]->[{self.tailPos}]"
+    | Token.field fragment => f!"FIELD<>  [{self.headPos}]->[{self.tailPos}]"
 
 instance : ToString Token where
   toString (self : Token) : String :=
     match self with
     | Token.term fragment => s!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
+    | Token.tactic fragment => s!"TACTIC<>  [{self.headPos}]->[{self.tailPos}]"
+    | Token.field fragment => s!"FIELD<>  [{self.headPos}]->[{self.tailPos}]"
 
 inductive AnalysisFragment where
   | tactic (fragment: TacticFragment)
@@ -99,8 +109,12 @@ def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileM
   logInfo f!"RESULT:\n {sentenceFragments}"
   if (← read).experimentalTokens then
     let terms := (removeTermDuplicatesFromSorted traversal.terms).map (λ f => Token.term f)
+    let fields := traversal.fields.map (λ f => Token.field f)
+    let termsAndFields := List.mergeSortedLists (λ x y => x.headPos < y.headPos) terms fields
+    let tactics := traversal.tactics.map (λ f => Token.tactic f)
+    let tokens := List.mergeSortedLists (λ x y => x.headPos < y.headPos) termsAndFields tactics
     Logger.logInfo f!"Terms:n {terms}"
-    return { sentenceFragments := sentenceFragments, tokens := terms }
+    return { sentenceFragments := sentenceFragments, tokens := termsAndFields }
   else
     return { sentenceFragments := sentenceFragments, tokens := [] }
 

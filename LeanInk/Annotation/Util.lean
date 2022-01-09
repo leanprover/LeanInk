@@ -23,10 +23,15 @@ instance : Positional Token where
   headPos := Token.headPos
   tailPos := Token.tailPos
 
+namespace Positonal
+  def length {α : Type u } [Positional α] (self : α) : Nat := (Positional.tailPos self) - (Positional.headPos self)
+end Positonal
+
 /- COMPOUND -/
 structure Compound (β : Type u) where
   headPos : String.Pos
   fragments : List (Nat × β)
+  deriving Inhabited
 
 namespace Compound
   def getFragments (self : Compound b) : List (b) := self.fragments.map (λ f => f.2)
