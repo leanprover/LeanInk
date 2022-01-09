@@ -1,4 +1,4 @@
-import LeanInk.Analysis.InfoTreeUtil
+import LeanInk.Analysis.DataTypes
 import LeanInk.Analysis.LeanContext
 
 import LeanInk.Configuration
@@ -17,108 +17,33 @@ namespace LeanInk.Analysis
 open Lean
 open Lean.Elab
 
-inductive Token where 
-  | term (term: TermFragment)
-  | tactic (tactic: TacticFragment)
-  | field (field: FieldFragment)
-  deriving Inhabited
+-- def removeTermDuplicatesFromSorted : List TermFragment -> List TermFragment
+--   | [] => []
+--   | x::[] => [x]
+--   | x::y::xs => 
+--     if x.headPos == y.headPos then
+--       x::removeTermDuplicatesFromSorted xs
+--     else
+--       x::removeTermDuplicatesFromSorted (y::xs)
 
-namespace Token
-  def headPos : Token -> String.Pos
-    | term f => f.headPos
-    | tactic f => f.headPos
-    | field f => f.headPos
-
-  def tailPos : Token -> String.Pos
-    | term f => f.tailPos
-    | tactic f => f.tailPos
-    | field f => f.tailPos
-end Token
-
-instance : ToFormat Token where
-  format (self : Token) : Format :=
-    match self with
-    | Token.term fragment => f!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
-    | Token.tactic fragment => f!"TACTIC<>  [{self.headPos}]->[{self.tailPos}]"
-    | Token.field fragment => f!"FIELD<>  [{self.headPos}]->[{self.tailPos}]"
-
-instance : ToString Token where
-  toString (self : Token) : String :=
-    match self with
-    | Token.term fragment => s!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
-    | Token.tactic fragment => s!"TACTIC<>  [{self.headPos}]->[{self.tailPos}]"
-    | Token.field fragment => s!"FIELD<>  [{self.headPos}]->[{self.tailPos}]"
-
-inductive AnalysisFragment where
-  | tactic (fragment: TacticFragment)
-  | message (fragment: MessageFragment)
-  deriving Inhabited
-
-namespace AnalysisFragment
-  def headPos : AnalysisFragment -> String.Pos
-    | tactic f => f.headPos
-    | message f => f.headPos
-    
-  def tailPos : AnalysisFragment -> String.Pos
-    | tactic f => f.tailPos
-    | message f => f.tailPos
-
-  def asTactic : AnalysisFragment -> Option TacticFragment
-    | tactic f => f
-    | _ => none
-
-  def asMessage : AnalysisFragment -> Option MessageFragment
-    | message f => f
-    | _ => none
-end AnalysisFragment
-
-instance : ToFormat AnalysisFragment where
-  format (self : AnalysisFragment) : Format :=
-    match self with
-    | AnalysisFragment.tactic _ => f!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
-    | AnalysisFragment.message _ => f!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
-
-instance : ToString AnalysisFragment where
-  toString (self : AnalysisFragment) : String :=
-    match self with
-    | AnalysisFragment.tactic _ => s!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
-    | AnalysisFragment.message _ => s!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
-
-structure AnalysisResult where
-  sentenceFragments: List AnalysisFragment
-  tokens: List Token
-
-namespace AnalysisResult
-
-def removeTermDuplicatesFromSorted : List TermFragment -> List TermFragment
-  | [] => []
-  | x::[] => [x]
-  | x::y::xs => 
-    if x.headPos == y.headPos then
-      x::removeTermDuplicatesFromSorted xs
-    else
-      x::removeTermDuplicatesFromSorted (y::xs)
-
-def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileMap) : AnalysisM AnalysisResult := do
-  let tactics := traversal.tactics.map (λ f => AnalysisFragment.tactic f)
-  let messages := messages.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment fileMap m))
-  let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
-  let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
-  logInfo f!"MESSAGES:\n {sortedMessages}"
-  let sentenceFragments := List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics sortedMessages
-  logInfo f!"RESULT:\n {sentenceFragments}"
-  if (← read).experimentalTokens then
-    let terms := (removeTermDuplicatesFromSorted traversal.terms).map (λ f => Token.term f)
-    let fields := traversal.fields.map (λ f => Token.field f)
-    let termsAndFields := List.mergeSortedLists (λ x y => x.headPos < y.headPos) terms fields
-    let tactics := traversal.tactics.map (λ f => Token.tactic f)
-    let tokens := List.mergeSortedLists (λ x y => x.headPos < y.headPos) termsAndFields tactics
-    Logger.logInfo f!"Terms:n {terms}"
-    return { sentenceFragments := sentenceFragments, tokens := termsAndFields }
-  else
-    return { sentenceFragments := sentenceFragments, tokens := [] }
-
-end AnalysisResult
+-- def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileMap) : AnalysisM AnalysisResult := do
+--   let tactics := traversal.tactics.map (λ f => AnalysisFragment.tactic f)
+--   let messages := messages.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment fileMap m))
+--   let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
+--   let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
+--   logInfo f!"MESSAGES:\n {sortedMessages}"
+--   let sentenceFragments := List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics sortedMessages
+--   logInfo f!"RESULT:\n {sentenceFragments}"
+--   if (← read).experimentalTokens then
+--     let terms := (removeTermDuplicatesFromSorted traversal.terms).map (λ f => Token.term f)
+--     let fields := traversal.fields.map (λ f => Token.field f)
+--     let termsAndFields := List.mergeSortedLists (λ x y => x.headPos < y.headPos) terms fields
+--     let tactics := traversal.tactics.map (λ f => Token.tactic f)
+--     let tokens := List.mergeSortedLists (λ x y => x.headPos < y.headPos) termsAndFields tactics
+--     Logger.logInfo f!"Terms:n {terms}"
+--     return { sentenceFragments := sentenceFragments, tokens := termsAndFields }
+--   else
+--     return { sentenceFragments := sentenceFragments, tokens := [] }
 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
   { Command.mkState env msg with infoState := { enabled := true }}
@@ -135,6 +60,6 @@ def analyzeInput : AnalysisM AnalysisResult := do
   let commandState := configureCommandState environment messages
   let s ← IO.processCommands context state commandState
   let trees := s.commandState.infoState.trees.toList
-  let traversalResult := resolveTacticList trees
+  let result ← resolveTacticList trees
   let messages := s.commandState.messages.msgs.toList
-  return ← AnalysisResult.create traversalResult messages context.fileMap
+  return result

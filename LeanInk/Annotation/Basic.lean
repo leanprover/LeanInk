@@ -3,7 +3,7 @@ import LeanInk.ListUtil
 import LeanInk.Logger
 import LeanInk.Annotation.Util
 
-import LeanInk.Analysis.InfoTreeUtil
+import LeanInk.Analysis.DataTypes
 import LeanInk.Analysis.Analysis
 
 import LeanInk.Annotation.Alectryon
@@ -85,8 +85,8 @@ partial def generateTokens (contents: String) (head: String.Pos) (offset: String
           let aToken : Alectryon.Token := { raw := text }
           return ← generateTokens contents tokens.headPos offset (aux.append [aToken]) (tokens::follow::ts)
 
-def toAlectryonTokens (self : Annotation) (contents : String) : AnalysisM Alectryon.Contents := do
-  return Alectryon.Contents.experimentalTokens (← generateTokens contents self.sentenceCompound.headPos self.sentenceCompound.headPos [] self.tokenCompound).toArray 
+-- def toAlectryonTokens (self : Annotation) (contents : String) : AnalysisM Alectryon.Contents := do
+--   return Alectryon.Contents.experimentalTokens (← generateTokens contents self.sentenceCompound.headPos self.sentenceCompound.headPos [] self.tokenCompound).toArray 
 
 def tokensBetween (aux : List (Compound Token)) (head : String.Pos) (tail : Option String.Pos) : List (Compound Token) -> List (Compound Token)
   | [] => aux
@@ -109,29 +109,29 @@ def matchTokenToAnalysis (tokens : List (Compound Token)) (aux : List Annotation
   | x::y::xs => matchTokenToAnalysis tokens (aux.append [{ sentenceCompound := x, tokenCompound := tokensBetween [] x.headPos y.headPos tokens }]) (y::xs)
   | x::xs => matchTokenToAnalysis tokens (aux.append [{ sentenceCompound := x, tokenCompound := tokensBetween [] x.headPos none tokens }]) xs
 
-def toAlectryonFragment (self : Annotation) (contents : String) : AnalysisM Alectryon.Fragment := do
-    if self.sentenceCompound.fragments.isEmpty then
-      if (← read).experimentalTokens then
-        return Alectryon.Fragment.text { contents := (← toAlectryonTokens self contents) }
-      else
-        return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
-    else
-      let tactics : List TacticFragment := self.sentenceCompound.getFragments.filterMap (λ f => f.asTactic)
-      let tacticGoals ← tactics.mapM (λ t => t.resolveGoals)
-      let messages : List MessageFragment := self.sentenceCompound.getFragments.filterMap (λ f => f.asMessage)
-      let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
-      if (← read).experimentalTokens then
-        return Alectryon.Fragment.sentence { 
-          contents := (← toAlectryonTokens self contents)
-          goals := tacticGoals.join.toArray
-          messages := stringMessages.toArray 
-        }
-      else
-      return Alectryon.Fragment.sentence { 
-        contents := Alectryon.Contents.string contents
-        goals := tacticGoals.join.toArray
-        messages := stringMessages.toArray
-      }
+-- def toAlectryonFragment (self : Annotation) (contents : String) : AnalysisM Alectryon.Fragment := do
+--     if self.sentenceCompound.fragments.isEmpty then
+--       if (← read).experimentalTokens then
+--         return Alectryon.Fragment.text { contents := (← toAlectryonTokens self contents) }
+--       else
+--         return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
+--     else
+--       let tactics : List TacticFragment := self.sentenceCompound.getFragments.filterMap (λ f => f.asTactic)
+--       let tacticGoals ← tactics.mapM (λ t => t.resolveGoals)
+--       let messages : List MessageFragment := self.sentenceCompound.getFragments.filterMap (λ f => f.asMessage)
+--       let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
+--       if (← read).experimentalTokens then
+--         return Alectryon.Fragment.sentence { 
+--           contents := (← toAlectryonTokens self contents)
+--           goals := tacticGoals.join.toArray
+--           messages := stringMessages.toArray 
+--         }
+--       else
+--       return Alectryon.Fragment.sentence { 
+--         contents := Alectryon.Contents.string contents
+--         goals := tacticGoals.join.toArray
+--         messages := stringMessages.toArray
+--       }
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).
@@ -146,12 +146,9 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
     let fragment ← toAlectryonFragment x (contents.extract x.sentenceCompound.headPos (y.sentenceCompound.headPos))
     return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
-def annotateFile (analysis : AnalysisResult) : AnalysisM (List Alectryon.Fragment) := do
+def annotateFile (analysis : AnalysisResult) : AnalysisM (List Annotation) := do
   logInfo f!"Analysis-Input: {analysis.sentenceFragments}"
   logInfo f!"Tokens: {analysis.tokens}"
-  -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← matchCompounds [{ headPos := 0, fragments := [] }] (toFragmentIntervals analysis.sentenceFragments)
   let tokens ← matchCompounds [{ headPos := 0, fragments := [] }] (toFragmentIntervals analysis.tokens)
-  let matchedCompounds := matchTokenToAnalysis tokens [] compounds
-  -- Logger.logInfo f!"Compounds: {matchedCompounds}"
-  return (← annotateFileWithCompounds [] (← read).inputFileContents matchedCompounds)
+  return matchTokenToAnalysis tokens [] compounds

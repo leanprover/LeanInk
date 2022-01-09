@@ -2,30 +2,12 @@ import LeanInk.Configuration
 import LeanInk.Logger
 
 import LeanInk.Analysis.Analysis
-import LeanInk.Analysis.InfoTreeUtil
 
 namespace LeanInk.Annotation
 
 open LeanInk.Analysis
 
 universe u
-
-/- POSITIONAL -/
-class Positional (α : Type u) where
-  headPos : α -> String.Pos
-  tailPos : α -> String.Pos
-
-instance : Positional AnalysisFragment where
-  headPos := AnalysisFragment.headPos
-  tailPos := AnalysisFragment.tailPos
-
-instance : Positional Token where
-  headPos := Token.headPos
-  tailPos := Token.tailPos
-
-namespace Positonal
-  def length {α : Type u } [Positional α] (self : α) : Nat := (Positional.tailPos self) - (Positional.headPos self)
-end Positonal
 
 /- COMPOUND -/
 structure Compound (β : Type u) where

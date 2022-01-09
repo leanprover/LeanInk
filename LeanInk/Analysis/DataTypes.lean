@@ -1,16 +1,24 @@
 import LeanInk.ListUtil
-import LeanInk.Annotation.Util
+import LeanInk.Configuration
 
 import Lean.Elab
 import Lean.Data.Lsp
 import Lean.Syntax
 
-namespace LeanInk
+namespace LeanInk.Analysis
 
 open Lean
 open Lean.Elab
 open Lean.Meta
-open LeanInk.Annotation
+
+/- Positional -/
+class Positional (α : Type u) where
+  headPos : α -> String.Pos
+  tailPos : α -> String.Pos
+
+namespace Positonal
+  def length {α : Type u } [Positional α] (self : α) : Nat := (Positional.tailPos self) - (Positional.headPos self)
+end Positonal
 
 /- Fragment -/
 /--
@@ -78,17 +86,21 @@ instance : Positional Token where
 
 /- Tactics -/
 structure Hypothesis where
-  name: String
-  type: String
-  body: String
+  names : List String
+  type : String
+  body : String
+
+structure Goal where
+  name : String
+  conclusion : String
+  hypotheses : List Hypothesis
 
 structure Tactic extends Fragment where
-  name: String
-  hypotheses : List Hypothesis
+  goals : List Goal
   deriving Inhabited
 
 structure Message extends Fragment where
-  msg: String
+  messages: List String
   deriving Inhabited
 
 /- Sentence -/
@@ -106,21 +118,6 @@ end Sentence
 instance : Positional Sentence where
   headPos := (λ x => x.toFragment.headPos)
   tailPos := (λ x => x.toFragment.tailPos)
-
-/- Traversal -/
-structure TraversalResult where
-  tokens : List Token
-  sentences : List Sentence
-  deriving Inhabited
-
-namespace TraversalResult
-  def empty : TraversalResult := { tokens := [], sentences := [] }
-
-  def merge (x y : TraversalResult) : TraversalResult := {
-    tokens := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.tokens y.tokens
-    sentences := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.sentences y.sentences
-  }
-end TraversalResult
 
 /- InfoTree -/
 structure ContextBasedInfo (β : Type) where
@@ -170,9 +167,21 @@ namespace TraversalFragment
       | Info.ofFieldInfo info => field { info := info, ctx := ctx }
       | _ => none
 
-/- 
-  Token Generation
--/
+  def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) : TraversalFragment -> AnalysisM α
+  | term fragment => fragment.ctx.runMetaM fragment.info.lctx (func (term fragment))
+  | field fragment => fragment.ctx.runMetaM fragment.info.lctx (func (field fragment))
+  | tactic fragment => fragment.ctx.runMetaM {} (func (tactic fragment))
+  | unknown fragment => fragment.ctx.runMetaM {} (func (unknown fragment))
+
+  /- 
+    Token Generation
+  -/
+  def inferType? : TraversalFragment -> MetaM (Option String)
+    | term termFragment => do
+      let format ← Meta.ppExpr (← Meta.inferType termFragment.info.expr)
+      return s!"{format}"
+    | _ => none
+
   def genDocString? (self : TraversalFragment) : MetaM (Option String) := do
     let env ← getEnv
     match self with
@@ -189,32 +198,192 @@ namespace TraversalFragment
       let elabInfo := fragment.info
       return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
 
-  def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) : TraversalFragment -> AnalysisM α
-    | term fragment => fragment.ctx.runMetaM fragment.info.lctx (func (term fragment))
-    | field fragment => fragment.ctx.runMetaM fragment.info.lctx (func (field fragment))
-    | tactic fragment => fragment.ctx.runMetaM {} (func (tactic fragment))
-    | unknown fragment => fragment.ctx.runMetaM {} (func (unknown fragment))
-
-  def genDocStringToken? (self : TraversalFragment) : AnalysisM (Option DocStringTokenInfo) := do
+  def genDocStringTokenInfo? (self : TraversalFragment) : AnalysisM (Option DocStringTokenInfo) := do
     match ← runMetaM (genDocString?) self with
     | some string => some { headPos := self.headPos, tailPos := self.tailPos, docString := string }
     | none => none
+
+  def genTypeTokenInfo? (self : TraversalFragment) : AnalysisM (Option TypeTokenInfo) := do
+    match ← runMetaM (inferType?) self with
+    | some string => some { headPos := self.headPos, tailPos := self.tailPos, type := string }
+    | none => none
+
+  def genTokens (self : TraversalFragment) : AnalysisM (List Token) := do
+    let mut tokens : List Token := []
+    if let some typeToken ← self.genTypeTokenInfo? then
+      tokens := tokens.append [Token.type typeToken]
+    if let some docStringToken ← self.genDocStringTokenInfo? then
+      tokens := tokens.append [Token.docString docStringToken]
+    return tokens
+
+  /- Sentence Generation -/
+  private def genGoal (goalType : Format) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
+    | Name.anonymous => do
+      return { 
+        name := ""
+        conclusion := toString goalType
+        hypotheses := hypotheses 
+      }
+    | name => do
+      let goalFormatName := format name.eraseMacroScopes
+      return { 
+        name := toString goalFormatName
+        conclusion := toString goalType
+        hypotheses := hypotheses 
+      }
+
+  /-- 
+  This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
+  of a single formatted string to support the Alectryon.Goal datatype.
+  -/
+  private def evalGoal (mvarId : MVarId)  : MetaM (Option Goal) := do
+    match (← getMCtx).findDecl? mvarId with
+    | none => return none
+    | some decl => do
+      let auxDecl := pp.auxDecls.get (<- getOptions)
+      let lctx := decl.lctx.sanitizeNames.run' { options := (← getOptions) }
+      withLCtx lctx decl.localInstances do
+        let (hidden, hiddenProp) ← ToHide.collect decl.type
+        let pushPending (list : List Hypothesis) (type? : Option Expr) : List Name -> MetaM (List Hypothesis)
+        | [] => pure list
+        | ids => do
+          match type? with
+            | none      => pure list
+            | some type => do
+              let typeFmt ← ppExpr type
+              let names ← ids.reverse.map (λ n => n.toString)
+              return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
+        let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
+          if hiddenProp.contains localDecl.fvarId then
+            let newHypotheses ← pushPending [] prevType? varNames
+            let type ← instantiateMVars localDecl.type
+            let typeFmt ← ppExpr type
+            let newHypotheses := newHypotheses.map (λ h => { h with type := h.type ++ s!" : {typeFmt}"})
+            pure ([], none, hypotheses.append newHypotheses)
+          else
+            match localDecl with
+            | LocalDecl.cdecl _ _ varName type _ =>
+              let varName := varName.simpMacroScopes
+              let type ← instantiateMVars type
+              if prevType? == none || prevType? == some type then
+                pure (varName::varNames, some type, hypotheses)
+              else do
+                let hypotheses ← pushPending hypotheses prevType? varNames
+                pure ([varName], some type, hypotheses)
+            | LocalDecl.ldecl _ _ varName type val _ => do
+              let varName := varName.simpMacroScopes
+              let hypotheses ← pushPending hypotheses prevType? varNames
+              let type ← instantiateMVars type
+              let val  ← instantiateMVars val
+              let typeFmt ← ppExpr type
+              let valFmt ← ppExpr val
+              pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
+        let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
+          if !auxDecl && localDecl.isAuxDecl || hidden.contains localDecl.fvarId then
+            pure (varNames, prevType?, hypotheses)
+          else
+            evalVar varNames prevType? hypotheses localDecl
+        let hypotheses ← pushPending hypotheses type? varNames 
+        let typeFmt ← ppExpr (← instantiateMVars decl.type)
+        return (← genGoal typeFmt hypotheses decl.userName)
+
+  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) : AnalysisM (List Goal) :=
+    match contextInfo.info.goalsAfter with
+    | [] => []
+    | goals => do
+      let ctx := { contextInfo.ctx with mctx := contextInfo.info.mctxAfter }
+      return (← ctx.runMetaM {} (goals.mapM (evalGoal .))).filterMap (λ x => x)
+
+  def genTactic? (self : TraversalFragment) : AnalysisM (Option Tactic) := do
+    match self with
+    | tactic fragment => do 
+      let goals ← genGoals fragment
+      if goals.isEmpty then
+        return none
+      else
+        return some { headPos := self.headPos, tailPos := self.tailPos, goals := goals }
+    | _ => none
+
+  def genSentences (self : TraversalFragment) : AnalysisM (List Sentence) := do
+    if let some t ← self.genTactic? then
+      return [Sentence.tactic t]
+    else
+      return []
 end TraversalFragment
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) : InfoTree -> AnalysisM TraversalResult
-  | InfoTree.context ctx tree => _resolveTacticList ctx tree
+/- Traversal -/
+structure AnalysisResult where
+  tokens : List Token
+  sentences : List Sentence
+  deriving Inhabited
+
+namespace AnalysisResult
+  def empty : AnalysisResult := { tokens := [], sentences := [] }
+
+  def merge (x y : AnalysisResult) : AnalysisResult := {
+    tokens := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.tokens y.tokens
+    sentences := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.sentences y.sentences
+  }
+
+  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) : AnalysisM AnalysisResult := do
+    let newTokens ← fragment.genTokens
+    let newSentences ← fragment.genSentences
+    { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
+end AnalysisResult
+
+structure TraversalAux where
+  allowsNewTactic : Bool := true
+  allowsNewField : Bool := true
+  allowsNewTerm : Bool := true
+  result : AnalysisResult := AnalysisResult.empty
+
+namespace TraversalAux
+  def merge (x y : TraversalAux) : TraversalAux := {
+    allowsNewTactic := x.allowsNewTactic ∧ y.allowsNewTactic
+    allowsNewField := x.allowsNewField ∧ y.allowsNewField
+    allowsNewTerm := x.allowsNewTerm ∧ y.allowsNewTerm
+    result := AnalysisResult.merge x.result y.result
+  }
+
+  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) : AnalysisM TraversalAux :=
+    match fragment with
+    | TraversalFragment.term _ => do
+      if self.allowsNewTerm then
+        let newResult ← self.result.insertFragment fragment
+        return { self with allowsNewTerm := false, result := newResult }
+      else 
+        return self
+    | TraversalFragment.field _ => do
+      if self.allowsNewTerm then
+        let newResult ← self.result.insertFragment fragment
+        return { self with allowsNewField := false, result := newResult }
+      else 
+        return self
+    | TraversalFragment.tactic _ => do
+      if self.allowsNewTerm then
+        let newResult ← self.result.insertFragment fragment
+        return { self with allowsNewTactic := false, result := newResult }
+      else 
+        return self
+    | _=> self
+end TraversalAux
+
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) : InfoTree -> AnalysisM TraversalAux
+  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
     match ctx? with
-    | none => TraversalResult.empty
-    | some ctx =>
+    | none => aux
+    | some ctx => do
       let ctx? := info.updateContext? ctx
-      let resolvedChildrenLeafs := children.toList.map  (_resolveTacticList ctx?)
-      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalResult.merge TraversalResult.empty
-      match TraversalFragment.create ctx info with
-      | some fragment => 
-        -- if sortedChildrenLeafs.tactics.isEmpty then 
-        --   { sortedChildrenLeafs with tactics := [f] }
-        -- else 
-          sortedChildrenLeafs
+      let resolvedChildrenLeafs ← children.toList.mapM (_resolveTacticList ctx? aux)
+      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
+      let fragment := TraversalFragment.create ctx info
+      match fragment with
+      | some fragment => sortedChildrenLeafs.insertFragment fragment
       | none => sortedChildrenLeafs
-  | _ => TraversalResult.empty
+  | _ => aux
+
+def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
+  let auxResults ← (trees.map _resolveTacticList).mapM (λ x => x)
+  let results := auxResults.map (λ x => x.result)
+  return results.foldl AnalysisResult.merge AnalysisResult.empty
