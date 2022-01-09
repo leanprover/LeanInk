@@ -46,7 +46,7 @@ namespace TacticFragment
       let goalName := s!"{goalFormatName}"
       return { name := goalName, conclusion := s!"{goalType}", hypotheses := hypotheses.toArray }
 
-  /-
+  /-- 
   This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
   of a single formatted string to support the Alectryon.Goal datatype.
   -/

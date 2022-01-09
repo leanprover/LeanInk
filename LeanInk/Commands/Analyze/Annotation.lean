@@ -4,6 +4,7 @@ import LeanInk.Commands.Analyze.Analysis
 import LeanInk.Commands.Analyze.ListUtil
 import LeanInk.Commands.Analyze.Logger
 import LeanInk.Commands.Analyze.AlectryonUtil
+import LeanInk.Commands.Analyze.Util
 
 import LeanInk.Output.Alectryon
 
@@ -17,59 +18,79 @@ open Lean
 open Lean.Elab
 
 /-
-  CompoundFragment
+  Annotation
 -/
-structure CompoundFragment where
-  headPos: String.Pos
-  enumFragments: List (Nat × AnalysisFragment)
-  tokens: List Token
+structure Annotation where
+  sentenceCompound : Compound AnalysisFragment
+  tokenCompound : List (Compound Token)
 
-namespace CompoundFragment
-  def tailPos (self : CompoundFragment) : Option String.Pos := (self.enumFragments.map (λ f => f.2.tailPos)).minimum?
-
-  def fragments (self : CompoundFragment) : List AnalysisFragment := self.enumFragments.map (λ f => f.2)
-
-  partial def generateTokens (contents: String) (head: String.Pos) (offset: String.Pos) (aux: List Alectryon.Token): List Token -> AnalysisM (List Alectryon.Token)
-    | [] => do
-      let text := contents.extract (head - offset) contents.utf8ByteSize
-      Logger.logInfo s!"generateTokens last >> '{text}' | {head - offset} - {contents.utf8ByteSize}"
-      if text.isEmpty then return aux
-      let lastToken : Alectryon.Token := { raw := text }
-      return aux.append [lastToken]
-    | token::ts => do
+partial def generateTokens (contents: String) (head: String.Pos) (offset: String.Pos) (aux: List Alectryon.Token) : List (Compound Token) -> AnalysisM (List Alectryon.Token)
+  | [] => do
+    let text := contents.extract (head - offset) contents.utf8ByteSize
+    Logger.logInfo s!"generateTokens last >> '{text}' | {head - offset} - {contents.utf8ByteSize}"
+    if text.isEmpty then return aux
+    let lastToken : Alectryon.Token := { raw := text }
+    return aux.append [lastToken]
+  | tokens::ts => do
+    match tokens.tailPos with
+    | none => generateTokens contents head offset aux ts
+    | some tokenTail => do
       let head := head - offset
-      let tokenHead := token.headPos - offset
-      let tokenTail := token.tailPos - offset
+      let tokenHead := tokens.headPos - offset
+      let tokenTail := tokenTail - offset
+      if head >= tokenTail then
+        return ← generateTokens contents (head + offset) offset aux ts
       if head >= tokenHead then
         let text := contents.extract head tokenTail
-        Logger.logInfo s!"generateTokens token >> '{text}' | {head} - {tokenTail}"
+        Logger.logInfo s!"generateTokens token - tail >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
         if text.isEmpty then 
-          return ← generateTokens contents token.tailPos offset aux ts
+          return ← generateTokens contents tokenTail offset aux ts
         else
-          let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo token text) }
-          return ← generateTokens contents token.tailPos offset (aux.append [aToken]) ts
+          let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo tokens text) }
+          return ← generateTokens contents tokenTail offset (aux.append [aToken]) ts
       else
         let text := contents.extract head tokenHead
-        Logger.logInfo s!"generateTokens token >> '{text}' | {head} - {tokenHead}"
+        Logger.logInfo s!"generateTokens token - nextHead >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
         if text.isEmpty then 
-          return ← generateTokens contents token.tailPos offset aux (token::ts)
+          return ← generateTokens contents tokenTail offset aux (tokens::ts)
         else
           let aToken : Alectryon.Token := { raw := text }
-          return ← generateTokens contents token.headPos offset (aux.append [aToken]) (token::ts)
+          return ← generateTokens contents tokens.headPos offset (aux.append [aToken]) (tokens::ts)
 
-  def toAlectryonTokens (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Contents := do
-    return Alectryon.Contents.experimentalTokens (← generateTokens contents self.headPos self.headPos [] self.tokens).toArray
+def toAlectryonTokens (self : Annotation) (contents : String) : AnalysisM Alectryon.Contents := do
+  return Alectryon.Contents.experimentalTokens (← generateTokens contents self.sentenceCompound.headPos self.sentenceCompound.headPos [] self.tokenCompound).toArray 
 
-  def toAlectryonFragment (self : CompoundFragment) (contents : String) : AnalysisM Alectryon.Fragment := do
-    if self.enumFragments.isEmpty then
+def tokensBetween (aux : List (Compound Token)) (head : String.Pos) (tail : Option String.Pos) : List (Compound Token) -> List (Compound Token)
+  | [] => aux
+  | x::xs =>
+    match (tail, x.tailPos) with
+    | (_, none) => tokensBetween aux head tail xs
+    | (some tail, some tokenTail) =>
+      if x.headPos <= tail && tokenTail > head then
+        tokensBetween (aux.append [x]) head tail xs
+      else
+        tokensBetween aux head tail xs
+    | (none, some tokenTail) => 
+      if tokenTail > head then
+        tokensBetween (aux.append [x]) head tail xs
+      else
+        tokensBetween aux head tail xs
+
+def matchTokenToAnalysis (tokens : List (Compound Token)) (aux : List Annotation) : List (Compound AnalysisFragment) -> List Annotation
+  | [] => aux
+  | x::y::xs => matchTokenToAnalysis tokens (aux.append [{ sentenceCompound := x, tokenCompound := tokensBetween [] x.headPos y.headPos tokens }]) (y::xs)
+  | x::xs => matchTokenToAnalysis tokens (aux.append [{ sentenceCompound := x, tokenCompound := tokensBetween [] x.headPos none tokens }]) xs
+
+def toAlectryonFragment (self : Annotation) (contents : String) : AnalysisM Alectryon.Fragment := do
+    if self.sentenceCompound.fragments.isEmpty then
       if (← read).experimentalTokens then
         return Alectryon.Fragment.text { contents := (← toAlectryonTokens self contents) }
       else
         return Alectryon.Fragment.text { contents := Alectryon.Contents.string contents}
     else
-      let tactics : List TacticFragment := self.fragments.filterMap (λ f => f.asTactic)
+      let tactics : List TacticFragment := self.sentenceCompound.getFragments.filterMap (λ f => f.asTactic)
       let tacticGoals ← tactics.mapM (λ t => t.resolveGoals)
-      let messages : List MessageFragment := self.fragments.filterMap (λ f => f.asMessage)
+      let messages : List MessageFragment := self.sentenceCompound.getFragments.filterMap (λ f => f.asMessage)
       let stringMessages ← messages.mapM (λ m => m.toAlectryonMessage)
       if (← read).experimentalTokens then
         return Alectryon.Fragment.sentence { 
@@ -78,140 +99,31 @@ namespace CompoundFragment
           messages := stringMessages.toArray 
         }
       else
-        return Alectryon.Fragment.sentence { 
-          contents := Alectryon.Contents.string contents
-          goals := tacticGoals.join.toArray
-          messages := stringMessages.toArray 
-        }
-end CompoundFragment
-
-instance : ToString CompoundFragment where
-  toString (self : CompoundFragment) : String := 
-    let tokens := f!"{self.tokens}"
-    s!"<COMPOUND head:{self.headPos} fragments:{self.enumFragments.map (λ x => x.1)} tokens:{tokens}>"
-
-/-
-  FragmentEvent
--/
-inductive FragmentEvent where
-  | head (pos: String.Pos) (fragment: AnalysisFragment) (idx: Nat)
-  | tail (pos: String.Pos) (fragment: AnalysisFragment) (idx: Nat)
-  deriving Inhabited
-
-namespace FragmentEvent
-  def position: FragmentEvent -> String.Pos
-    | head p _ _ => p
-    | tail p _ _ => p
-
-  def idx: FragmentEvent -> Nat
-    | head _ _ idx => idx
-    | tail _ _ idx => idx
-
-  def fragment: FragmentEvent -> AnalysisFragment
-    | head _ f _ => f
-    | tail _ f _ => f
-
-  def enumerateFragment (self : FragmentEvent) : (Nat × AnalysisFragment) := (self.idx, self.fragment)
-
-  def isHead: FragmentEvent -> Bool
-    | head _ _ _ => true
-    | tail _ _ _ => false
-
-  def isTail: FragmentEvent -> Bool
-    | head _ _ _ => false
-    | tail _ _ _ => true
-end FragmentEvent
-
-instance : ToString FragmentEvent where
-  toString (self : FragmentEvent) : String := s!"<FRAGMENT isHead: {self.isHead}, pos: {self.position}, idx: {self.idx}>"
-
-/-
-  Annotation
--/
-def generateFragmentEventQueue (analysis : List AnalysisFragment) : List FragmentEvent :=
-  let enumerateAnalysis := analysis.enum
-  let headQueue := enumerateAnalysis.map (λ (idx, f) => FragmentEvent.head f.headPos f idx)
-  let sortedTailList := List.sort (λ x y => x.2.tailPos < y.2.tailPos) enumerateAnalysis
-  let tailQueue := sortedTailList.map (λ (idx, f) => FragmentEvent.tail f.tailPos f idx)
-  List.mergeSortedLists (λ x y => x.position < y.position) headQueue tailQueue
-
-def tokensBetween (aux : List Token) (head : String.Pos) (tail : Option String.Pos)  : List Token -> List Token
-  | [] => aux
-  | x::xs =>
-    match tail with
-    | some tail =>
-      if x.headPos <= tail && x.tailPos > head then
-        tokensBetween (aux.append [x]) head tail xs
-      else
-        tokensBetween aux head tail xs
-    | none => 
-      if x.tailPos > head then
-        tokensBetween (aux.append [x]) head tail xs
-      else
-        tokensBetween aux head tail xs
-
-def matchTokensToCompounds (tokens : List Token) (aux : List CompoundFragment) : List CompoundFragment -> List CompoundFragment
-  | [] => aux
-  | x::y::xs => matchTokensToCompounds tokens (aux.append [{ x with tokens := tokensBetween [] x.headPos y.headPos tokens }]) (y::xs)
-  | x::xs => matchTokensToCompounds tokens (aux.append [{ x with tokens := tokensBetween [] x.headPos none tokens }]) xs
-
-def generateCompoundFragments (l : List CompoundFragment) : List FragmentEvent -> AnalysisM (List CompoundFragment)
-  | [] => l -- No events left, so we just return!
-  | e::es => do
-    match l.getLast? with
-    | none => do
-      if e.isHead then
-        let newCompound : CompoundFragment := { headPos := e.position, enumFragments := [e.enumerateFragment], tokens := [] }
-        Logger.logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
-        return (← generateCompoundFragments [newCompound] es)
-      else
-        Logger.logInfo s!"NO COMPOUND -> UNEXPECTED TAIL"
-        return [] -- TODO: handle error
-    | some c => do
-      if e.isHead then
-        if c.headPos == e.position then
-          let updatedCompound := { c with enumFragments := c.enumFragments.append [e.enumerateFragment] }
-          Logger.logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH HEAD {e.idx} -> {updatedCompound}"
-          return (← generateCompoundFragments (l.dropLast.append [updatedCompound]) es)
-        else
-          let newCompound := { c with headPos := e.position, enumFragments := c.enumFragments.append [e.enumerateFragment] }
-          Logger.logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH HEAD {e.idx} -> {newCompound}"
-          return (← generateCompoundFragments (l.append [newCompound]) es)
-      else
-        if c.headPos == e.position then
-          let updatedCompound := { c with enumFragments := c.enumFragments.filter (λ x => x.1 != e.idx)}
-          Logger.logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
-          return (← generateCompoundFragments (l.dropLast.append [updatedCompound]) es)
-        else 
-          let newFragments := c.enumFragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
-          /-
-            It may be the case that the newFragments list isEmpty. This is totally fine as we need to
-            insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
-          -/
-          let newCompound : CompoundFragment := { headPos := e.position, enumFragments := newFragments, tokens := [] }
-          Logger.logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
-          return (← generateCompoundFragments (l.append [newCompound]) es)
+      return Alectryon.Fragment.sentence { 
+        contents := Alectryon.Contents.string contents
+        goals := tacticGoals.join.toArray
+        messages := stringMessages.toArray
+      }
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).
 Generates AlectryonFragments for the given CompoundFragments and input file content.
 -/
-def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List CompoundFragment -> AnalysisM (List Alectryon.Fragment)
+def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Alectryon.Fragment)
   | [] => l
   | x::[] => do
-    let fragment ← x.toAlectryonFragment (contents.extract x.headPos contents.utf8ByteSize)
+    let fragment ← toAlectryonFragment x (contents.extract x.sentenceCompound.headPos contents.utf8ByteSize)
     return l.append [fragment]
   | x::y::ys => do
-    let fragment ← x.toAlectryonFragment (contents.extract x.headPos y.headPos)
+    let fragment ← toAlectryonFragment x (contents.extract x.sentenceCompound.headPos (y.sentenceCompound.headPos))
     return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
 def annotateFile (analysis : AnalysisResult) : AnalysisM (List Alectryon.Fragment) := do
-  Logger.logInfo f!"Annotation-Input: {analysis.sentenceFragments}"
-  let events := generateFragmentEventQueue analysis.sentenceFragments
-  Logger.logInfo f!"Events: {events}"
-  -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
-  let compounds ← generateCompoundFragments [{ headPos := 0, enumFragments := [], tokens := [] }] events
+  Logger.logInfo f!"Analysis-Input: {analysis.sentenceFragments}"
   Logger.logInfo f!"Tokens: {analysis.tokens}"
-  let matchedCompounds := matchTokensToCompounds analysis.tokens [] compounds
-  Logger.logInfo f!"Compounds: {matchedCompounds}"
+  -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
+  let compounds ← matchCompounds [{ headPos := 0, fragments := [] }] (toFragmentIntervals analysis.sentenceFragments)
+  let tokens ← matchCompounds [{ headPos := 0, fragments := [] }] (toFragmentIntervals analysis.tokens)
+  let matchedCompounds := matchTokenToAnalysis tokens [] compounds
+  -- Logger.logInfo f!"Compounds: {matchedCompounds}"
   return (← annotateFileWithCompounds [] (← read).inputFileContents matchedCompounds)

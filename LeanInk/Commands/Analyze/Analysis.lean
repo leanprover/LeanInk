@@ -18,6 +18,7 @@ open Lean.Elab
 
 inductive Token where 
   | term (term: TermFragment)
+  deriving Inhabited
 
 namespace Token
   def headPos : Token -> String.Pos
@@ -31,6 +32,11 @@ instance : ToFormat Token where
   format (self : Token) : Format :=
     match self with
     | Token.term fragment => f!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
+
+instance : ToString Token where
+  toString (self : Token) : String :=
+    match self with
+    | Token.term fragment => s!"TERM<{fragment.info.expr}>  [{self.headPos}]->[{self.tailPos}]"
 
 inductive AnalysisFragment where
   | tactic (fragment: TacticFragment)
@@ -60,6 +66,12 @@ instance : ToFormat AnalysisFragment where
     match self with
     | AnalysisFragment.tactic _ => f!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
     | AnalysisFragment.message _ => f!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
+
+instance : ToString AnalysisFragment where
+  toString (self : AnalysisFragment) : String :=
+    match self with
+    | AnalysisFragment.tactic _ => s!"TACTIC  [{self.headPos}]->[{self.tailPos}]"
+    | AnalysisFragment.message _ => s!"MESSAGE [{self.headPos}]->[{self.tailPos}]"
 
 structure AnalysisResult where
   sentenceFragments: List AnalysisFragment

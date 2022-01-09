@@ -61,12 +61,19 @@ def runAnalysis : AnalysisM UInt32 := do
   return 0
 
 -- EXECUTION
-def exec (args: List ResolvedArgument) (files: List String) : IO UInt32 := do
-  match files with
-  | a::as =>
-    if not (_validateInputFile a) then do
-      Logger.logError s!"Provided file \"{a}\" is not lean file."
-    else
-      let config ← _buildConfiguration args a
-      return ← (runAnalysis.run config)
-  | _ => Logger.logError s!"No input files provided"
+def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
+  if not (_validateInputFile file) then do
+    Logger.logError s!"Provided file \"{file}\" is not lean file."
+  else
+    IO.println s!"Starting Analyisis for: \"{file}\""
+    let config ← _buildConfiguration args file
+    return ← (runAnalysis.run config)
+
+def exec (args: List ResolvedArgument) : List String -> IO UInt32
+  | [] => do Logger.logError s!"No input files provided"
+  | files => do
+    -- Span task for every file?
+    for file in files do
+      if (← execAux args file) != 0 then
+        return ← Logger.logError s!"Analysis for \"{file}\" failed!"
+    return 0
