@@ -38,10 +38,6 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n    case left => ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hq", "_type": "sentence"},
- {"contents": "\n    case right => ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
- {"contents": "\n  case left => ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
- {"contents": "\n", "_type": "text"}]
+ {"contents":
+  "\n    case left => exact hq\n    case right => exact hp\n  case left => exact hp\n",
+  "_type": "text"}]

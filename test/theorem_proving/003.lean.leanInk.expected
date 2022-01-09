@@ -62,6 +62,4 @@
     "_type": "goal"}],
   "contents": "exact hq",
   "_type": "sentence"},
- {"contents": "\n  ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
- {"contents": "", "_type": "text"}]
+ {"contents": "\n  exact hp", "_type": "text"}]

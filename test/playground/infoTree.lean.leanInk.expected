@@ -1,9 +1,5 @@
 [{"contents":
-  "import Lean\n\nopen Lean.Elab\n\nstructure A where\n  val : Nat → Nat\n\nstructure B where\n  pair : A × A\n\nset_option trace.Elab.info true\n\ndef f (x : Nat) : Nat × Nat :=\n  let y := ⟨x, x⟩\n  id y\n\ndef h : (x y : Nat) → (b : Bool) → x + 0 = x :=\n  fun x y b => by\n    ",
-  "_type": "text"},
- {"messages": [], "goals": [], "contents": "simp", "_type": "sentence"},
- {"contents":
-  "\n\ndef f2 : (x y : Nat) → (b : Bool) → Nat :=\n  fun x y b =>\n    let (z, w) := (x + y, x - y)\n    let z1 := z + w\n    z + z1\n\ndef f3 (s : Nat × Array (Array Nat)) : Array Nat :=\n  s.2[1].push s.1\n\ndef f4 (arg : B) : Nat :=\n  arg.pair.fst.val 0\n\ndef f5 (x : Nat) : B := {\n  pair := ({ val := id }, { val := id })\n}\n\nopen Nat in\n",
+  "import Lean\n\nopen Lean.Elab\n\nstructure A where\n  val : Nat → Nat\n\nstructure B where\n  pair : A × A\n\ndef f (x : Nat) : Nat × Nat :=\n  let y := ⟨x, x⟩\n  id y\n\ndef h : (x y : Nat) → (b : Bool) → x + 0 = x :=\n  fun x y b => by\n    simp\n\ndef f2 : (x y : Nat) → (b : Bool) → Nat :=\n  fun x y b =>\n    let (z, w) := (x + y, x - y)\n    let z1 := z + w\n    z + z1\n\ndef f3 (s : Nat × Array (Array Nat)) : Array Nat :=\n  s.2[1].push s.1\n\ndef f4 (arg : B) : Nat :=\n  arg.pair.fst.val 0\n\ndef f5 (x : Nat) : B := {\n  pair := ({ val := id }, { val := id })\n}\n\nopen Nat in\n",
   "_type": "text"},
  {"messages":
   [{"contents": "def Nat.xor : Nat → Nat → Nat :=\nbitwise bne\n",
@@ -11,4 +7,18 @@
   "goals": [],
   "contents": "#print",
   "_type": "sentence"},
- {"contents": " xor\ninstance : Inhabited Nat where\n\nmacro", "_type": "text"}]
+ {"contents": " xor\ninstance : Inhabited Nat where\n\n", "_type": "text"},
+ {"messages":
+  [{"contents": "infoTree.lean:39:0: error: expected identifier or term\n",
+    "_type": "message"}],
+  "goals": [],
+  "contents": "macro",
+  "_type": "sentence"},
+ {"messages":
+  [{"contents": "infoTree.lean:39:0: error: expected identifier or term\n",
+    "_type": "message"},
+   {"contents": "infoTree.lean:39:5: error: unexpected end of input\n",
+    "_type": "message"}],
+  "goals": [],
+  "contents": "",
+  "_type": "sentence"}]

@@ -100,8 +100,6 @@ theorem right_inverse.surjective {f : α → β} {g : β → α} (h : right_inve
 theorem has_right_inverse.surjective {f : α → β} : has_right_inverse f → surjective f
 | ⟨finv, inv⟩ => inv.surjective
 
-set_option trace.Elab.info true
-
 theorem left_inverse_of_surjective_of_right_inverse {f : α → β} {g : β → α} (surjf : surjective f)
   (rfg : right_inverse f g) : left_inverse f g :=
 λ y =>

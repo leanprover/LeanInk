@@ -19,9 +19,8 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n  case left => ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
- {"contents": "\n  case right =>\n    ", "_type": "text"},
+ {"contents": "\n  case left => exact hp\n  case right =>\n    ",
+  "_type": "text"},
  {"messages": [],
   "goals":
   [{"name": "left",
@@ -40,8 +39,5 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n    case left => ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hq", "_type": "sentence"},
- {"contents": "\n    case right => ", "_type": "text"},
- {"messages": [], "goals": [], "contents": "exact hp", "_type": "sentence"},
- {"contents": "", "_type": "text"}]
+ {"contents": "\n    case left => exact hq\n    case right => exact hp",
+  "_type": "text"}]

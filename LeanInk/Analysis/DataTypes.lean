@@ -74,6 +74,11 @@ inductive Token where
 | docString (info: DocStringTokenInfo)
 deriving Inhabited
 
+instance : ToString Token where -- TODO: Improve this
+  toString : Token -> String
+  | Token.type _ => "Type"
+  | Token.docString _ => "DocString"
+
 namespace Token
   def toFragment : Token -> Fragment
   | type info => info.toFragment
@@ -100,7 +105,7 @@ structure Tactic extends Fragment where
   deriving Inhabited
 
 structure Message extends Fragment where
-  messages: List String
+  msg: String
   deriving Inhabited
 
 /- Sentence -/
@@ -109,10 +114,23 @@ inductive Sentence where
 | message (info: Message)
 deriving Inhabited
 
+instance : ToString Sentence where -- TODO: Improve this
+  toString : Sentence -> String
+  | Sentence.tactic _ => "Type"
+  | Sentence.message _ => "DocString"
+
 namespace Sentence
   def toFragment : Sentence -> Fragment
   | tactic info => info.toFragment
   | message info => info.toFragment
+
+  def asTactic? : Sentence -> Option Tactic
+  | tactic info => info
+  | _ => none
+
+  def asMessage? : Sentence -> Option Message
+  | message info => info
+  | _ => none
 end Sentence
 
 instance : Positional Sentence where
@@ -329,6 +347,22 @@ namespace AnalysisResult
     let newTokens ← fragment.genTokens
     let newSentences ← fragment.genSentences
     { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
+
+  def Position.toStringPos (fileMap: FileMap) (pos: Position) : String.Pos :=
+    FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
+
+  private def genMessage (fileMap : FileMap) (message : Lean.Message) : AnalysisM Message := do
+    let headPos := Position.toStringPos fileMap message.pos
+    let tailPos := Position.toStringPos fileMap (message.endPos.getD message.pos)
+    let string ← message.toString
+    return { headPos := headPos, tailPos := tailPos, msg := string }
+
+  def insertMessages (self : AnalysisResult) (messages : List Lean.Message) (fileMap : FileMap): AnalysisM AnalysisResult := do
+    let messages ← messages.mapM (genMessage fileMap)
+    let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) messages
+    let newSentences := sortedMessages.map (λ x => Sentence.message x)
+    let mergedSentences := List.mergeSortedLists (λ x y => (Positional.headPos x) < (Positional.headPos y)) newSentences self.sentences
+    return { self with sentences := mergedSentences }
 end AnalysisResult
 
 structure TraversalAux where
@@ -354,13 +388,13 @@ namespace TraversalAux
       else 
         return self
     | TraversalFragment.field _ => do
-      if self.allowsNewTerm then
+      if self.allowsNewField then
         let newResult ← self.result.insertFragment fragment
         return { self with allowsNewField := false, result := newResult }
       else 
         return self
     | TraversalFragment.tactic _ => do
-      if self.allowsNewTerm then
+      if self.allowsNewTactic then
         let newResult ← self.result.insertFragment fragment
         return { self with allowsNewTactic := false, result := newResult }
       else 

@@ -7,8 +7,6 @@ import LeanInk.CLI
 import LeanInk.Analysis.Analysis
 
 import Lean.Util.Path
-import Lean.Data.Json
-import Lean.Data.Json.Printer
 
 namespace LeanInk.Analysis
 
@@ -34,29 +32,15 @@ where
     | none => none
     | some string => some (FilePath.mk string)
 
--- OUTPUT
-open IO.FS
-def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : AnalysisM Unit := do
-  let dirEntry : DirEntry := { 
-    root := folderPath,
-    fileName := fileName ++ ".leanInk"
-  }
-  let path ← dirEntry.path
-  IO.FS.writeFile path content
-  logInfo s!"Results written to file: {path}!"
-
-def generateOutput (fragments : Array Annotation.Alectryon.Fragment) : String := s!"{toJson fragments}"
-
 def runAnalysis : AnalysisM UInt32 := do
   let config ← read
   logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
   let result ← analyzeInput config
   logInfo "Annotating..."
-  let outputFragments ← Annotation.annotateFile result
+  let annotation ← Annotation.annotateFile result
   logInfo "Outputting..."
-  createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)
-  return 0
+  return ← Annotation.Alectryon.genOutput annotation
 
 -- EXECUTION
 def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do

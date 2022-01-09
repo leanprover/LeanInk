@@ -8,8 +8,6 @@ structure A where
 structure B where
   pair : A × A
 
-set_option trace.Elab.info true
-
 def f (x : Nat) : Nat × Nat :=
   let y := ⟨x, x⟩
   id y

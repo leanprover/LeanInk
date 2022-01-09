@@ -6,8 +6,6 @@
 Prose. *Emphasis*; **strong emphasis**; ``code``; `coq code`; `link <url>`__.
 |-/
 
-set_option trace.Elab.info true
-
 #check Bool
 
 #print "Hello World"
