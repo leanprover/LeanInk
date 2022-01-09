@@ -108,4 +108,4 @@ def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt
       return 0
     else
       let (resArgs, unresArgs) := resolveArgumentList command.arguments args
-      return (← command.run resArgs unresArgs) -- TODO: Resolve arguments
+      return (← command.run resArgs unresArgs)
