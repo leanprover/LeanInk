@@ -43,20 +43,18 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   }
   let path ← dirEntry.path
   IO.FS.writeFile path content
-  Logger.logInfo s!"Results written to file: {path}!"
+  logInfo s!"Results written to file: {path}!"
 
 def generateOutput (fragments : Array Annotation.Alectryon.Fragment) : String := s!"{toJson fragments}"
 
 def runAnalysis : AnalysisM UInt32 := do
   let config ← read
-  Logger.logInfo s!"Starting process with lean file: {config.inputFileName}"
-  Logger.logInfo "Analyzing..."
+  logInfo s!"Starting process with lean file: {config.inputFileName}"
+  logInfo "Analyzing..."
   let result ← analyzeInput config
-
-  Logger.logInfo "Annotating..."
+  logInfo "Annotating..."
   let outputFragments ← Annotation.annotateFile result
-
-  Logger.logInfo "Outputting..."
+  logInfo "Outputting..."
   createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)
   return 0
 

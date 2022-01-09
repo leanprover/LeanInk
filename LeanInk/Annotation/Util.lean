@@ -84,25 +84,25 @@ def matchCompounds [Positional a] [ToString a] (l : List (Compound a)) : List (F
     | none => do
       if e.isHead then
         let newCompound : Compound a := { headPos := e.position, fragments := [e.enumerateFragment] }
-        Logger.logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
+        logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
         return (← matchCompounds [newCompound] es)
       else
-        Logger.logInfo s!"FAILURE: Unexpected tail!"
+        logInfo s!"FAILURE: Unexpected tail!"
         return []
     | some c => do
       if e.isHead then
         if c.headPos == e.position then
           let updatedCompound := { c with fragments := c.fragments.append [e.enumerateFragment] }
-          Logger.logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH HEAD {e.idx} -> {updatedCompound}"
+          logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH HEAD {e.idx} -> {updatedCompound}"
           return (← matchCompounds (l.dropLast.append [updatedCompound]) es)
         else
           let newCompound := { c with headPos := e.position, fragments := c.fragments.append [e.enumerateFragment] }
-          Logger.logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH HEAD {e.idx} -> {newCompound}"
+          logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH HEAD {e.idx} -> {newCompound}"
           return (← matchCompounds (l.append [newCompound]) es)
       else
         if c.headPos == e.position then
           let updatedCompound := { c with fragments := c.fragments.filter (λ x => x.1 != e.idx)}
-          Logger.logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
+          logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
           return (← matchCompounds (l.dropLast.append [updatedCompound]) es)
         else 
           let newFragments := c.fragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
@@ -111,5 +111,5 @@ def matchCompounds [Positional a] [ToString a] (l : List (Compound a)) : List (F
             insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
           -/
           let newCompound : Compound a := { headPos := e.position, fragments := newFragments }
-          Logger.logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
+          logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
           return (← matchCompounds (l.append [newCompound]) es)

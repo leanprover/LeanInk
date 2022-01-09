@@ -27,32 +27,32 @@ structure Annotation where
 partial def generateTokens (contents: String) (head: String.Pos) (offset: String.Pos) (aux: List Alectryon.Token) : List (Compound Token) -> AnalysisM (List Alectryon.Token)
   | [] => do
     let text := contents.extract (head - offset) contents.utf8ByteSize
-    Logger.logInfo s!"generateTokens last >> '{text}' | {head - offset} - {contents.utf8ByteSize}"
+    logInfo s!"generateTokens last >> '{text}' | {head - offset} - {contents.utf8ByteSize}"
     if text.isEmpty then return aux
     let lastToken : Alectryon.Token := { raw := text }
     return aux.append [lastToken]
   | tokens::ts => do
     match tokens.tailPos with
     | none => generateTokens contents head offset aux ts
-    | some tokenTail => do
+    | some tail => do
       let head := head - offset
       let tokenHead := tokens.headPos - offset
-      let tokenTail := tokenTail - offset
+      let tokenTail := tail - offset
       if head >= tokenTail then
         return ← generateTokens contents (head + offset) offset aux ts
       if head >= tokenHead then
         let text := contents.extract head tokenTail
-        Logger.logInfo s!"generateTokens token - tail >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
+        logInfo s!"generateTokens token - tail >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
         if text.isEmpty then 
-          return ← generateTokens contents tokenTail offset aux ts
+          return ← generateTokens contents tail offset aux ts
         else
           let aToken : Alectryon.Token := { raw := text, typeinfo := (← Token.generateTypeInfo tokens text) }
-          return ← generateTokens contents tokenTail offset (aux.append [aToken]) ts
+          return ← generateTokens contents tail offset (aux.append [aToken]) ts
       else
         let text := contents.extract head tokenHead
-        Logger.logInfo s!"generateTokens token - nextHead >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
+        logInfo s!"generateTokens token - nextHead >> '{text}' | {head} - {tokenHead}<>{tokenTail}"
         if text.isEmpty then 
-          return ← generateTokens contents tokenTail offset aux (tokens::ts)
+          return ← generateTokens contents tail offset aux (tokens::ts)
         else
           let aToken : Alectryon.Token := { raw := text }
           return ← generateTokens contents tokens.headPos offset (aux.append [aToken]) (tokens::ts)
@@ -119,8 +119,8 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
     return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
 def annotateFile (analysis : AnalysisResult) : AnalysisM (List Alectryon.Fragment) := do
-  Logger.logInfo f!"Analysis-Input: {analysis.sentenceFragments}"
-  Logger.logInfo f!"Tokens: {analysis.tokens}"
+  logInfo f!"Analysis-Input: {analysis.sentenceFragments}"
+  logInfo f!"Tokens: {analysis.tokens}"
   -- We generate the compounds and provide an initial compound beginning at the source root index (0) with no fragments.
   let compounds ← matchCompounds [{ headPos := 0, fragments := [] }] (toFragmentIntervals analysis.sentenceFragments)
   let tokens ← matchCompounds [{ headPos := 0, fragments := [] }] (toFragmentIntervals analysis.tokens)

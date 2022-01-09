@@ -94,9 +94,9 @@ def create (traversal: TraversalResult) (messages: List Message) (fileMap: FileM
   let messages := messages.map (λ m => AnalysisFragment.message (MessageFragment.mkFragment fileMap m))
   let filteredMessages := messages.filter (λ f => f.headPos < f.tailPos)
   let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) filteredMessages
-  Logger.logInfo f!"MESSAGES:\n {sortedMessages}"
+  logInfo f!"MESSAGES:\n {sortedMessages}"
   let sentenceFragments := List.mergeSortedLists (λ x y => x.headPos < y.headPos) tactics sortedMessages
-  Logger.logInfo f!"RESULT:\n {sentenceFragments}"
+  logInfo f!"RESULT:\n {sentenceFragments}"
   if (← read).experimentalTokens then
     let terms := (removeTermDuplicatesFromSorted traversal.terms).map (λ f => Token.term f)
     Logger.logInfo f!"Terms:n {terms}"
@@ -116,8 +116,8 @@ def analyzeInput : AnalysisM AnalysisResult := do
   initializeSearchPaths header config
   let options := Options.empty.setBool `trace.Elab.info true
   let (environment, messages) ← processHeader header options messages context 0
-  Logger.logInfo s!"Header: {environment.header.mainModule}"
-  Logger.logInfo s!"Header: {environment.header.moduleNames}"
+  logInfo s!"Header: {environment.header.mainModule}"
+  logInfo s!"Header: {environment.header.moduleNames}"
   let commandState := configureCommandState environment messages
   let s ← IO.processCommands context state commandState
   let trees := s.commandState.infoState.trees.toList

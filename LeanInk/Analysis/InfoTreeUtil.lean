@@ -80,22 +80,13 @@ namespace TermFragment
     | _, _ => true
 end TermFragment
 
+/- 
+  Fragment
+-/
+
 inductive Fragment where
   | tactic (f : TacticFragment)
   | term (f : TermFragment)
-
-/-
-  Traversal Result
--/
-structure TraversalResult where
-  tactics : List TacticFragment
-  terms : List TermFragment
-  deriving Inhabited
-
-namespace TraversalResult
-  def empty : TraversalResult := {  tactics := [], terms := [] }
-  def isEmpty (x : TraversalResult) : Bool := x.tactics.isEmpty ∧ x.terms.isEmpty
-end TraversalResult
 
 /-
   InfoTree traversal
@@ -115,6 +106,19 @@ def Info.toFragment (info : Info) (ctx : ContextInfo) : Option Fragment :=
     else
       Fragment.term fragment
   | _ => none
+
+/-
+  Traversal Result
+-/
+structure TraversalResult where
+  tactics : List TacticFragment
+  terms : List TermFragment
+  deriving Inhabited
+
+namespace TraversalResult
+  def empty : TraversalResult := {  tactics := [], terms := [] }
+  def isEmpty (x : TraversalResult) : Bool := x.tactics.isEmpty ∧ x.terms.isEmpty
+end TraversalResult
 
 def mergeSortFragments (x y : TraversalResult) : TraversalResult := { 
   tactics := List.mergeSortedLists (λ x y => x.headPos < y.headPos) x.tactics y.tactics
