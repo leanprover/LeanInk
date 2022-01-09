@@ -63,7 +63,7 @@ def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
   if not (_validateInputFile file) then do
     Logger.logError s!"Provided file \"{file}\" is not lean file."
   else
-    IO.println s!"Starting Analyisis for: \"{file}\""
+    IO.println s!"Starting Analysis for: \"{file}\""
     let config ← _buildConfiguration args file
     return ← (runAnalysis.run config)
 
