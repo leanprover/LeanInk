@@ -1,4 +1,4 @@
-namespace LeanInk.Commands.Analyze
+namespace LeanInk
 
 namespace List
 

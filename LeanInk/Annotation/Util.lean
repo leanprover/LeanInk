@@ -1,11 +1,12 @@
-import LeanInk.Commands.Analyze.Configuration
-import LeanInk.Commands.Analyze.InfoTreeUtil
-import LeanInk.Commands.Analyze.Analysis
-import LeanInk.Commands.Analyze.Logger
+import LeanInk.Configuration
+import LeanInk.Logger
 
-namespace LeanInk.Commands.Analyze
+import LeanInk.Analysis.Analysis
+import LeanInk.Analysis.InfoTreeUtil
 
-open Output
+namespace LeanInk.Annotation
+
+open LeanInk.Analysis
 
 universe u
 

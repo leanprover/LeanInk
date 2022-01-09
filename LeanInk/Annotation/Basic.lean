@@ -1,21 +1,21 @@
-import LeanInk.Commands.Analyze.Configuration
-import LeanInk.Commands.Analyze.InfoTreeUtil
-import LeanInk.Commands.Analyze.Analysis
-import LeanInk.Commands.Analyze.ListUtil
-import LeanInk.Commands.Analyze.Logger
-import LeanInk.Commands.Analyze.AlectryonUtil
-import LeanInk.Commands.Analyze.Util
+import LeanInk.Configuration
+import LeanInk.ListUtil
+import LeanInk.Logger
+import LeanInk.Annotation.Util
 
-import LeanInk.Output.Alectryon
+import LeanInk.Analysis.InfoTreeUtil
+import LeanInk.Analysis.Analysis
+
+import LeanInk.Annotation.Alectryon
 
 import Lean.MetavarContext
 import Lean.Elab.InfoTree
 
-namespace LeanInk.Commands.Analyze
+namespace LeanInk.Annotation
 
-open Output
 open Lean
 open Lean.Elab
+open LeanInk.Analysis
 
 /-
   Annotation

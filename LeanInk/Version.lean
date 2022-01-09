@@ -1,4 +1,4 @@
-namespace LeanInk.Commands.Version
+namespace LeanInk.Version
 
 def leanVersion : String :=
   let versionString := s!"{Lean.version.major}.{Lean.version.minor}.{Lean.version.patch}"

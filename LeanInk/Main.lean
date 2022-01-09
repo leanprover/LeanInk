@@ -1,5 +1,6 @@
 import LeanInk.CLI
-import LeanInk.Commands
+import LeanInk.Analysis
+import LeanInk.Version
 
 open LeanInk
 open LeanInk.CLI
@@ -30,14 +31,14 @@ def analyzeCommand : Command := {
       help := "Enables output of experimental tokens in Alectryon with additonal type information"
     }
   ]
-  run := Commands.Analyze.exec
+  run := Analysis.exec
 }
 
 def leanVersionCommand : Command := {
   identifiers := ["leanVersion", "lV"],
   help := "Returns the lean version supported by this leanInk instance.",
   arguments := [],
-  run := λ _ _ => Commands.Version.printLeanVersion
+  run := λ _ _ => Version.printLeanVersion
 }
 
 def main : List String -> IO UInt32 := runCLI app [analyzeCommand, leanVersionCommand]

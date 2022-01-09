@@ -1,16 +1,16 @@
-import LeanInk.Commands.Analyze.Configuration
-import LeanInk.Commands.Analyze.FileHelper
-import LeanInk.Commands.Analyze.Analysis
-import LeanInk.Commands.Analyze.Annotation
-import LeanInk.Commands.Analyze.Logger
-
+import LeanInk.Configuration
+import LeanInk.FileHelper
+import LeanInk.Annotation
+import LeanInk.Logger
 import LeanInk.CLI
+
+import LeanInk.Analysis.Analysis
 
 import Lean.Util.Path
 import Lean.Data.Json
 import Lean.Data.Json.Printer
 
-namespace LeanInk.Commands.Analyze
+namespace LeanInk.Analysis
 
 open LeanInk.CLI
 open Lean
@@ -45,7 +45,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   IO.FS.writeFile path content
   Logger.logInfo s!"Results written to file: {path}!"
 
-def generateOutput (fragments : Array Output.Alectryon.Fragment) : String := s!"{toJson fragments}"
+def generateOutput (fragments : Array Annotation.Alectryon.Fragment) : String := s!"{toJson fragments}"
 
 def runAnalysis : AnalysisM UInt32 := do
   let config ← read
@@ -54,7 +54,7 @@ def runAnalysis : AnalysisM UInt32 := do
   let result ← analyzeInput config
 
   Logger.logInfo "Annotating..."
-  let outputFragments ← annotateFile result
+  let outputFragments ← Annotation.annotateFile result
 
   Logger.logInfo "Outputting..."
   createOutputFile (← IO.currentDir) config.inputFileName (generateOutput outputFragments.toArray)

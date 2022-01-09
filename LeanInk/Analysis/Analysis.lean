@@ -1,8 +1,9 @@
-import LeanInk.Commands.Analyze.Configuration
-import LeanInk.Commands.Analyze.InfoTreeUtil
-import LeanInk.Commands.Analyze.ListUtil
-import LeanInk.Commands.Analyze.LeanContext
-import LeanInk.Commands.Analyze.Logger
+import LeanInk.Analysis.InfoTreeUtil
+import LeanInk.Analysis.LeanContext
+
+import LeanInk.Configuration
+import LeanInk.ListUtil
+import LeanInk.Logger
 
 import Lean.Elab.Frontend
 import Lean.Elab.Import
@@ -11,7 +12,7 @@ import Lean.Parser
 
 import Lean.Util.Trace
 
-namespace LeanInk.Commands.Analyze
+namespace LeanInk.Analysis
 
 open Lean
 open Lean.Elab

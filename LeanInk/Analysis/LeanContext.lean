@@ -3,14 +3,13 @@ import Lean.Parser.Module
 import Lean.Elab
 import Lean.Util.Paths
 
-import LeanInk.Commands.Analyze.Logger
-import LeanInk.Commands.Analyze.Configuration
+import LeanInk.Logger
+import LeanInk.Configuration
 
-namespace LeanInk.Commands.Analyze
+namespace LeanInk.Analysis
 
 open System
 open Lean
-open LeanInk.CLI
 
 -- LEAN
 def initializeLeanContext : IO Unit := do
@@ -31,13 +30,13 @@ def getLakePath : IO String := do
 open IO
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
-    Logger.logInfo s!"lakefile does not exist: {lakeFile}"
+    logInfo s!"lakefile does not exist: {lakeFile}"
   else if lakeFile.fileName != some "lakefile.lean" then
     match lakeFile.fileName with
-    | none => Logger.logInfo s!"lakefile is not a valid file!"
-    | some fileName => Logger.logInfo s!"lakefile [{fileName}] not called: lakefile.lean"
+    | none => logInfo s!"lakefile is not a valid file!"
+    | some fileName => logInfo s!"lakefile [{fileName}] not called: lakefile.lean"
   else
-    Logger.logInfo s!"Loading Lake Context with lakefile ({lakeFile})..."
+    logInfo s!"Loading Lake Context with lakefile ({lakeFile})..."
     let imports := Lean.Elab.headerToImports header
     let arguments := #[lakePrintPathsCmd] ++ imports.map (toString ·.module)
     let lakeProcess ← Process.spawn {
@@ -52,17 +51,17 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
     | 0 => do
       let stdout := stdout.split (· == '\n') |>.getLast!
       match Json.parse stdout with
-      | Except.error _ => Logger.logInfo s!"Failed to parse lake output: {stdout}"
+      | Except.error _ => logInfo s!"Failed to parse lake output: {stdout}"
       | Except.ok val => match fromJson? val with
-        | Except.error _ => Logger.logInfo s!"Failed to decode lake output: {stdout}"
+        | Except.error _ => logInfo s!"Failed to decode lake output: {stdout}"
         | Except.ok paths => do
           let paths : LeanPaths := paths 
           initializeLeanContext
           initSearchPath (← findSysroot?) paths.oleanPath
-          Logger.logInfo s!"{paths.oleanPath}"
-          Logger.logInfo s!"Successfully loaded lake search paths"
-    | 2 => Logger.logInfo s!"No search paths required!"
-    | _ => Logger.logInfo s!"Using lake failed! Make sure that lake is installed!"
+          logInfo s!"{paths.oleanPath}"
+          logInfo s!"Successfully loaded lake search paths"
+    | 2 => logInfo s!"No search paths required!"
+    | _ => logInfo s!"Using lake failed! Make sure that lake is installed!"
 
 def configureLake : AnalysisM Unit := do
   let lakeProcess ← Process.spawn {
@@ -74,7 +73,7 @@ def configureLake : AnalysisM Unit := do
     }
     let stdout := String.trim (← lakeProcess.stdout.readToEnd)
     match (← lakeProcess.wait) with
-    | _ => Logger.logInfo s!"Lake configured dependencies!"
+    | _ => logInfo s!"Lake configured dependencies!"
 
 def initializeSearchPaths (header : Syntax) (config : Configuration) : AnalysisM Unit := do
   match config.lakeFile with

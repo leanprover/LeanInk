@@ -35,15 +35,14 @@ def containsFlag (args : List ResolvedArgument) (identifier : String) : Bool :=
   | _ => false
 
 -- METHODS
-/-
-Resolves a command list given the available commands.
+open Result in
+/-- Resolves a command list given the available commands.
 
 Errors:
 - throws CLIError.noCommandsProvided if available commands is empty
 - throws CLIError.noArgumentsProvided if the argument list is empty
 - throws CLIError.unknownCommand if the first argument cannot be resolved to any of the available commands.
 -/
-open Result in
 private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (Command × List String) :=
   if available.isEmpty then 
     failure CLIError.noCommandsProvided -- If no root commands are available we throw an error
@@ -54,7 +53,6 @@ private def _resolveCommandList (available: List Command) (args: List String) : 
       match List.find? (λ x => x.identifiers.elem a) available with
       | none => failure (CLIError.unknownCommand a)
       | some c => success (c, as)
-
 
 private partial def resolveArgumentList (available: List Argument) (args: List String) : List ResolvedArgument × List String :=
   if available.isEmpty then
