@@ -24,7 +24,8 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     outputType := OutputType.alectryonFragments
     lakeFile := getLakeFile? arguments
     verbose := containsFlag arguments "--verbose"
-    experimentalTokens := containsFlag arguments "--experimental-type-tokens"
+    experimentalTypeInfo := containsFlag arguments "--x-enable-type-info"
+    experimentalDocString := containsFlag arguments "--x-enable-docStrings"
   }
 where
   getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=

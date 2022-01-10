@@ -198,8 +198,9 @@ def genGoals (tactic : Analysis.Tactic) : List Goal := tactic.goals.map (λ g =>
 def genMessages (message : Analysis.Message) : Message := { contents := message.msg }
 
 def genFragment (annotation : Annotation) (contents : String) : AnalysisM Alectryon.Fragment := do
+  let config ← read
   if annotation.sentence.fragments.isEmpty then
-    if (← read).experimentalTokens then
+    if config.experimentalTypeInfo ∨ config.experimentalDocString then
       let headPos := annotation.sentence.headPos
       let tokens ← genTokens contents headPos headPos [] annotation.tokens
       return Fragment.text { contents := Contents.experimentalTokens tokens.toArray }
@@ -208,7 +209,7 @@ def genFragment (annotation : Annotation) (contents : String) : AnalysisM Alectr
   else
     let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
     let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
-    if (← read).experimentalTokens then
+    if config.experimentalTypeInfo ∨ config.experimentalDocString then
       let headPos := annotation.sentence.headPos
       let tokens ← genTokens contents headPos headPos  [] annotation.tokens
       return Fragment.sentence { 

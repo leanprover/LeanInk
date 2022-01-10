@@ -17,7 +17,8 @@ structure Configuration where
   outputType : OutputType
   lakeFile : Option FilePath
   verbose: Bool
-  experimentalTokens: Bool
+  experimentalTypeInfo: Bool
+  experimentalDocString: Bool
 
 namespace Configuration
 

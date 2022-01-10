@@ -251,10 +251,13 @@ namespace TraversalFragment
 
   def genTokens (self : TraversalFragment) : AnalysisM (List Token) := do
     let mut tokens : List Token := []
-    if let some typeToken ← self.genTypeTokenInfo? then
-      tokens := tokens.append [Token.type typeToken]
-    if let some docStringToken ← self.genDocStringTokenInfo? then
-      tokens := tokens.append [Token.docString docStringToken]
+    let config ← read
+    if config.experimentalTypeInfo then
+      if let some typeToken ← self.genTypeTokenInfo? then
+        tokens := tokens.append [Token.type typeToken]
+    if config.experimentalDocString then
+      if let some docStringToken ← self.genDocStringTokenInfo? then
+        tokens := tokens.append [Token.docString docStringToken]
     return tokens
 
   /- Sentence Generation -/

@@ -27,8 +27,12 @@ def analyzeCommand : Command := {
       help := "Enables verbose output."
     },
     flag {
-      identifiers := ["--experimental-type-tokens"]
-      help := "Enables output of experimental tokens in Alectryon with additonal type information"
+      identifiers := ["--x-enable-type-info"]
+      help := "Enables output of experimental type info support for Alectryon. Alectryon will show a hover popup with type information for certain tokens."
+    },
+    flag {
+      identifiers := ["--x-enable-docStrings"]
+      help := "Enables output of experimental docStrings support for Alectryon. Alectryon will show a hover popup with the docString for tactics and terms if available."
     }
   ]
   run := Analysis.exec
