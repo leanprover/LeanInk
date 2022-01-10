@@ -16,9 +16,16 @@ class Positional (α : Type u) where
   headPos : α -> String.Pos
   tailPos : α -> String.Pos
 
-namespace Positonal
-  def length {α : Type u } [Positional α] (self : α) : Nat := (Positional.tailPos self) - (Positional.headPos self)
-end Positonal
+namespace Positional
+  def length { α : Type u } [Positional α] (self : α) : Nat := (Positional.tailPos self) - (Positional.headPos self)
+
+  def smallest? { α : Type u } [Positional α] (list : List α) : Option α := List.foldl (λ a y => 
+    let y : α := y -- We need to help the compiler a bit here otherwise it thinks `y : Option α`
+    match a with 
+    | none => y
+    | some x => if (Positional.length x) < (Positional.length y) then x else y
+  ) none list
+end Positional
 
 /- Fragment -/
 /--
@@ -53,6 +60,10 @@ structure TokenInfo extends Fragment where
 structure TypeTokenInfo extends TokenInfo where
   type: String
   deriving Inhabited
+
+instance : Positional TypeTokenInfo where
+  headPos := (λ x => x.toFragment.headPos)
+  tailPos := (λ x => x.toFragment.tailPos)
   
 /--
   The `DocStringTokenInfo` describes the metadata of an available docstring of a source text token.
@@ -61,6 +72,10 @@ structure TypeTokenInfo extends TokenInfo where
 structure DocStringTokenInfo extends TokenInfo where
   docString: String
   deriving Inhabited
+
+instance : Positional DocStringTokenInfo where
+  headPos := (λ x => x.toFragment.headPos)
+  tailPos := (λ x => x.toFragment.tailPos)
 
 /-- 
   A `Token` describes the metadata of a specific range of source text.
@@ -83,6 +98,14 @@ namespace Token
   def toFragment : Token -> Fragment
   | type info => info.toFragment
   | docString info => info.toFragment
+
+  def toTypeTokenInfo? : Token -> Option TypeTokenInfo
+  | type info => info
+  | _ => none
+
+  def toDocStringTokenInfo? : Token -> Option DocStringTokenInfo
+  | docString info => info
+  | _ => none
 end Token
 
 instance : Positional Token where
@@ -413,7 +436,11 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       let fragment := TraversalFragment.create ctx info
       match fragment with
-      | some fragment => sortedChildrenLeafs.insertFragment fragment
+      | some fragment => 
+        if fragment.headPos >= fragment.tailPos then
+          sortedChildrenLeafs
+        else
+          sortedChildrenLeafs.insertFragment fragment
       | none => sortedChildrenLeafs
   | _ => aux
 

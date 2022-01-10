@@ -16,8 +16,11 @@ structure Compound (β : Type u) where
   deriving Inhabited
 
 namespace Compound
-  def getFragments (self : Compound b) : List (b) := self.fragments.map (λ f => f.2)
-  def tailPos { x : Type u } [Positional x] (self : Compound x) : Option String.Pos := (self.getFragments.map (λ f => Positional.tailPos f)).minimum?
+  def getFragments (self : Compound b) : List b := self.fragments.map (λ f => f.2)
+
+  def tailPos { x : Type u } [Positional x] (self : Compound x) : Option String.Pos := (self.getFragments.map (λ f => Positional.tailPos f)).maximum?
+
+  def empty { x : Type u } (headPos : String.Pos) : Compound x := { headPos := headPos, fragments := [] }
 end Compound
 
 instance {a : Type u} [ToString a] : ToString (Compound a) where
