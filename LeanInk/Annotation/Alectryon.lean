@@ -104,25 +104,21 @@ instance : ToJson Fragment where
   Token Generation
 -/
 
-def genTypeInfo (name : String) (info : Analysis.TypeTokenInfo) : TypeInfo :=  { name := name, type := info.type }
-
-def genTypeInfo? (getContents : String.Pos -> String.Pos -> String) (tokens : List Analysis.TypeTokenInfo) : AnalysisM (Option TypeInfo) := 
-  match Positional.smallest? tokens with
-  | some token => do 
+def genTypeInfo? (getContents : String.Pos -> String.Pos -> String) (token : Analysis.TypeTokenInfo) : AnalysisM (Option TypeInfo) := do
+  match token.type with
+  | some type => do
     let headPos := Positional.headPos token
     let tailPos := Positional.tailPos token
-    return genTypeInfo (getContents headPos tailPos) token
+    return some { name := (getContents headPos tailPos), type := type }
   | none => none
 
-def genDocString? (tokens : List Analysis.DocStringTokenInfo) : AnalysisM (Option String) := 
-  match Positional.smallest? tokens with
-  | some token => token.docString
-  | none => none
-
-def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token :=
-  let typeInfo := genTypeInfo? getContents (token.getFragments.filterMap (λ x => x.toTypeTokenInfo?))
-  let docString := genDocString? (token.getFragments.filterMap (λ x => x.toDocStringTokenInfo?))
-  return { raw := contents, typeinfo := ← typeInfo, docstring := ← docString } 
+def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token := do
+  let typeTokens := token.getFragments.filterMap (λ x => x.toTypeTokenInfo?)
+  match (Positional.smallest? typeTokens) with
+  | none => do 
+    return { raw := contents }
+  | some token => do 
+    return { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString }
 
 def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : String := 
   if head >= tail then

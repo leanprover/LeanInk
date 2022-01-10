@@ -44,36 +44,24 @@ instance : Positional Fragment where
 
 /- Token -/
 /--
-  `TokenInfo` is the base structure of all `Token`.
-  Inherently it describe the semantic info of the token, which can and should be used for semantic syntax
-  highlighting.
+  `SemanticTokenInfo` describe the semantic info of the token, which can and should be used for semantic syntax highlighting.
 -/
-structure TokenInfo extends Fragment where
+structure SemanticTokenInfo extends Fragment where
   semanticType: Option String := none
   deriving Inhabited
 
 /--
   The `TypeTokenInfo` describes the metadata of a source text token that conforms
-  to a specific type within our type system.
-  E.g.: A variable token `p` might conform to type `Nat`
+  to a specific type within our type system. It may also describe just a docstring associated with the token.
+  We combine both these informatio together, as the docstring is naturally attached to the type.
+  E.g.: A variable token `p` might conform to type `Nat` and has the docstring for `Nat`
 -/
-structure TypeTokenInfo extends TokenInfo where
-  type: String
+structure TypeTokenInfo extends Fragment where
+  type: Option String
+  docString: Option String
   deriving Inhabited
 
 instance : Positional TypeTokenInfo where
-  headPos := (λ x => x.toFragment.headPos)
-  tailPos := (λ x => x.toFragment.tailPos)
-  
-/--
-  The `DocStringTokenInfo` describes the metadata of an available docstring of a source text token.
-  In this case a source text token may be a function or structure with a docstring.
--/
-structure DocStringTokenInfo extends TokenInfo where
-  docString: String
-  deriving Inhabited
-
-instance : Positional DocStringTokenInfo where
   headPos := (λ x => x.toFragment.headPos)
   tailPos := (λ x => x.toFragment.tailPos)
 
@@ -86,25 +74,25 @@ instance : Positional DocStringTokenInfo where
 -/
 inductive Token where
 | type (info: TypeTokenInfo)
-| docString (info: DocStringTokenInfo)
+| semantic (info: SemanticTokenInfo)
 deriving Inhabited
 
-instance : ToString Token where -- TODO: Improve this
+instance : ToString Token where
   toString : Token -> String
   | Token.type _ => "Type"
-  | Token.docString _ => "DocString"
+  | Token.semantic _ => "Semantic"
 
 namespace Token
   def toFragment : Token -> Fragment
   | type info => info.toFragment
-  | docString info => info.toFragment
+  | semantic info => info.toFragment
 
   def toTypeTokenInfo? : Token -> Option TypeTokenInfo
   | type info => info
   | _ => none
 
-  def toDocStringTokenInfo? : Token -> Option DocStringTokenInfo
-  | docString info => info
+  def toSemanticTokenInfo? : Token -> Option SemanticTokenInfo
+  | semantic info => info
   | _ => none
 end Token
 
@@ -239,25 +227,23 @@ namespace TraversalFragment
       let elabInfo := fragment.info
       return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
 
-  def genDocStringTokenInfo? (self : TraversalFragment) : AnalysisM (Option DocStringTokenInfo) := do
-    match ← runMetaM (genDocString?) self with
-    | some string => some { headPos := self.headPos, tailPos := self.tailPos, docString := string }
-    | none => none
-
   def genTypeTokenInfo? (self : TraversalFragment) : AnalysisM (Option TypeTokenInfo) := do
-    match ← runMetaM (inferType?) self with
-    | some string => some { headPos := self.headPos, tailPos := self.tailPos, type := string }
-    | none => none
+    let mut docString : Option String := none
+    let mut type : Option String := none
+    let config ← read
+    if config.experimentalDocString then
+      docString ← runMetaM (genDocString?) self
+    if config.experimentalTypeInfo then
+      type ← runMetaM (inferType?) self
+    if type == none ∧ docString == none then
+      return none
+    else
+      return some { headPos := self.headPos, tailPos := self.tailPos, type := type, docString := docString }
 
   def genTokens (self : TraversalFragment) : AnalysisM (List Token) := do
     let mut tokens : List Token := []
-    let config ← read
-    if config.experimentalTypeInfo then
-      if let some typeToken ← self.genTypeTokenInfo? then
-        tokens := tokens.append [Token.type typeToken]
-    if config.experimentalDocString then
-      if let some docStringToken ← self.genDocStringTokenInfo? then
-        tokens := tokens.append [Token.docString docStringToken]
+    if let some typeToken ← self.genTypeTokenInfo? then
+      tokens := tokens.append [Token.type typeToken]
     return tokens
 
   /- Sentence Generation -/
