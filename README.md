@@ -80,7 +80,12 @@ For more information about Alectryon make sure to take a look at their repositor
 # Development
 
 ## Experimental Features
-`--experimental-type-tokens` flag enables the type hover information for Alectryon. However this feature in Alectryon is still in active development and available here: [AlectryonFork:typeid](https://github.com/insightmind/alectryon/tree/typeid)
+
+### Additional Type Hover Metadata
+The following flags are experimental and used to display additional information about a source text token in Alectryon. However this feature in Alectryon is still in active development and available here: [AlectryonFork:typeid](https://github.com/insightmind/alectryon/tree/typeid):
+
+- `--x-enable-type-info` flag enables extraction of type information
+- `--x-enable-docStrings` flag enables extraction of doc strings
 
 ## Running Tests
 There are some aspects you might want to take note of when attempting to develop a feature or fix a bug in LeanInk.
