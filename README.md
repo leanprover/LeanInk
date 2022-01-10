@@ -52,6 +52,16 @@ LeanInk will then fetch any dependencies if necessary.
 
 ---
 
+You can also analyze multiple files sequentially (concurrent analysis should be possible but is currently out of scope, feel free to contribute!):
+
+```bash
+leanInk analyze Input1.lean Input2.lean
+```
+
+This will create `Input2.leanink` and `Input2.leanink` respectively. However if you want to provide a lake should be valid for both input files, as you can only provide a single lake file.
+
+---
+
 To get the supported Lean 4 version of your instance of LeanInk you can do the following:
 
 ```bash
@@ -68,6 +78,9 @@ To embed Lean 4 in code blocks you have to use the `lean4::` directive for reStr
 For more information about Alectryon make sure to take a look at their repository.
 
 # Development
+
+## Experimental Features
+`--experimental-type-tokens` flag enables the type hover information for Alectryon. However this feature in Alectryon is still in active development and available here: [AlectryonFork:typeid](https://github.com/insightmind/alectryon/tree/typeid)
 
 ## Running Tests
 There are some aspects you might want to take note of when attempting to develop a feature or fix a bug in LeanInk.
