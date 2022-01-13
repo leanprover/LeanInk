@@ -58,7 +58,7 @@ You can also analyze multiple files sequentially (concurrent analysis should be 
 leanInk analyze Input1.lean Input2.lean
 ```
 
-This will create `Input2.leanink` and `Input2.leanink` respectively. However if you want to provide a lake should be valid for both input files, as you can only provide a single lake file.
+This will create `Input1.leanink` and `Input2.leanink` respectively. However if you want to provide a lake should be valid for both input files, as you can only provide a single lake file.
 
 ---
 
