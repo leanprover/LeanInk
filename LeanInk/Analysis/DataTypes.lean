@@ -288,7 +288,7 @@ namespace TraversalFragment
             let newHypotheses ← pushPending [] prevType? varNames
             let type ← instantiateMVars localDecl.type
             let typeFmt ← ppExpr type
-            let newHypotheses := newHypotheses.map (λ h => { h with type := h.type ++ s!" : {typeFmt}"})
+            let newHypotheses := newHypotheses.map (λ h => { h with type := h.type})
             pure ([], none, hypotheses.append newHypotheses)
           else
             match localDecl with
