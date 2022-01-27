@@ -21,10 +21,7 @@
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat : n✝ = n✝",
-      "names": ["n✝"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Nat.succ n✝ = Nat.succ n✝",
     "_type": "goal"}],
   "contents": "induction n",
@@ -91,10 +88,7 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat : a ≠ b",
-      "names": ["a", "b"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
     "conclusion": "¬a = b",
     "_type": "goal"}],
   "contents": "intros",
@@ -104,27 +98,18 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat : a ≠ b",
-      "names": ["a", "b"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
     "conclusion": "¬a = b",
     "_type": "goal"},
    {"name": "",
     "hypotheses":
-    [{"type": "Nat : a ≠ b",
-      "names": ["a", "b"],
-      "body": "",
-      "_type": "hypothesis"},
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
      {"type": "a = b", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"},
    {"name": "",
     "hypotheses":
-    [{"type": "Nat : a ≠ b",
-      "names": ["a", "b"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
     "conclusion": "¬a = b",
     "_type": "goal"}],
   "contents": "by_contra H",
@@ -136,10 +121,7 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat : ¬¬a = b",
-      "names": ["a", "b"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
     "conclusion": "a = b",
     "_type": "goal"}],
   "contents": "intros",
@@ -149,10 +131,7 @@
   "goals":
   [{"name": "h",
     "hypotheses":
-    [{"type": "Nat : ¬¬a = b",
-      "names": ["a", "b"],
-      "body": "",
-      "_type": "hypothesis"},
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
      {"type": "¬a = b", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -164,10 +143,7 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop : ¬¬p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents": "intros",
@@ -177,10 +153,7 @@
   "goals":
   [{"name": "h",
     "hypotheses":
-    [{"type": "Prop : ¬¬p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"},
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
      {"type": "¬p", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -311,7 +284,7 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -324,7 +297,7 @@
   "goals":
   [{"name": "right.right.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -332,7 +305,7 @@
     "_type": "goal"},
    {"name": "right.right.right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -340,7 +313,7 @@
     "_type": "goal"},
    {"name": "right.right.right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -348,7 +321,7 @@
     "_type": "goal"},
    {"name": "right.left.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -356,7 +329,7 @@
     "_type": "goal"},
    {"name": "right.left.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -364,7 +337,7 @@
     "_type": "goal"},
    {"name": "right.right.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -372,7 +345,7 @@
     "_type": "goal"},
    {"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -380,7 +353,7 @@
     "_type": "goal"},
    {"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -388,7 +361,7 @@
     "_type": "goal"},
    {"name": "right.right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -396,7 +369,7 @@
     "_type": "goal"},
    {"name": "right.left.right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -404,7 +377,7 @@
     "_type": "goal"},
    {"name": "right.left.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -412,7 +385,7 @@
     "_type": "goal"},
    {"name": "right.left.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -420,7 +393,7 @@
     "_type": "goal"},
    {"name": "right.left.right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -428,7 +401,7 @@
     "_type": "goal"},
    {"name": "right.left.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -436,7 +409,7 @@
     "_type": "goal"},
    {"name": "left.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -444,7 +417,7 @@
     "_type": "goal"},
    {"name": "right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -452,7 +425,7 @@
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -460,7 +433,7 @@
     "_type": "goal"},
    {"name": "left.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -468,7 +441,7 @@
     "_type": "goal"},
    {"name": "left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -476,7 +449,7 @@
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -484,7 +457,7 @@
     "_type": "goal"},
    {"name": "left.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -492,7 +465,7 @@
     "_type": "goal"},
    {"name": "left.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
       "_type": "hypothesis"}],
@@ -507,10 +480,7 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ p ∧ q ∧ p",
     "_type": "goal"}],
   "contents": "intros",
@@ -520,18 +490,12 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents": "constructor",
@@ -541,18 +505,12 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents": "assumption",
@@ -562,34 +520,22 @@
   "goals":
   [{"name": "left.left",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "left.right",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.left",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents": "constructor",
@@ -599,10 +545,7 @@
   "goals":
   [{"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents": "assumption",
@@ -612,18 +555,12 @@
   "goals":
   [{"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.right.right",
     "hypotheses":
-    [{"type": "Prop : p",
-      "names": ["p", "q"],
-      "body": "",
-      "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents": "constructor",
@@ -635,7 +572,7 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -648,7 +585,7 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -656,7 +593,7 @@
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -669,7 +606,7 @@
   "goals":
   [{"name": "right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -682,7 +619,7 @@
   "goals":
   [{"name": "right.left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -690,7 +627,7 @@
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -703,7 +640,7 @@
   "goals":
   [{"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -718,7 +655,7 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -726,7 +663,7 @@
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -739,7 +676,7 @@
   "goals":
   [{"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
@@ -752,7 +689,7 @@
   "goals":
   [{"name": "right.right",
     "hypotheses":
-    [{"type": "Prop : p",
+    [{"type": "Prop",
       "names": ["p", "q", "r"],
       "body": "",
       "_type": "hypothesis"}],
