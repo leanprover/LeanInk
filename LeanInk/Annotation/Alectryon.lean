@@ -6,10 +6,12 @@ import LeanInk.FileHelper
 
 import Lean.Data.Json
 import Lean.Data.Json.FromToJson
+import Lean.Data.Lsp
 
 namespace LeanInk.Annotation.Alectryon
 
 open Lean
+open Lean.Lsp
 open LeanInk.Analysis
 
 structure TypeInfo where
@@ -24,6 +26,7 @@ structure Token where
   typeinfo : Option TypeInfo := Option.none
   link : Option String := Option.none
   docstring : Option String := Option.none
+  semanticType : Option String :=  Option.none
   deriving ToJson
 
 /--
@@ -112,13 +115,25 @@ def genTypeInfo? (getContents : String.Pos -> String.Pos -> String) (token : Ana
     return some { name := (getContents headPos tailPos), type := type }
   | none => pure none
 
+def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String)
+  | none => pure none
+  | some info =>
+    match info.semanticType with
+    | SemanticTokenType.property => pure (some "Name")
+    | SemanticTokenType.keyword => pure (some "Keyword")
+    | SemanticTokenType.variable => pure (some "Name")
+    | default => pure none
+
 def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token := do
   let typeTokens := token.getFragments.filterMap (λ x => x.toTypeTokenInfo?)
+  let semanticTokens := token.getFragments.filterMap (λ x => x.toSemanticTokenInfo?)
+  let semanticToken := Positional.smallest? semanticTokens
+  let semanticTokenType ← genSemanticTokenValue semanticToken
   match (Positional.smallest? typeTokens) with
   | none => do 
-    return { raw := contents }
+    return { raw := contents, semanticType := semanticTokenType }
   | some token => do 
-    return { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString }
+    return { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString, semanticType := semanticTokenType }
 
 def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : String := 
   if head >= tail then

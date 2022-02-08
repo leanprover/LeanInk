@@ -30,7 +30,6 @@ def analyzeInput : AnalysisM AnalysisResult := do
   logInfo s!"Header: {environment.header.moduleNames}"
   let commandState := configureCommandState environment messages
   let s ← IO.processCommands context state commandState
-  let trees := s.commandState.infoState.trees.toList
-  let result ← resolveTacticList trees
+  let result ← resolveTacticList s.commandState.infoState.trees.toList
   let messages := s.commandState.messages.msgs.toList
   return ← result.insertMessages messages context.fileMap 

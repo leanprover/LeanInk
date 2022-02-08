@@ -33,6 +33,10 @@ def analyzeCommand : Command := {
     flag {
       identifiers := ["--x-enable-docStrings"]
       help := "Enables output of experimental docStrings support for Alectryon. Alectryon will show a hover popup with the docString for tactics and terms if available."
+    },
+    flag {
+      identifiers := ["--x-enable-semantic-token"],
+      help := "Enables output of experimental semantic token support for Alectryon. Alectryon uses this information to implement semantic syntax highlighting."
     }
   ]
   run := Analysis.exec

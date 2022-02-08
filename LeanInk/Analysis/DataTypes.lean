@@ -4,10 +4,13 @@ import LeanInk.Configuration
 import Lean.Elab
 import Lean.Data.Lsp
 import Lean.Syntax
+import Lean.Server
 
 namespace LeanInk.Analysis
 
 open Lean
+open Lean.Lsp
+open Lean.Server
 open Lean.Elab
 open Lean.Meta
 
@@ -47,8 +50,12 @@ instance : Positional Fragment where
   `SemanticTokenInfo` describe the semantic info of the token, which can and should be used for semantic syntax highlighting.
 -/
 structure SemanticTokenInfo extends Fragment where
-  semanticType: Option String := none
+  semanticType: Option SemanticTokenType := none
   deriving Inhabited
+
+instance : Positional SemanticTokenInfo where
+  headPos := (λ x => x.toFragment.headPos)
+  tailPos := (λ x => x.toFragment.tailPos)
 
 /--
   The `TypeTokenInfo` describes the metadata of a source text token that conforms
@@ -149,6 +156,57 @@ instance : Positional Sentence where
   tailPos := (λ x => x.toFragment.tailPos)
 
 /- InfoTree -/
+structure SemanticTraversalInfo where
+  stx : Syntax
+  node : Info
+
+namespace SemanticTraversalInfo
+  def highlightIdentifier (globalTailPos : String.Pos) (info : SemanticTraversalInfo) : AnalysisM (List Token) := do
+    match info.stx.getRange?, info.node with
+    | some range, Info.ofTermInfo info => do
+      let stx := info.stx
+      let headPos := (stx.getPos? false).getD 0
+      let tailPos := (stx.getTailPos? false).getD 0
+      if headPos >= tailPos then
+        return []
+      if let Expr.fvar .. := info.expr then
+        return [Token.semantic { semanticType := SemanticTokenType.variable, headPos := headPos, tailPos := tailPos }]
+      else if headPos > globalTailPos then
+        return [Token.semantic { semanticType := SemanticTokenType.property, headPos := headPos, tailPos := tailPos }]
+      else
+        return []
+    | _, _ => pure []
+
+  def highlightKeyword (headPos tailPos : String.Pos) (stx: Syntax) : AnalysisM (List Token) := do
+    if let Syntax.atom info val := stx then
+      if (val.length > 0 && val[0].isAlpha) || (val.length > 1 && val[0] = '#' && val[1].isAlpha) then
+        return [Token.semantic { semanticType := SemanticTokenType.keyword, headPos := headPos, tailPos := tailPos } ]
+    return []
+
+  partial def _resolveSemanticTokens (aux : List Token) (info : SemanticTraversalInfo) : AnalysisM (List Token) := do
+    let stx := info.stx
+    let headPos := (stx.getPos? false).getD 0
+    let tailPos := (stx.getTailPos? false).getD 0
+    if headPos >= tailPos then
+      return []
+    else
+      match stx with
+      | `($e.$id:ident) => do
+        let newToken := Token.semantic { semanticType := SemanticTokenType.property, headPos := headPos, tailPos := tailPos }
+        _resolveSemanticTokens (aux ++ [newToken]) { info with stx := e }
+      | `($id:ident) => highlightIdentifier tailPos { info with stx := id }
+      | _ => do
+        if !(FileWorker.noHighlightKinds.contains stx.getKind) then
+          let token ← highlightKeyword headPos tailPos stx
+          if stx.isOfKind choiceKind then
+            _resolveSemanticTokens (aux ++ token) { info with stx := stx[0] }
+          else
+            let resolvedTokens := (← stx.getArgs.mapM (λ newStx => _resolveSemanticTokens [] { info with stx := newStx })).toList
+            return resolvedTokens.foldl (List.mergeSortedLists (λ x y => Positional.headPos x < Positional.headPos y)) (aux ++ token)
+        else
+          return []
+end SemanticTraversalInfo
+
 structure ContextBasedInfo (β : Type) where
   ctx : ContextInfo
   info : β
@@ -186,15 +244,16 @@ namespace TraversalFragment
     | SourceInfo.original .., SourceInfo.original .. => false
     | _, _ => true
 
-  def create (ctx : ContextInfo) (info : Info) : Option TraversalFragment :=
+  def create (ctx : ContextInfo) (info : Info) : ((Option TraversalFragment) × (Option SemanticTraversalInfo)) :=
     if Info.isExpanded info then
-      none
+      (none, none)
     else
+      let semantic : SemanticTraversalInfo := { node := info, stx := info.stx }
       match info with 
-      | Info.ofTacticInfo info => tactic { info := info, ctx := ctx }
-      | Info.ofTermInfo info => term { info := info, ctx := ctx }
-      | Info.ofFieldInfo info => field { info := info, ctx := ctx }
-      | _ => none
+      | Info.ofTacticInfo info => (tactic { info := info, ctx := ctx }, semantic)
+      | Info.ofTermInfo info => (term { info := info, ctx := ctx }, semantic)
+      | Info.ofFieldInfo info => (field { info := info, ctx := ctx }, semantic)
+      | _ => (none, semantic)
 
   def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) : TraversalFragment -> AnalysisM α
   | term fragment => fragment.ctx.runMetaM fragment.info.lctx (func (term fragment))
@@ -355,12 +414,20 @@ namespace AnalysisResult
     sentences := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.sentences y.sentences
   }
 
+  def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
+
   def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) : AnalysisM AnalysisResult := do
     let newTokens ← fragment.genTokens
     let newSentences ← fragment.genSentences
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
-  def Position.toStringPos (fileMap: FileMap) (pos: Position) : String.Pos :=
+  def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := do
+    if (← read).experimentalSemanticType then
+      pure { self with tokens := self.tokens ++ (← info._resolveSemanticTokens []) }
+    else
+      return self
+
+  def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
     FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
 
   private def genMessage (fileMap : FileMap) (message : Lean.Message) : AnalysisM Message := do
@@ -381,6 +448,7 @@ structure TraversalAux where
   allowsNewTactic : Bool := true
   allowsNewField : Bool := true
   allowsNewTerm : Bool := true
+  allowsNewSemantic : Bool := true
   result : AnalysisResult := AnalysisResult.empty
 
 namespace TraversalAux
@@ -412,6 +480,13 @@ namespace TraversalAux
       else 
         return self
     | _ => pure self
+
+    def insertSemanticInfo (self : TraversalAux) (info : SemanticTraversalInfo) : AnalysisM TraversalAux := do
+      if self.allowsNewSemantic then
+        let newResult ← self.result.insertSemanticInfo info
+        return { self with allowsNewSemantic := false,  result := newResult }
+      else
+        return self
 end TraversalAux
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) : InfoTree -> AnalysisM TraversalAux
@@ -425,12 +500,19 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       let fragment := TraversalFragment.create ctx info
       match fragment with
-      | some fragment => do
+      | (some fragment, some semantic) => do
+        let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
         if fragment.headPos >= fragment.tailPos then
           return sortedChildrenLeafs
         else
           sortedChildrenLeafs.insertFragment fragment
-      | none => pure sortedChildrenLeafs
+      | (some fragment, none) => do
+        if fragment.headPos >= fragment.tailPos then
+          return sortedChildrenLeafs
+        else
+          sortedChildrenLeafs.insertFragment fragment
+      | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
+      | (_, _) => pure sortedChildrenLeafs
   | _ => pure aux
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do

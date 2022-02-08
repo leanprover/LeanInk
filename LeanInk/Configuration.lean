@@ -16,9 +16,10 @@ structure Configuration where
   inputFileContents : String
   outputType : OutputType
   lakeFile : Option FilePath
-  verbose: Bool
-  experimentalTypeInfo: Bool
-  experimentalDocString: Bool
+  verbose : Bool
+  experimentalTypeInfo : Bool
+  experimentalDocString : Bool
+  experimentalSemanticType : Bool
 
 namespace Configuration
 
