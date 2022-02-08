@@ -110,7 +110,7 @@ def genTypeInfo? (getContents : String.Pos -> String.Pos -> String) (token : Ana
     let headPos := Positional.headPos token
     let tailPos := Positional.tailPos token
     return some { name := (getContents headPos tailPos), type := type }
-  | none => none
+  | none => pure none
 
 def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token := do
   let typeTokens := token.getFragments.filterMap (λ x => x.toTypeTokenInfo?)
@@ -134,7 +134,7 @@ partial def genTokens (contents : String) (head : String.Pos) (offset : String.P
   logInfo s!"TEXT-X: {head} - {contents.utf8ByteSize + offset} > {contents}"
   let text := extractContents offset contents head (contents.utf8ByteSize + offset)
   logInfo s!"Text-X1: {text}"
-  l.append [{ raw := text }]
+  return l.append [{ raw := text }]
 | x::[] => do
   logInfo s!"TEXT-A: {head} - {contents.utf8ByteSize + offset} > {x.headPos} {x.tailPos.getD x.headPos} {contents}"
   let extract := extractContents offset contents
@@ -225,7 +225,7 @@ Expects a list of sorted CompoundFragments (sorted by headPos).
 Generates AlectryonFragments for the given CompoundFragments and input file content.
 -/
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Fragment)
-| [] => l
+| [] => pure l
 | x::[] => do
   let fragment ← genFragment x (contents.extract x.sentence.headPos contents.utf8ByteSize)
   return l.append [fragment]

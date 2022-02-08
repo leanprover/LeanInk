@@ -33,4 +33,4 @@ def analyzeInput : AnalysisM AnalysisResult := do
   let trees := s.commandState.infoState.trees.toList
   let result ← resolveTacticList trees
   let messages := s.commandState.messages.msgs.toList
-  return ← result.insertMessages messages context.fileMap
+  return ← result.insertMessages messages context.fileMap 

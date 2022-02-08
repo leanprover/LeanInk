@@ -95,8 +95,10 @@ def runHelp (app: AppInfo)  (available: List Command) (arguments : List String) 
 -- ENTRY
 def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt32 := do
   let commands := helpCommand::versionCommand::commands
-  match (← _resolveCommandList commands args) with -- We automatically add the help and version command internally for command resolution.
-  | Result.failure error => return 1
+  match _resolveCommandList commands args with -- We automatically add the help and version command internally for command resolution.
+  | Result.failure error => do
+    IO.println (generateDefaultHelp app commands)
+    return 1
   | Result.success result => do
     let (command, args) := result
     if command.identifiers == helpCommand.identifiers then

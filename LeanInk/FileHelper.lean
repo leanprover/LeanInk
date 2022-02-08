@@ -21,7 +21,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
     root := folderPath,
     fileName := fileName ++ ".leanInk"
   }
-  let path ← dirEntry.path
+  let path := dirEntry.path
   IO.FS.writeFile path content
   logInfo s!"Results written to file: {path}!"
 

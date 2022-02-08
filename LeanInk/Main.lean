@@ -9,7 +9,7 @@ open LeanInk.CLI.Argument
 def app : AppInfo := {
   name := "LeanInk"
   base := "leanInk"
-  version := { major := 1, minor := 0, patch := 0, suffix := "-pre" }
+  version := { major := 1, minor := 0, patch := 0 }
   description := "LeanInk is a code analysis tool for Lean 4 that extracts proof tactic information. It's main goal is to ease the support for Lean 4 in Alectryon."
 }
 

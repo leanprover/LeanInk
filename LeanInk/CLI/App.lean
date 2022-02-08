@@ -5,7 +5,7 @@ structure AppVersion where
   major : Nat
   minor : Nat
   patch : Nat
-  suffix : String
+  suffix : String := ""
 
 instance : ToString AppVersion where
   toString (self : AppVersion) : String := s!"{self.major}.{self.minor}.{self.patch}{self.suffix}"

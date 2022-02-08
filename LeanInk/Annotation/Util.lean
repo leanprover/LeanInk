@@ -68,7 +68,7 @@ def toFragmentIntervals { x : Type } [Positional x] [Inhabited x] [Inhabited x] 
   List.mergeSortedLists (λ x y => (FragmentInterval.position x) < (FragmentInterval.position y)) headQueue tailQueue
 
 def matchCompounds [Positional a] [ToString a] (l : List (Compound a)) : List (FragmentInterval a) -> AnalysisM (List (Compound a))
-  | [] => l -- No events left, so we just return!
+  | [] => pure l -- No events left, so we just return!
   | e::es => do
     match l.getLast? with
     | none => do
