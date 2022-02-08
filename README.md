@@ -86,6 +86,7 @@ The following flags are experimental and used to display additional information 
 
 - `--x-enable-type-info` flag enables extraction of type information
 - `--x-enable-docStrings` flag enables extraction of doc strings
+- `--x-enable-semantic-token` flag enables extraction of semantic toke types for semantic syntax highlighting support
 
 ## Running Tests
 There are some aspects you might want to take note of when attempting to develop a feature or fix a bug in LeanInk.
