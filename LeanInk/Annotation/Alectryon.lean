@@ -11,7 +11,6 @@ import Lean.Data.Lsp
 namespace LeanInk.Annotation.Alectryon
 
 open Lean
-open Lean.Lsp
 open LeanInk.Analysis
 
 structure TypeInfo where
@@ -119,9 +118,11 @@ def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String
   | none => pure none
   | some info =>
     match info.semanticType with
-    | SemanticTokenType.property => pure (some "Name")
+    | SemanticTokenType.property => pure (some "Name.Attribute")
     | SemanticTokenType.keyword => pure (some "Keyword")
-    | SemanticTokenType.variable => pure (some "Name")
+    | SemanticTokenType.variable => pure (some "Name.Variable")
+    | SemanticTokenType.constant => pure (some "Name.Constant")
+    | SemanticTokenType.literal => pure (some "Literal")
     | default => pure none
 
 def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token := do

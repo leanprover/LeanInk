@@ -9,7 +9,6 @@ import Lean.Server
 namespace LeanInk.Analysis
 
 open Lean
-open Lean.Lsp
 open Lean.Server
 open Lean.Elab
 open Lean.Meta
@@ -49,6 +48,13 @@ instance : Positional Fragment where
 /--
   `SemanticTokenInfo` describe the semantic info of the token, which can and should be used for semantic syntax highlighting.
 -/
+inductive SemanticTokenType where
+| property
+| «variable»
+| «constant»
+| keyword
+| literal
+
 structure SemanticTokenInfo extends Fragment where
   semanticType: Option SemanticTokenType := none
   deriving Inhabited
@@ -161,26 +167,32 @@ structure SemanticTraversalInfo where
   node : Info
 
 namespace SemanticTraversalInfo
+  def genSemanticToken (stx : Syntax) (type : SemanticTokenType) : List Token :=
+    let headPos := (stx.getPos? false).getD 0
+    let tailPos := (stx.getTailPos? false).getD 0
+    if headPos >= tailPos then
+      []
+    else
+      [Token.semantic { semanticType := SemanticTokenType.variable, headPos := headPos, tailPos := tailPos }]
+
   def highlightIdentifier (globalTailPos : String.Pos) (info : SemanticTraversalInfo) : AnalysisM (List Token) := do
     match info.stx.getRange?, info.node with
     | some range, Info.ofTermInfo info => do
-      let stx := info.stx
-      let headPos := (stx.getPos? false).getD 0
-      let tailPos := (stx.getTailPos? false).getD 0
-      if headPos >= tailPos then
-        return []
-      if let Expr.fvar .. := info.expr then
-        return [Token.semantic { semanticType := SemanticTokenType.variable, headPos := headPos, tailPos := tailPos }]
-      else if headPos > globalTailPos then
-        return [Token.semantic { semanticType := SemanticTokenType.property, headPos := headPos, tailPos := tailPos }]
-      else
-        return []
+      let genToken := genSemanticToken info.stx
+      match info.expr with
+      | Expr.fvar .. => return genToken SemanticTokenType.variable
+      | Expr.lit .. => return genToken SemanticTokenType.literal
+      | _ =>
+        if (info.stx.getPos? false).getD 0 > globalTailPos then
+          return genToken SemanticTokenType.property
+        else
+          return []
     | _, _ => pure []
 
   def highlightKeyword (headPos tailPos : String.Pos) (stx: Syntax) : AnalysisM (List Token) := do
     if let Syntax.atom info val := stx then
       if (val.length > 0 && val[0].isAlpha) || (val.length > 1 && val[0] = '#' && val[1].isAlpha) then
-        return [Token.semantic { semanticType := SemanticTokenType.keyword, headPos := headPos, tailPos := tailPos } ]
+        return genSemanticToken stx SemanticTokenType.keyword
     return []
 
   partial def _resolveSemanticTokens (aux : List Token) (info : SemanticTraversalInfo) : AnalysisM (List Token) := do
@@ -192,8 +204,8 @@ namespace SemanticTraversalInfo
     else
       match stx with
       | `($e.$id:ident) => do
-        let newToken := Token.semantic { semanticType := SemanticTokenType.property, headPos := headPos, tailPos := tailPos }
-        _resolveSemanticTokens (aux ++ [newToken]) { info with stx := e }
+        let newToken := genSemanticToken id SemanticTokenType.property
+        _resolveSemanticTokens (aux ++ newToken) { info with stx := e }
       | `($id:ident) => highlightIdentifier tailPos { info with stx := id }
       | _ => do
         if !(FileWorker.noHighlightKinds.contains stx.getKind) then
