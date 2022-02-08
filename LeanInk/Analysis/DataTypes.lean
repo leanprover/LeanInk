@@ -51,9 +51,7 @@ instance : Positional Fragment where
 inductive SemanticTokenType where
 | property
 | «variable»
-| «constant»
 | keyword
-| literal
 
 structure SemanticTokenInfo extends Fragment where
   semanticType: Option SemanticTokenType := none
@@ -162,9 +160,15 @@ instance : Positional Sentence where
   tailPos := (λ x => x.toFragment.tailPos)
 
 /- InfoTree -/
+private def Info.isExpanded (self : Info) : Bool :=
+  let stx := Info.stx self
+  match stx.getHeadInfo, stx.getTailInfo with
+  | SourceInfo.original .., SourceInfo.original .. => false
+  | _, _ => true
+
 structure SemanticTraversalInfo where
   stx : Syntax
-  node : Info
+  node : Option Info
 
 namespace SemanticTraversalInfo
   def genSemanticToken (stx : Syntax) (type : SemanticTokenType) : List Token :=
@@ -173,21 +177,28 @@ namespace SemanticTraversalInfo
     if headPos >= tailPos then
       []
     else
-      [Token.semantic { semanticType := SemanticTokenType.variable, headPos := headPos, tailPos := tailPos }]
+      [Token.semantic { semanticType := type, headPos := headPos, tailPos := tailPos }]
 
   def highlightIdentifier (globalTailPos : String.Pos) (info : SemanticTraversalInfo) : AnalysisM (List Token) := do
-    match info.stx.getRange?, info.node with
-    | some range, Info.ofTermInfo info => do
-      let genToken := genSemanticToken info.stx
-      match info.expr with
-      | Expr.fvar .. => return genToken SemanticTokenType.variable
-      | Expr.lit .. => return genToken SemanticTokenType.literal
-      | _ =>
-        if (info.stx.getPos? false).getD 0 > globalTailPos then
-          return genToken SemanticTokenType.property
-        else
-          return []
-    | _, _ => pure []
+    match info.node with
+    | some node => do
+      if Info.isExpanded node then
+        return []
+      match info.stx.getRange?, info.node with
+      | some range, Info.ofTermInfo info => do
+        let genToken := genSemanticToken info.stx
+        match info.expr with
+        | Expr.fvar .. => return genToken SemanticTokenType.variable
+        | _ =>
+          match info.stx.getPos? with
+          | some pos => 
+            if pos > globalTailPos then
+              return genToken SemanticTokenType.property
+            else
+              return []
+          | _ => pure []  
+      | _, _ => pure []
+    | _ => pure []
 
   def highlightKeyword (headPos tailPos : String.Pos) (stx: Syntax) : AnalysisM (List Token) := do
     if let Syntax.atom info val := stx then
@@ -249,12 +260,6 @@ namespace TraversalFragment
   | field fragment => (fragment.info.stx.getTailPos? false).getD 0
   | tactic fragment => (fragment.info.toElabInfo.stx.getTailPos? false).getD 0
   | unknown fragment => (fragment.info.stx.getTailPos? false).getD 0
-
-  private def Info.isExpanded (self : Info) : Bool :=
-    let stx := Info.stx self
-     match stx.getHeadInfo, stx.getTailInfo with
-    | SourceInfo.original .., SourceInfo.original .. => false
-    | _, _ => true
 
   def create (ctx : ContextInfo) (info : Info) : ((Option TraversalFragment) × (Option SemanticTraversalInfo)) :=
     if Info.isExpanded info then

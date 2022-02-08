@@ -121,8 +121,6 @@ def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String
     | SemanticTokenType.property => pure (some "Name.Attribute")
     | SemanticTokenType.keyword => pure (some "Keyword")
     | SemanticTokenType.variable => pure (some "Name.Variable")
-    | SemanticTokenType.constant => pure (some "Name.Constant")
-    | SemanticTokenType.literal => pure (some "Literal")
     | default => pure none
 
 def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token := do
