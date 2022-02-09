@@ -1,6 +1,7 @@
 import LeanInk.Configuration
 import LeanInk.FileHelper
-import LeanInk.Annotation
+import LeanInk.Annotation.DataTypes
+import LeanInk.Annotation.Alectryon
 import LeanInk.Logger
 import LeanInk.CLI
 
@@ -10,6 +11,7 @@ import Lean.Util.Path
 
 namespace LeanInk.Analysis
 
+open LeanInk.Annotation
 open LeanInk.CLI
 open Lean
 open System
@@ -21,7 +23,6 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
   return { 
     inputFilePath := file
     inputFileContents := contents
-    outputType := OutputType.alectryonFragments
     lakeFile := getLakeFile? arguments
     verbose := containsFlag arguments "--verbose"
     experimentalTypeInfo := containsFlag arguments "--x-enable-type-info"
@@ -34,7 +35,7 @@ where
     | none => none
     | some string => some (FilePath.mk string)
 
-def runAnalysis : AnalysisM UInt32 := do
+def runAnalysis (output : Output) : AnalysisM UInt32 := do
   let config ← read
   logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
@@ -42,16 +43,23 @@ def runAnalysis : AnalysisM UInt32 := do
   logInfo "Annotating..."
   let annotation ← Annotation.annotateFile result
   logInfo "Outputting..."
-  return ← Annotation.Alectryon.genOutput annotation
+  return ← output.genOutput annotation
 
 -- EXECUTION
+def execAuxM : AnalysisM UInt32 := do
+  return ← runAnalysis { 
+    name := "Alectryon"
+    genOutput := Alectryon.genOutput
+  } 
+
 def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
   if not (_validateInputFile file) then do
     Logger.logError s!"Provided file \"{file}\" is not lean file."
   else
     IO.println s!"Starting Analysis for: \"{file}\""
     let config ← _buildConfiguration args file
-    return ← (runAnalysis.run config)
+    return ← (execAuxM.run config)
+    
 
 def exec (args: List ResolvedArgument) : List String -> IO UInt32
   | [] => do Logger.logError s!"No input files provided"

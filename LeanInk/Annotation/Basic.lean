@@ -3,6 +3,7 @@ import LeanInk.ListUtil
 import LeanInk.Logger
 
 import LeanInk.Annotation.Util
+import LeanInk.Annotation.DataTypes
 
 import LeanInk.Analysis.DataTypes
 import LeanInk.Analysis.Analysis
@@ -14,10 +15,6 @@ open LeanInk.Analysis
 /-
   Annotation
 -/
-structure Annotation where
-  sentence : Compound Sentence
-  tokens : List (Compound Token)
-
 def tokensBetween (aux : List (Compound Token)) (head : String.Pos) (tail : Option String.Pos) : List (Compound Token) -> List (Compound Token)
   | [] => aux
   | x::xs =>

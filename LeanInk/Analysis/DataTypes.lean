@@ -1,5 +1,4 @@
 import LeanInk.ListUtil
-import LeanInk.Configuration
 
 import Lean.Elab
 import Lean.Data.Lsp

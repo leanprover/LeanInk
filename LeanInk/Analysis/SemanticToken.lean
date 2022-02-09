@@ -1,4 +1,5 @@
 import LeanInk.Analysis.DataTypes
+import LeanInk.Configuration
 import LeanInk.ListUtil
 
 import Lean.Elab
