@@ -121,7 +121,6 @@ structure Goal where
   hypotheses : List Hypothesis
 
 structure Tactic extends Fragment where
-  hasNested : Bool := false
   goalsBefore : List Goal
   goalsAfter : List Goal
   deriving Inhabited

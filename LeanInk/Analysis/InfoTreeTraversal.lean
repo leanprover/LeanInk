@@ -199,9 +199,9 @@ namespace TraversalFragment
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
 
-  def genSentences (self : TraversalFragment) (hasNestedTactic : Bool) : AnalysisM (List Sentence) := do
+  def genSentences (self : TraversalFragment) : AnalysisM (List Sentence) := do
     if let some t ← self.genTactic? then
-      return [Sentence.tactic { t with hasNested := hasNestedTactic }]
+      return [Sentence.tactic t]
     else
       return []
 end TraversalFragment
@@ -222,11 +222,9 @@ namespace AnalysisResult
 
   def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
 
-  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) (hasNestedTactic : Bool := false) : AnalysisM AnalysisResult := do
-    let mut newTokens : List Token := []
-    if !hasNestedTactic then
-      newTokens ← fragment.genTokens
-    let newSentences ← fragment.genSentences hasNestedTactic
+  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) : AnalysisM AnalysisResult := do
+    let newTokens : List Token := ← fragment.genTokens
+    let newSentences ← fragment.genSentences
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
   def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := do
@@ -253,7 +251,6 @@ namespace AnalysisResult
 end AnalysisResult
 
 structure TraversalAux where
-  allowsNewTactic : Bool := true
   allowsNewField : Bool := true
   allowsNewTerm : Bool := true
   allowsNewSemantic : Bool := true
@@ -261,13 +258,12 @@ structure TraversalAux where
 
 namespace TraversalAux
   def merge (x y : TraversalAux) : TraversalAux := {
-    allowsNewTactic := x.allowsNewTactic ∧ y.allowsNewTactic
     allowsNewField := x.allowsNewField ∧ y.allowsNewField
     allowsNewTerm := x.allowsNewTerm ∧ y.allowsNewTerm
     result := AnalysisResult.merge x.result y.result
   }
 
-  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) (hasNestedTactic: Bool) : AnalysisM TraversalAux :=
+  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) : AnalysisM TraversalAux :=
     match fragment with
     | TraversalFragment.term _ => do
       if self.allowsNewTerm then
@@ -282,11 +278,12 @@ namespace TraversalAux
       else 
         return self
     | TraversalFragment.tactic contextInfo => do
-    if self.allowsNewTactic then
-        let newResult ← self.result.insertFragment fragment hasNestedTactic
-        return { self with allowsNewTactic := true, result := newResult }
-      else 
+      let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
+      if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self
+      else
+        let newResult ← self.result.insertFragment fragment
+        return { self with result := newResult }
     | _ => pure self
 
     def insertSemanticInfo (self : TraversalAux) (info : SemanticTraversalInfo) : AnalysisM TraversalAux := do
@@ -306,34 +303,16 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM (_resolveTacticList ctx? aux)
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
-      let hasNested := hasNestedTactic headPos tailPos tree
       let fragment := TraversalFragment.create ctx info
-      let tacticChildren := sortedChildrenLeafs.result.sentences.filterMap (λ f => f.asTactic?)
-      if tacticChildren.any (λ t => t.headPos == headPos && t.tailPos == tailPos) then
-        return sortedChildrenLeafs
-      IO.println (← Info.format ctx info)
       match fragment with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        sortedChildrenLeafs.insertFragment fragment hasNested          
-      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment hasNested          
+        sortedChildrenLeafs.insertFragment fragment          
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment          
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
     | _, _, _ => pure aux
   | _ => pure aux
-where
-  hasNestedTactic (pos tailPos) : InfoTree → Bool
-    | InfoTree.node i@(Info.ofTacticInfo _) cs => Id.run <| do
-      if let `(by $t) := i.stx then
-        return false  -- ignore term-nested proofs such as in `simp [show p by ...]`
-      if let (some pos', some tailPos') := (i.pos?, i.tailPos?) then
-        -- ignore nested infos of the same tactic, e.g. from expansion
-        if (pos', tailPos') != (pos, tailPos) then
-          return true
-      cs.any (hasNestedTactic pos tailPos)
-    | InfoTree.node (Info.ofMacroExpansionInfo _) cs =>
-      cs.any (hasNestedTactic pos tailPos)
-    | _ => false
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let auxResults ← (trees.map _resolveTacticList).mapM (λ x => x)

@@ -225,7 +225,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
     match Positional.smallest? tactics with
     | some tactic => do
       let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
-      let useBefore : Bool := tactic.tailPos > globalTailPos || tactic.hasNested
+      let useBefore : Bool := tactic.tailPos > globalTailPos
       let mut fragmentContents : Contents := Contents.string contents
       if config.experimentalTypeInfo ∨ config.experimentalDocString then
         let headPos := annotation.sentence.headPos
