@@ -121,8 +121,14 @@ structure Goal where
   hypotheses : List Hypothesis
 
 structure Tactic extends Fragment where
-  goals : List Goal
+  hasNested : Bool := false
+  goalsBefore : List Goal
+  goalsAfter : List Goal
   deriving Inhabited
+
+instance : Positional Tactic where
+  headPos := (λ x => x.toFragment.headPos)
+  tailPos := (λ x => x.toFragment.tailPos)
 
 structure Message extends Fragment where
   msg: String
