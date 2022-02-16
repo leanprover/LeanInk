@@ -178,21 +178,25 @@ namespace TraversalFragment
         let typeFmt ← ppExpr (← instantiateMVars decl.type)
         return (← genGoal typeFmt hypotheses decl.userName)
 
-  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) : AnalysisM (List Goal) :=
-    match contextInfo.info.goalsAfter with
-    | [] => pure []
-    | goals => do
-      let ctx := { contextInfo.ctx with mctx := contextInfo.info.mctxAfter }
-      return (← ctx.runMetaM {} (goals.mapM (evalGoal .))).filterMap (λ x => x)
+  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
+    let ctx := { contextInfo.ctx with mctx := metaCtx }
+    return (← ctx.runMetaM {} (goals.mapM (evalGoal .))).filterMap (λ x => x)
+
+  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool): AnalysisM (List Goal) :=
+    if beforeNode then
+      _genGoals contextInfo contextInfo.info.goalsBefore contextInfo.info.mctxBefore
+    else
+      _genGoals contextInfo contextInfo.info.goalsAfter contextInfo.info.mctxAfter
 
   def genTactic? (self : TraversalFragment) : AnalysisM (Option Tactic) := do
     match self with
     | tactic fragment => do 
-      let goals ← genGoals fragment
-      if goals.isEmpty then
-        return none
+      let goalsBefore ← genGoals fragment true
+      let goalsAfter ← genGoals fragment false
+      if goalsAfter.isEmpty then
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "🐙", hypotheses := [] }] }
       else
-        return some { headPos := self.headPos, tailPos := self.tailPos, goals := goals }
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
 
   def genSentences (self : TraversalFragment) : AnalysisM (List Sentence) := do
@@ -219,7 +223,7 @@ namespace AnalysisResult
   def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
 
   def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) : AnalysisM AnalysisResult := do
-    let newTokens ← fragment.genTokens
+    let newTokens : List Token := ← fragment.genTokens
     let newSentences ← fragment.genSentences
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
@@ -247,7 +251,6 @@ namespace AnalysisResult
 end AnalysisResult
 
 structure TraversalAux where
-  allowsNewTactic : Bool := true
   allowsNewField : Bool := true
   allowsNewTerm : Bool := true
   allowsNewSemantic : Bool := true
@@ -255,7 +258,6 @@ structure TraversalAux where
 
 namespace TraversalAux
   def merge (x y : TraversalAux) : TraversalAux := {
-    allowsNewTactic := x.allowsNewTactic ∧ y.allowsNewTactic
     allowsNewField := x.allowsNewField ∧ y.allowsNewField
     allowsNewTerm := x.allowsNewTerm ∧ y.allowsNewTerm
     result := AnalysisResult.merge x.result y.result
@@ -275,12 +277,13 @@ namespace TraversalAux
         return { self with allowsNewField := false, result := newResult }
       else 
         return self
-    | TraversalFragment.tactic _ => do
-      if self.allowsNewTactic then
-        let newResult ← self.result.insertFragment fragment
-        return { self with allowsNewTactic := false, result := newResult }
-      else 
+    | TraversalFragment.tactic contextInfo => do
+      let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
+      if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self
+      else
+        let newResult ← self.result.insertFragment fragment
+        return { self with result := newResult }
     | _ => pure self
 
     def insertSemanticInfo (self : TraversalAux) (info : SemanticTraversalInfo) : AnalysisM TraversalAux := do
@@ -291,12 +294,12 @@ namespace TraversalAux
         return self
 end TraversalAux
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) : InfoTree -> AnalysisM TraversalAux
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) : AnalysisM TraversalAux :=
+  match tree with
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
-    match ctx? with
-    | none => pure aux
-    | some ctx => do
+    match ctx?, info.pos?, info.tailPos? with
+    | some ctx, some headPos, some tailPos => do
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM (_resolveTacticList ctx? aux)
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
@@ -304,17 +307,11 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       match fragment with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        if fragment.headPos >= fragment.tailPos then
-          return sortedChildrenLeafs
-        else
-          sortedChildrenLeafs.insertFragment fragment
-      | (some fragment, none) => do
-        if fragment.headPos >= fragment.tailPos then
-          return sortedChildrenLeafs
-        else
-          sortedChildrenLeafs.insertFragment fragment
+        sortedChildrenLeafs.insertFragment fragment          
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment          
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
+    | _, _, _ => pure aux
   | _ => pure aux
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do

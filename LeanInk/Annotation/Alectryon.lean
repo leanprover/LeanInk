@@ -203,11 +203,15 @@ def genGoal (goal : Analysis.Goal) : Goal := {
   hypotheses := (goal.hypotheses.map genHypothesis).toArray
 }
 
-def genGoals (tactic : Analysis.Tactic) : List Goal := tactic.goals.map (λ g => genGoal g)
+def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal := 
+  if beforeNode then 
+    tactic.goalsBefore.map (λ g => genGoal g)
+  else
+    tactic.goalsAfter.map (λ g => genGoal g)
 
 def genMessages (message : Analysis.Message) : Message := { contents := message.msg }
 
-def genFragment (annotation : Annotation) (contents : String) : AnalysisM Alectryon.Fragment := do
+def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let config ← read
   if annotation.sentence.fragments.isEmpty then
     if config.experimentalTypeInfo ∨ config.experimentalDocString then
@@ -218,21 +222,22 @@ def genFragment (annotation : Annotation) (contents : String) : AnalysisM Alectr
       return Fragment.text { contents := Contents.string contents }
   else
     let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
-    let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
-    if config.experimentalTypeInfo ∨ config.experimentalDocString then
-      let headPos := annotation.sentence.headPos
-      let tokens ← genTokens contents headPos headPos  [] annotation.tokens
+    match Positional.smallest? tactics with
+    | some tactic => do
+      let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
+      let useBefore : Bool := tactic.tailPos > globalTailPos
+      let mut fragmentContents : Contents := Contents.string contents
+      if config.experimentalTypeInfo ∨ config.experimentalDocString then
+        let headPos := annotation.sentence.headPos
+        let tokens ← genTokens contents headPos headPos [] annotation.tokens
+        fragmentContents := Contents.experimentalTokens tokens.toArray
       return Fragment.sentence { 
-        contents := Contents.experimentalTokens tokens.toArray
-        goals := (tactics.map genGoals).join.toArray
+        contents := fragmentContents
+        goals := ([tactic].map (genGoals useBefore)).join.toArray
         messages := (messages.map genMessages).toArray
       }
-    else
-      return Fragment.sentence { 
-        contents := Contents.string contents
-        goals := (tactics.map genGoals).join.toArray
-        messages := (messages.map genMessages).toArray
-      }
+    | none => do
+      return Fragment.text { contents := Contents.string contents }
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).
@@ -241,10 +246,10 @@ Generates AlectryonFragments for the given CompoundFragments and input file cont
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Fragment)
 | [] => pure l
 | x::[] => do
-  let fragment ← genFragment x (contents.extract x.sentence.headPos contents.utf8ByteSize)
+  let fragment ← genFragment x contents.utf8ByteSize (contents.extract x.sentence.headPos contents.utf8ByteSize)
   return l.append [fragment]
 | x::y::ys => do
-  let fragment ← genFragment x (contents.extract x.sentence.headPos (y.sentence.headPos))
+  let fragment ← genFragment x y.sentence.headPos (contents.extract x.sentence.headPos (y.sentence.headPos))
   return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
 
 def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do

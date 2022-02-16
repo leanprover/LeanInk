@@ -43,11 +43,9 @@ instance [ToString a] : ToString (FragmentInterval a) where
 
 /- FUNCTIONS -/
 def toFragmentIntervals { x : Type } [Positional x] [Inhabited x] [Inhabited x] (positionals : List x) : List (FragmentInterval x) :=
-  let sortedHeadList := List.sort (λ x y => (Positional.headPos x) < (Positional.headPos y)) positionals
-  let sortedTailList := List.sort (λ x y => (Positional.tailPos x) < (Positional.tailPos y)) positionals
-  let headQueue := sortedHeadList.enum.map (λ (idx, f) => FragmentInterval.head (Positional.headPos f) f idx)
-  let tailQueue := sortedTailList.enum.map (λ (idx, f) => FragmentInterval.tail (Positional.tailPos f) f idx)
-  List.mergeSortedLists (λ x y => (FragmentInterval.position x) < (FragmentInterval.position y)) headQueue tailQueue
+  let indexedPositionals := positionals.enum.map (λ (idx, f) => [FragmentInterval.head (Positional.headPos f) f idx, FragmentInterval.tail (Positional.tailPos f) f idx])
+  let mergedPositionals := indexedPositionals.join
+  List.sort (λ x y =>  x.position < y.position) mergedPositionals
 
 def matchCompounds [Positional a] [ToString a] (l : List (Compound a)) : List (FragmentInterval a) -> AnalysisM (List (Compound a))
   | [] => pure l -- No events left, so we just return!

@@ -23,7 +23,7 @@ namespace Positional
     let y : α := y -- We need to help the compiler a bit here otherwise it thinks `y : Option α`
     match a with 
     | none => y
-    | some x => if (Positional.length x) < (Positional.length y) then x else y
+    | some x => if (Positional.length x) <= (Positional.length y) then x else y
   ) none list
 end Positional
 
@@ -121,8 +121,13 @@ structure Goal where
   hypotheses : List Hypothesis
 
 structure Tactic extends Fragment where
-  goals : List Goal
+  goalsBefore : List Goal
+  goalsAfter : List Goal
   deriving Inhabited
+
+instance : Positional Tactic where
+  headPos := (λ x => x.toFragment.headPos)
+  tailPos := (λ x => x.toFragment.tailPos)
 
 structure Message extends Fragment where
   msg: String
@@ -136,8 +141,8 @@ deriving Inhabited
 
 instance : ToString Sentence where -- TODO: Improve this
   toString : Sentence -> String
-  | Sentence.tactic _ => "Type"
-  | Sentence.message _ => "DocString"
+  | Sentence.tactic t => s!"Tactic {t.headPos}-{t.tailPos}"
+  | Sentence.message _ => "Message"
 
 namespace Sentence
   def toFragment : Sentence -> Fragment
