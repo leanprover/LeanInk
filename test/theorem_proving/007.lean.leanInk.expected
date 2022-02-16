@@ -1,6 +1,17 @@
 [{"contents":
-  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by\n  ",
+  "-- set_option trace.Elab.info true\n\ntheorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := ",
   "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p ∧ q ∧ p",
+    "_type": "goal"}],
+  "contents": "by\n  ",
+  "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "left",
@@ -19,7 +30,28 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents": "\n  case right =>\n    ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p ∧ q ∧ p",
+    "_type": "goal"}],
+  "contents": "\n  ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q ∧ p",
+    "_type": "goal"}],
+  "contents": "case right =>\n    ",
+  "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "left",
@@ -38,6 +70,82 @@
     "_type": "goal"}],
   "contents": "apply And.intro",
   "_type": "sentence"},
- {"contents":
-  "\n    case left => exact hq\n    case right => exact hp\n  case left => exact hp\n",
-  "_type": "text"}]
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q ∧ p",
+    "_type": "goal"}],
+  "contents": "\n    ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q",
+    "_type": "goal"}],
+  "contents": "case left => ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "contents": "exact hq",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "q ∧ p",
+    "_type": "goal"}],
+  "contents": "\n    ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p",
+    "_type": "goal"}],
+  "contents": "case right => ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "contents": "exact hp",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p ∧ q ∧ p",
+    "_type": "goal"}],
+  "contents": "\n  ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p",
+    "_type": "goal"}],
+  "contents": "case left => ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "contents": "exact hp",
+  "_type": "sentence"},
+ {"contents": "\n", "_type": "text"}]

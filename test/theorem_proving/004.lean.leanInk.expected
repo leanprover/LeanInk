@@ -1,6 +1,16 @@
-[{"contents":
-  "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by\n  ",
+[{"contents": "theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := ",
   "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p ∧ q ∧ p",
+    "_type": "goal"}],
+  "contents": "by\n  ",
+  "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -12,4 +22,19 @@
     "_type": "goal"}],
   "contents": "apply And.intro hp",
   "_type": "sentence"},
- {"contents": "\n  exact And.intro hq hp", "_type": "text"}]
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p ∧ q ∧ p",
+    "_type": "goal"}],
+  "contents": "\n  ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "contents": "exact And.intro hq hp",
+  "_type": "sentence"},
+ {"contents": "", "_type": "text"}]
