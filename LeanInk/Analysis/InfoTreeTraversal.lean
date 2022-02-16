@@ -223,7 +223,9 @@ namespace AnalysisResult
   def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
 
   def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) (hasNestedTactic : Bool := false) : AnalysisM AnalysisResult := do
-    let newTokens ← fragment.genTokens
+    let mut newTokens : List Token := []
+    if !hasNestedTactic then
+      newTokens ← fragment.genTokens
     let newSentences ← fragment.genSentences hasNestedTactic
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
@@ -280,14 +282,17 @@ namespace TraversalAux
       else 
         return self
     | TraversalFragment.tactic contextInfo => do
-      let newResult ← self.result.insertFragment fragment hasNestedTactic
-      return { self with allowsNewTactic := false, result := newResult }
+    if self.allowsNewTactic then
+        let newResult ← self.result.insertFragment fragment hasNestedTactic
+        return { self with allowsNewTactic := true, result := newResult }
+      else 
+        return self
     | _ => pure self
 
     def insertSemanticInfo (self : TraversalAux) (info : SemanticTraversalInfo) : AnalysisM TraversalAux := do
       if self.allowsNewSemantic then
         let newResult ← self.result.insertSemanticInfo info
-        return { self with allowsNewSemantic := true,  result := newResult }
+        return { self with allowsNewSemantic := false,  result := newResult }
       else
         return self
 end TraversalAux
@@ -303,18 +308,12 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       let hasNested := hasNestedTactic headPos tailPos tree
       let fragment := TraversalFragment.create ctx info
+      IO.println (← Info.format ctx info)
       match fragment with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        if fragment.headPos >= fragment.tailPos then
-          return sortedChildrenLeafs
-        else
-          sortedChildrenLeafs.insertFragment fragment hasNested
-      | (some fragment, none) => do
-        if fragment.headPos >= fragment.tailPos then
-          return sortedChildrenLeafs
-        else
-          sortedChildrenLeafs.insertFragment fragment hasNested
+        sortedChildrenLeafs.insertFragment fragment hasNested          
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment hasNested          
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
     | _, _, _ => pure aux

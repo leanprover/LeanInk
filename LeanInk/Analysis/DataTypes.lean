@@ -23,7 +23,7 @@ namespace Positional
     let y : α := y -- We need to help the compiler a bit here otherwise it thinks `y : Option α`
     match a with 
     | none => y
-    | some x => if (Positional.length x) < (Positional.length y) then x else y
+    | some x => if (Positional.length x) <= (Positional.length y) then x else y
   ) none list
 end Positional
 
@@ -142,8 +142,8 @@ deriving Inhabited
 
 instance : ToString Sentence where -- TODO: Improve this
   toString : Sentence -> String
-  | Sentence.tactic _ => "Type"
-  | Sentence.message _ => "DocString"
+  | Sentence.tactic t => s!"Tactic {t.headPos}-{t.tailPos}"
+  | Sentence.message _ => "Message"
 
 namespace Sentence
   def toFragment : Sentence -> Fragment

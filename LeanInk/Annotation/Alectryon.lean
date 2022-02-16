@@ -225,22 +225,17 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
     match Positional.smallest? tactics with
     | some tactic => do
       let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
-      let beforeTactic : Bool := tactic.tailPos < globalTailPos || tactic.hasNested
-      IO.println beforeTactic
+      let useBefore : Bool := tactic.tailPos > globalTailPos
+      let mut fragmentContents : Contents := Contents.string contents
       if config.experimentalTypeInfo ∨ config.experimentalDocString then
         let headPos := annotation.sentence.headPos
         let tokens ← genTokens contents headPos headPos [] annotation.tokens
-        return Fragment.sentence { 
-          contents := Contents.experimentalTokens tokens.toArray
-          goals := ([tactic].map (genGoals beforeTactic)).join.toArray
-          messages := (messages.map genMessages).toArray
-        }
-      else
-        return Fragment.sentence { 
-          contents := Contents.string contents
-          goals := ([tactic].map (genGoals beforeTactic)).join.toArray
-          messages := (messages.map genMessages).toArray
-        }
+        fragmentContents := Contents.experimentalTokens tokens.toArray
+      return Fragment.sentence { 
+        contents := fragmentContents
+        goals := ([tactic].map (genGoals useBefore)).join.toArray
+        messages := (messages.map genMessages).toArray
+      }
     | none => do
       return Fragment.text { contents := Contents.string contents }
 
