@@ -222,22 +222,21 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
       return Fragment.text { contents := Contents.string contents }
   else
     let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
-    match Positional.smallest? tactics with
-    | some tactic => do
-      let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
+    let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
+    let mut goals : List Goal := []
+    if let (some tactic) := Positional.smallest? tactics then
       let useBefore : Bool := tactic.tailPos > globalTailPos
-      let mut fragmentContents : Contents := Contents.string contents
-      if config.experimentalTypeInfo ∨ config.experimentalDocString then
-        let headPos := annotation.sentence.headPos
-        let tokens ← genTokens contents headPos headPos [] annotation.tokens
-        fragmentContents := Contents.experimentalTokens tokens.toArray
-      return Fragment.sentence { 
-        contents := fragmentContents
-        goals := ([tactic].map (genGoals useBefore)).join.toArray
-        messages := (messages.map genMessages).toArray
-      }
-    | none => do
-      return Fragment.text { contents := Contents.string contents }
+      goals := genGoals useBefore tactic
+    let mut fragmentContents : Contents := Contents.string contents
+    if config.experimentalTypeInfo ∨ config.experimentalDocString then
+      let headPos := annotation.sentence.headPos
+      let tokens ← genTokens contents headPos headPos [] annotation.tokens
+      fragmentContents := Contents.experimentalTokens tokens.toArray
+    return Fragment.sentence { 
+      contents := fragmentContents
+      goals := goals.toArray
+      messages := (messages.map genMessages).toArray
+    }
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).
