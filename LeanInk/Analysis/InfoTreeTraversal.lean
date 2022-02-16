@@ -308,6 +308,9 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       let hasNested := hasNestedTactic headPos tailPos tree
       let fragment := TraversalFragment.create ctx info
+      let tacticChildren := sortedChildrenLeafs.result.sentences.filterMap (λ f => f.asTactic?)
+      if tacticChildren.any (λ t => t.headPos == headPos && t.tailPos == tailPos) then
+        return sortedChildrenLeafs
       IO.println (← Info.format ctx info)
       match fragment with
       | (some fragment, some semantic) => do
