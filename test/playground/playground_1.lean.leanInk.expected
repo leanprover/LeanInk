@@ -1,9 +1,15 @@
 [{"contents":
   "/-|\n=======\n Title\n=======\n\nProse. *Emphasis*; **strong emphasis**; ``code``; `coq code`; `link <url>`__.\n|-/\n\n",
   "_type": "text"},
- {"contents": "#check", "_type": "text"},
+ {"messages": [{"contents": "Bool : Type\n", "_type": "message"}],
+  "goals": [],
+  "contents": "#check",
+  "_type": "sentence"},
  {"contents": " Bool\n\n", "_type": "text"},
- {"contents": "#print", "_type": "text"},
+ {"messages": [{"contents": "Hello World\n", "_type": "message"}],
+  "goals": [],
+  "contents": "#print",
+  "_type": "sentence"},
  {"contents":
   " \"Hello World\"\n\nexample (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := ",
   "_type": "text"},

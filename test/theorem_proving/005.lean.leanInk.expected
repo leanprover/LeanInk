@@ -49,5 +49,8 @@
   "contents": "exact And.intro hq hp",
   "_type": "sentence"},
  {"contents": "\n\n", "_type": "text"},
- {"contents": "#check", "_type": "text"},
+ {"messages": [{"contents": "And : Prop → Prop → Prop\n", "_type": "message"}],
+  "goals": [],
+  "contents": "#check",
+  "_type": "sentence"},
  {"contents": " And", "_type": "text"}]
