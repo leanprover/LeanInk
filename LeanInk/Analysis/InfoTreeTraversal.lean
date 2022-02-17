@@ -239,7 +239,13 @@ namespace AnalysisResult
   private def genMessage (fileMap : FileMap) (message : Lean.Message) : AnalysisM Message := do
     let headPos := Position.toStringPos fileMap message.pos
     let tailPos := Position.toStringPos fileMap (message.endPos.getD message.pos)
-    let string ← message.toString
+    let mut string ← message.data.toString
+    if message.caption != "" then
+      string := message.caption ++ ":¬" ++ string
+    if message.severity == MessageSeverity.warning then
+      string := "Warning: " ++ string
+    else if message.severity == MessageSeverity.error then
+      string := "Error: " ++ string
     return { headPos := headPos, tailPos := tailPos, msg := string }
 
   def insertMessages (self : AnalysisResult) (messages : List Lean.Message) (fileMap : FileMap): AnalysisM AnalysisResult := do
