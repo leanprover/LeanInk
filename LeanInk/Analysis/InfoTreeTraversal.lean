@@ -194,7 +194,7 @@ namespace TraversalFragment
       let goalsBefore ← genGoals fragment true
       let goalsAfter ← genGoals fragment false
       if goalsAfter.isEmpty then
-        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "🐙", hypotheses := [] }] }
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
       else
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
