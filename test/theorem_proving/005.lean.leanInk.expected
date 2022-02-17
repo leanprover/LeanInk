@@ -49,7 +49,7 @@
   "contents": "exact And.intro hq hp",
   "_type": "sentence"},
  {"contents": "\n\n", "_type": "text"},
- {"messages": [{"contents": "And : Prop → Prop → Prop\n", "_type": "message"}],
+ {"messages": [{"contents": "And : Prop → Prop → Prop", "_type": "message"}],
   "goals": [],
   "contents": "#check",
   "_type": "sentence"},
