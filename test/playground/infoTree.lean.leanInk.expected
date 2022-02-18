@@ -12,7 +12,11 @@
   "contents": "by\n    ",
   "_type": "sentence"},
  {"messages": [],
-  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
   "contents": "simp",
   "_type": "sentence"},
  {"contents":

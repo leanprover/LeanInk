@@ -45,7 +45,11 @@
   "contents": " ",
   "_type": "sentence"},
  {"messages": [],
-  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
   "contents": "exact And.intro hq hp",
   "_type": "sentence"},
  {"contents": "\n\n", "_type": "text"},

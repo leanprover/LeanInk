@@ -114,7 +114,11 @@
   "contents": "\n  ",
   "_type": "sentence"},
  {"messages": [],
-  "goals": [{"name": "", "hypotheses": [], "conclusion": "🐙", "_type": "goal"}],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
   "contents": "exact hp",
   "_type": "sentence"},
  {"contents": "", "_type": "text"}]
