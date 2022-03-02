@@ -13,7 +13,7 @@ open Lean
 
 -- LEAN
 def initializeLeanContext : IO Unit := do
-  let leanPath ← Lean.findSysroot?
+  let leanPath ← Lean.findSysroot
   Lean.initSearchPath leanPath
 
 -- LAKE
@@ -57,7 +57,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
         | Except.ok paths => do
           let paths : LeanPaths := paths 
           initializeLeanContext
-          initSearchPath (← findSysroot?) paths.oleanPath
+          initSearchPath (← findSysroot) paths.oleanPath
           logInfo s!"{paths.oleanPath}"
           logInfo s!"Successfully loaded lake search paths"
     | 2 => logInfo s!"No search paths required!"
