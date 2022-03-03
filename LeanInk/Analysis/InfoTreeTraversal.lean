@@ -304,8 +304,8 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
   match tree with
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
-    match ctx?, info.pos?, info.tailPos? with
-    | some ctx, some headPos, some tailPos => do
+    match ctx? with
+    | some ctx => do
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM (_resolveTacticList ctx? aux)
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
@@ -317,7 +317,7 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment          
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
-    | _, _, _ => pure aux
+    | none => pure aux
   | _ => pure aux
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
