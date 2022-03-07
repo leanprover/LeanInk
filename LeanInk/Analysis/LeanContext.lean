@@ -31,6 +31,7 @@ open IO
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
     logInfo s!"lakefile does not exist: {lakeFile}"
+    initializeLeanContext
   else if lakeFile.fileName != some "lakefile.lean" then
     match lakeFile.fileName with
     | none => logInfo s!"lakefile is not a valid file!"
