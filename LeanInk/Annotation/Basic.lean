@@ -37,6 +37,6 @@ def matchTokenToAnalysis (tokens : List (Compound Token)) (aux : List Annotation
   | x::xs => matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween [] x.headPos none tokens }]) xs
 
 def annotateFile (analysis : AnalysisResult) : AnalysisM (List Annotation) := do
-  let compounds ← _matchCompoundsLoop (toFragmentIntervals analysis.sentences)
-  let tokens ← _matchCompoundsLoop (toFragmentIntervals analysis.tokens)
+  let compounds ← matchCompounds (toFragmentIntervals analysis.sentences)
+  let tokens ← matchCompounds (toFragmentIntervals analysis.tokens)
   return matchTokenToAnalysis tokens [] compounds
