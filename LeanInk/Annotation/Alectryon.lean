@@ -242,5 +242,6 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
 def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do
   let config := (← read)
   let fragments ← annotateFileWithCompounds [] config.inputFileContents annotation
-  createOutputFile (← IO.currentDir) config.inputFileName (generateOutput fragments.toArray)
+  let rawContents ← generateOutput fragments.toArray
+  createOutputFile (← IO.currentDir) config.inputFileName rawContents
   return 0
