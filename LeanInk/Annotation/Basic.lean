@@ -15,22 +15,6 @@ open LeanInk.Analysis
 /-
   Annotation
 -/
--- def _tokensBetween (aux : List (Compound Token)) (head : String.Pos) (tail : Option String.Pos) : List (Compound Token) -> List (Compound Token)
---   | [] => aux
---   | x::xs =>
---     match (tail, x.tailPos) with
---     | (_, none) => tokensBetween aux head tail xs
---     | (some tail, some tokenTail) =>
---       if x.headPos <= tail && tokenTail > head then
---         tokensBetween (aux.append [x]) head tail xs
---       else
---         tokensBetween aux head tail xs
---     | (none, some tokenTail) => 
---       if tokenTail > head then
---         tokensBetween (aux.append [x]) head tail xs
---       else
---         tokensBetween aux head tail xs
-
 def tokensBetween (head : String.Pos) (tail : Option String.Pos) (compounds: List (Compound Token)) : List (Compound Token) := Id.run do
   let mut tokens : Array (Compound Token) := #[]
   for token in compounds do
