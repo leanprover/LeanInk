@@ -68,6 +68,7 @@ namespace TraversalFragment
   -/
   def inferType? : TraversalFragment -> MetaM (Option String)
     | term termFragment => do
+      -- This call requires almost half of the runtime of the tree traversal.
       let format ← try Meta.ppExpr (← Meta.inferType termFragment.info.expr) catch e => e.toMessageData.toString
       return s!"{format}"
     | _ => pure none
