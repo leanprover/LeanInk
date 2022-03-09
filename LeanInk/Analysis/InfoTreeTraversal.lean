@@ -1,3 +1,6 @@
+import Init.System.IO
+import Init.Control.Except
+
 import LeanInk.Analysis.DataTypes
 import LeanInk.Analysis.SemanticToken
 
@@ -14,6 +17,7 @@ namespace LeanInk.Analysis
 open Lean
 open Lean.Elab
 open Lean.Meta
+open IO
 
 structure ContextBasedInfo (β : Type) where
   ctx : ContextInfo
@@ -321,7 +325,37 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
     | none => pure aux
   | _ => pure aux
 
-def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
+inductive TraversalEvent
+| result (r : TraversalAux)
+| error (e : IO.Error)
+
+def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
+  let taskBody : AnalysisM TraversalEvent := do
+    let res ← _resolveTacticList none {} tree
+    return TraversalEvent.result res
+  let task ← IO.asTask (taskBody $ ← read)
+  return task.map fun
+    | Except.ok ev => ev
+    | Except.error e => TraversalEvent.error e
+
+def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let auxResults ← (trees.map _resolveTacticList).mapM (λ x => x)
   let results := auxResults.map (λ x => x.result)
   return results.foldl AnalysisResult.merge AnalysisResult.empty
+
+def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM (Option (List TraversalAux)) := do
+  let mut results : List TraversalAux := []
+  for task in tasks do
+    let result ← BaseIO.toIO (IO.wait task)
+    match result with
+    | TraversalEvent.result r => results := r::results
+    | _ => return none
+  return results
+
+def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
+  let tasks ← trees.toArray.mapM (λ t => _resolveTask t)
+  match (← resolveTasks tasks) with
+  | some auxResults => do
+    let results := auxResults.map (λ x => x.result)
+    return results.foldl AnalysisResult.merge AnalysisResult.empty
+  | _ => return { tokens := [], sentences := []}
