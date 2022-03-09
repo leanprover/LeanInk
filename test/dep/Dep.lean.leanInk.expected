@@ -2169,13 +2169,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "",
-    "link": null,
-    "docstring":
-    "`iterate n tac` runs `tac` exactly `n` times.\n`iterate tac` runs `tac` repeatedly until failure.\n\nTo run multiple tactics, one can do `iterate (tac₁; tac₂; ⋯)` or\n```lean\niterate\n  tac₁\n  tac₂\n  ⋯\n```\n",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "",
     "link": null,
@@ -2510,13 +2503,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "",
-    "link": null,
-    "docstring":
-    "`iterate n tac` runs `tac` exactly `n` times.\n`iterate tac` runs `tac` repeatedly until failure.\n\nTo run multiple tactics, one can do `iterate (tac₁; tac₂; ⋯)` or\n```lean\niterate\n  tac₁\n  tac₂\n  ⋯\n```\n",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "",
     "link": null,
@@ -2697,13 +2683,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "",
-    "link": null,
-    "docstring":
-    "`iterate n tac` runs `tac` exactly `n` times.\n`iterate tac` runs `tac` repeatedly until failure.\n\nTo run multiple tactics, one can do `iterate (tac₁; tac₂; ⋯)` or\n```lean\niterate\n  tac₁\n  tac₂\n  ⋯\n```\n",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "",
     "link": null,
@@ -2809,13 +2788,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "",
-    "link": null,
-    "docstring":
-    "`iterate n tac` runs `tac` exactly `n` times.\n`iterate tac` runs `tac` repeatedly until failure.\n\nTo run multiple tactics, one can do `iterate (tac₁; tac₂; ⋯)` or\n```lean\niterate\n  tac₁\n  tac₂\n  ⋯\n```\n",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "",
     "link": null,
@@ -3870,13 +3842,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "",
-    "link": null,
-    "docstring":
-    "`allGoals tac` runs `tac` on each goal, concatenating the resulting goals, if any. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "",
     "link": null,

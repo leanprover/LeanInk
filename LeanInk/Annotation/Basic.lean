@@ -15,26 +15,43 @@ open LeanInk.Analysis
 /-
   Annotation
 -/
-def tokensBetween (aux : List (Compound Token)) (head : String.Pos) (tail : Option String.Pos) : List (Compound Token) -> List (Compound Token)
-  | [] => aux
-  | x::xs =>
-    match (tail, x.tailPos) with
-    | (_, none) => tokensBetween aux head tail xs
+-- def _tokensBetween (aux : List (Compound Token)) (head : String.Pos) (tail : Option String.Pos) : List (Compound Token) -> List (Compound Token)
+--   | [] => aux
+--   | x::xs =>
+--     match (tail, x.tailPos) with
+--     | (_, none) => tokensBetween aux head tail xs
+--     | (some tail, some tokenTail) =>
+--       if x.headPos <= tail && tokenTail > head then
+--         tokensBetween (aux.append [x]) head tail xs
+--       else
+--         tokensBetween aux head tail xs
+--     | (none, some tokenTail) => 
+--       if tokenTail > head then
+--         tokensBetween (aux.append [x]) head tail xs
+--       else
+--         tokensBetween aux head tail xs
+
+def tokensBetween (head : String.Pos) (tail : Option String.Pos) (compounds: List (Compound Token)) : List (Compound Token) := Id.run do
+  let mut tokens : Array (Compound Token) := #[]
+  for token in compounds do
+    match (tail, token.tailPos) with
+    | (_, none) => continue
     | (some tail, some tokenTail) =>
-      if x.headPos <= tail && tokenTail > head then
-        tokensBetween (aux.append [x]) head tail xs
-      else
-        tokensBetween aux head tail xs
+      if token.headPos <= tail && tokenTail > head then
+        tokens ← tokens.push token
     | (none, some tokenTail) => 
       if tokenTail > head then
-        tokensBetween (aux.append [x]) head tail xs
-      else
-        tokensBetween aux head tail xs
+        tokens ← tokens.push token
+  return tokens.toList
 
 def matchTokenToAnalysis (tokens : List (Compound Token)) (aux : List Annotation) : List (Compound Sentence) -> List Annotation
   | [] => aux
-  | x::y::xs => matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween [] x.headPos y.headPos tokens }]) (y::xs)
-  | x::xs => matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween [] x.headPos none tokens }]) xs
+  | x::y::xs => 
+    let tokens := (tokens.dropWhile (λ t => x.headPos > t.tailPos.getD t.headPos))
+    matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween x.headPos y.headPos tokens}]) (y::xs)
+  | x::xs => 
+    let tokens := (tokens.dropWhile (λ t => x.headPos > t.tailPos.getD t.headPos))
+    matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween x.headPos none tokens}]) xs
 
 def annotateFile (analysis : AnalysisResult) : AnalysisM (List Annotation) := do
   let compounds ← matchCompounds (toFragmentIntervals analysis.sentences)
