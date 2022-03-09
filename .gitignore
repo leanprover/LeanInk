@@ -8,3 +8,6 @@
 /test/**/.git
 /test/**/*.leanInk
 /.vscode
+
+*.trace
+*.json

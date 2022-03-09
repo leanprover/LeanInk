@@ -32,14 +32,15 @@ def analyzeInput : AnalysisM AnalysisResult := do
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
   initializeSearchPaths header config
-  let (environment, messages) ← processHeader header Options.empty messages context 0
+    let options := Options.empty.setBool `trace.Elab.info true
+  let (environment, messages) ← processHeader header options messages context 0
   logInfo s!"Header: {environment.header.mainModule}"
   logInfo s!"Header: {environment.header.moduleNames}"
   let commandState := configureCommandState environment messages
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
-  if config.experimentalSemanticType then
-    let semanticResult ← runSemanticAnalysis s.commands
-    let result := semanticResult.merge result
+  -- if config.experimentalSemanticType then
+  --   let semanticResult ← runSemanticAnalysis s.commands
+  --   let result := semanticResult.merge result
   let messages := s.commandState.messages.msgs.toList.filter (λ m => m.endPos.isSome )
   return ← result.insertMessages messages context.fileMap 

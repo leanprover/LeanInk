@@ -19,4 +19,4 @@ def mergeSort (f: α -> α -> Bool) : List α -> List α
     where
       split (xs : List α) := (List.length xs) / 2
 
-def sort : (α -> α -> Bool) -> List α -> List α := mergeSort
+def sort [Inhabited α] (f: α -> α -> Bool) (xs : List α) : List α := (xs.toArray.qsort f).toList

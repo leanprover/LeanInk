@@ -54,7 +54,7 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
       if e.isHead then
         let newCompound : Compound a := { headPos := e.position, fragments := [e.enumerateFragment] }
         logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
-        return compounds.append #[newCompound]
+        return compounds.push newCompound
       else
         logInfo s!"FAILURE: Unexpected tail!"
         return #[]
@@ -63,16 +63,16 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
         if c.headPos == e.position then
           let updatedCompound := { c with fragments := c.fragments.append [e.enumerateFragment] }
           logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH HEAD {e.idx} -> {updatedCompound}"
-          return compounds.insertAt (compounds.size - 1) updatedCompound
+          return compounds.pop.push updatedCompound
         else
           let newCompound := { c with headPos := e.position, fragments := c.fragments.append [e.enumerateFragment] }
           logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH HEAD {e.idx} -> {newCompound}"
-          return compounds.append #[newCompound]
+          return compounds.push newCompound
       else
         if c.headPos == e.position then
           let updatedCompound := { c with fragments := c.fragments.filter (λ x => x.1 != e.idx)}
           logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
-          return compounds.insertAt (compounds.size - 1) updatedCompound
+          return compounds.pop.push updatedCompound
         else 
           let newFragments := c.fragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
           /-
@@ -81,7 +81,7 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
           -/
           let newCompound : Compound a := { headPos := e.position, fragments := newFragments }
           logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
-          return compounds.append #[newCompound]
+          return compounds.push newCompound
 
 def _matchCompoundsLoop [Positional a] [ToString a] (events : List (FragmentInterval a)) : AnalysisM (List (Compound a)) := do
   let mut compounds : Array (Compound a) := #[{ headPos := 0, fragments := [] }]
