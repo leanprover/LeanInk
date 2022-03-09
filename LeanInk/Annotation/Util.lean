@@ -59,7 +59,7 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
   match compounds with
     | [] => do
       if e.isHead then
-        let newCompound : Compound a := { headPos := e.position, tailPos := e.tailPos, fragments := [e.enumerateFragment] }
+        let newCompound : Compound a := { headPos := e.position, tailPos := none, fragments := [e.enumerateFragment] }
         logInfo s!"NO COMPOUND -> GENERATING NEW FROM HEAD AT {e.position} -> {newCompound}"
         return [newCompound]
       else
@@ -68,22 +68,21 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
     | c::cs => do
       if e.isHead then
         if c.headPos == e.position then
-          let updatedCompound := { c with tailPos := maxTailPos e.tailPos c.tailPos, fragments := c.fragments.append [e.enumerateFragment] }
+          let updatedCompound := { c with tailPos := none, fragments := c.fragments.append [e.enumerateFragment] }
           logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH HEAD {e.idx} -> {updatedCompound}"
           return updatedCompound::cs
         else
-          let newCompound := { c with headPos := e.position, tailPos := maxTailPos e.tailPos c.tailPos, fragments := c.fragments.append [e.enumerateFragment] }
+          let oldCompound := { c with tailPos := e.position }
+          let newCompound := { c with headPos := e.position, tailPos := none, fragments := c.fragments.append [e.enumerateFragment] }
           logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH HEAD {e.idx} -> {newCompound}"
-          return newCompound::c::cs
+          return newCompound::oldCompound::cs
       else
         let newFragments := c.fragments.filter (λ x => x.1 != e.idx) -- Remove all fragments with the same idx
         let mut newTailPos := c.tailPos
         if newFragments.isEmpty then
           newTailPos := none
-        else if c.tailPos.getD e.tailPos <= e.tailPos then 
-          newTailPos := (newFragments.map (λ f => Positional.tailPos (f.2))).maximum?
         if c.headPos == e.position then
-          let updatedCompound := { c with tailPos := newTailPos, fragments := newFragments}
+          let updatedCompound := { c with tailPos := none, fragments := newFragments}
           logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
           return updatedCompound::cs
         else 
@@ -91,9 +90,10 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
             It may be the case that the newFragments list isEmpty. This is totally fine as we need to
             insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.
           -/
-          let newCompound : Compound a := { headPos := e.position, tailPos := newTailPos, fragments := newFragments }
+          let oldCompound := { c with tailPos := e.position }
+          let newCompound := { headPos := e.position, tailPos := none, fragments := newFragments }
           logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
-          return newCompound::c::cs
+          return newCompound::oldCompound::cs
 
 def matchCompounds [Positional a] [ToString a] (events : List (FragmentInterval a)) : AnalysisM (List (Compound a)) := do
   let mut compounds : List (Compound a) := [{ headPos := 0, tailPos := none, fragments := [] }]

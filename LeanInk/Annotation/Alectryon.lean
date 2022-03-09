@@ -106,12 +106,15 @@ instance : ToJson Fragment where
   Token Generation
 -/
 
-def genTypeInfo? (getContents : String.Pos -> String.Pos -> String) (token : Analysis.TypeTokenInfo) : AnalysisM (Option TypeInfo) := do
+def genTypeInfo? (getContents : String.Pos -> String.Pos -> Option String) (token : Analysis.TypeTokenInfo) : AnalysisM (Option TypeInfo) := do
   match token.type with
   | some type => do
     let headPos := Positional.headPos token
     let tailPos := Positional.tailPos token
-    return some { name := (getContents headPos tailPos), type := type }
+    match getContents headPos tailPos with 
+    | none => pure none
+    | "" => pure none
+    | some x => return some { name := x, type := type }
   | none => pure none
 
 def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String)
@@ -123,70 +126,55 @@ def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String
     | SemanticTokenType.variable => pure (some "Name.Variable")
     | default => pure none
 
-def genToken (token : Compound Analysis.Token) (contents : String) (getContents : String.Pos -> String.Pos -> String) : AnalysisM Token := do
-  let typeTokens := token.getFragments.filterMap (λ x => x.toTypeTokenInfo?)
-  let semanticTokens := token.getFragments.filterMap (λ x => x.toSemanticTokenInfo?)
-  let semanticToken := Positional.smallest? semanticTokens
-  let semanticTokenType ← genSemanticTokenValue semanticToken
-  match (Positional.smallest? typeTokens) with
-  | none => do 
-    return { raw := contents, semanticType := semanticTokenType }
-  | some token => do 
-    return { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString, semanticType := semanticTokenType }
+def genToken (token : Compound Analysis.Token) (contents : Option String) (getContents : String.Pos -> String.Pos -> Option String) : AnalysisM (Option Token) := do
+  match contents with
+  | none => return none
+  | "" => return none
+  | some contents => do
+    let typeTokens := token.getFragments.filterMap (λ x => x.toTypeTokenInfo?)
+    let semanticTokens := token.getFragments.filterMap (λ x => x.toSemanticTokenInfo?)
+    let semanticToken := Positional.smallest? semanticTokens
+    let semanticTokenType ← genSemanticTokenValue semanticToken
+    match (Positional.smallest? typeTokens) with
+    | none => do 
+      return some { raw := contents, semanticType := semanticTokenType }
+    | some token => do 
+      return some { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString, semanticType := semanticTokenType }
 
-def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : String := 
+def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
   if head >= tail then
-    ""
+    none
   else
     contents.extract (head - offset) (tail - offset)
 
 def minPos (x y : String.Pos) := if x < y then x else y
 def maxPos (x y : String.Pos) := if x > y then x else y
 
-partial def genTokens (contents : String) (head : String.Pos) (offset : String.Pos) (l : List Token) :  List (Compound Analysis.Token) -> AnalysisM (List Token)
-| [] => do
-  logInfo s!"TEXT-X: {head} - {contents.utf8ByteSize + offset} > {contents}"
-  let text := extractContents offset contents head (contents.utf8ByteSize + offset)
-  logInfo s!"Text-X1: {text}"
-  return l.append [{ raw := text }]
-| x::[] => do
-  logInfo s!"TEXT-A: {head} - {contents.utf8ByteSize + offset} > {x.headPos} {x.tailPos.getD x.headPos} {contents}"
-  let extract := extractContents offset contents
-  if x.headPos <= head then
-    let textTail := contents.utf8ByteSize + offset
-    let tokenTail := maxPos head (x.tailPos.getD textTail)
-    let tail := minPos textTail (x.tailPos.getD textTail)
-    let head := maxPos head x.headPos
-    let text := extract head tail
-    logInfo s!"Text-A1: {text}"
-    let fragment ← genToken x text extract
-    return ← genTokens contents tail offset (l.append [fragment]) ([])
-  else
-    let textTail := contents.utf8ByteSize + offset
-    let tail := minPos textTail x.headPos
-    let text := extract head tail
-    logInfo s!"Text-A2: {text}"
-    return ← genTokens contents tail offset (l.append [{ raw := text }]) ([x])
-| x::y::ys => do
-  logInfo s!"TEXT-B: {head} - {contents.utf8ByteSize + offset} > {x.headPos} {x.tailPos.getD x.headPos} {y.headPos} {y.tailPos.getD x.headPos} {contents}"
-  let extract := extractContents offset contents
-  if x.headPos <= head then
-    let textTail := contents.utf8ByteSize + offset
-    let tokenTail := maxPos head (x.tailPos.getD y.headPos)
-    let tail := minPos (minPos y.headPos tokenTail) textTail
-    let head := maxPos head x.headPos
-    let text := extract head tail
-    logInfo s!"Text-B1: {text}"
-    let fragment ← genToken x text extract
-    return (← genTokens contents tail offset (l.append [fragment]) (y::ys))
-  else
-    let textTail := contents.utf8ByteSize + offset
-    let tail := minPos textTail x.headPos
-    let text := extract head tail
-    let nextHead := maxPos head tail
-    logInfo s!"Text-B2: {text}"
-    return (← genTokens contents tail offset (l.append [{ raw := text }]) (x::y::ys))
-
+partial def genTokens (contents : String) (head : String.Pos) (offset : String.Pos) (l : List Token)  (compounds : List (Compound Analysis.Token)) : AnalysisM (List Token) := do
+  let textTail := contents.utf8ByteSize + offset
+  let mut head : String.Pos := head
+  let mut tokens : List Token := []
+  for x in compounds do
+    let extract := extractContents offset contents
+    let tail := x.tailPos.getD textTail
+    if x.headPos <= head then
+      let text := extract head tail
+      head := tail
+      logInfo s!"Text-B1: {text}"
+      match (← genToken x text extract) with
+      | none => logInfo s!"Empty 1 {text} {x.headPos} {tail}"
+      | some fragment => tokens := fragment::tokens
+    else
+      let text := extract head x.headPos
+      head := x.headPos
+      logInfo s!"Text-B2: {text}"
+      match text with
+      | none => logInfo s!"Empty 1 {text} {x.headPos} {tail}"
+      | some text => tokens := { raw := text }::tokens
+  match extractContents offset contents head (contents.utf8ByteSize + offset) with
+  | none => return tokens.reverse
+  | some x => return ({ raw := x }::tokens).reverse
+  
 /- 
   Fragment Generation
 -/

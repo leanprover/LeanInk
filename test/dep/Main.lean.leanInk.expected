@@ -76,11 +76,5 @@
     "raw": "\"Hello, world!\"",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
-    "semanticType": null,
-    "raw": "",
-    "link": null,
-    "docstring": null,
     "_type": "token"}],
   "_type": "text"}]
