@@ -52,10 +52,10 @@ namespace TraversalFragment
     else
       let semantic : SemanticTraversalInfo := { node := info, stx := info.stx }
       match info with 
-      | Info.ofTacticInfo info => (tactic { info := info, ctx := ctx }, semantic)
+      | Info.ofTacticInfo info => (tactic { info := info, ctx := ctx }, none)
       | Info.ofTermInfo info => (term { info := info, ctx := ctx }, semantic)
-      | Info.ofFieldInfo info => (field { info := info, ctx := ctx }, semantic)
-      | _ => (none, semantic)
+      | Info.ofFieldInfo info => (field { info := info, ctx := ctx }, none)
+      | _ => (none, none)
 
   def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) : TraversalFragment -> AnalysisM α
   | term fragment => fragment.ctx.runMetaM fragment.info.lctx (func (term fragment))
