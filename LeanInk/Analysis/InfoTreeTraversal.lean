@@ -50,16 +50,18 @@ namespace TraversalFragment
   | tactic fragment => (fragment.info.toElabInfo.stx.getTailPos? false).getD 0
   | unknown fragment => (fragment.info.stx.getTailPos? false).getD 0
 
-  def create (ctx : ContextInfo) (info : Info) : ((Option TraversalFragment) × (Option SemanticTraversalInfo)) :=
+  def create (ctx : ContextInfo) (info : Info) : AnalysisM ((Option TraversalFragment) × (Option SemanticTraversalInfo)) := do
     if Info.isExpanded info then
-      (none, none)
+      pure (none, none)
     else
-      let semantic : SemanticTraversalInfo := { node := info, stx := info.stx }
+      let mut semantic : Option SemanticTraversalInfo := none 
+      if (← read).experimentalSemanticType then
+        semantic := some { node := info, stx := info.stx }
       match info with 
-      | Info.ofTacticInfo info => (tactic { info := info, ctx := ctx }, semantic)
-      | Info.ofTermInfo info => (term { info := info, ctx := ctx }, semantic)
-      | Info.ofFieldInfo info => (field { info := info, ctx := ctx }, semantic)
-      | _ => (none, semantic)
+      | Info.ofTacticInfo info => pure (tactic { info := info, ctx := ctx }, semantic)
+      | Info.ofTermInfo info => pure (term { info := info, ctx := ctx }, semantic)
+      | Info.ofFieldInfo info => pure (field { info := info, ctx := ctx }, semantic)
+      | _ => pure (none, semantic)
 
   def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) : TraversalFragment -> AnalysisM α
   | term fragment => fragment.ctx.runMetaM fragment.info.lctx (func (term fragment))
@@ -314,8 +316,7 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM (_resolveTacticList ctx? aux)
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
-      let fragment := TraversalFragment.create ctx info
-      match fragment with
+      match (← TraversalFragment.create ctx info) with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
         sortedChildrenLeafs.insertFragment fragment          
