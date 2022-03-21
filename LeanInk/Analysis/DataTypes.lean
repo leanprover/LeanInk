@@ -17,7 +17,7 @@ class Positional (α : Type u) where
   tailPos : α -> String.Pos
 
 namespace Positional
-  def length { α : Type u } [Positional α] (self : α) : Nat := (Positional.tailPos self) - (Positional.headPos self)
+  def length { α : Type u } [Positional α] (self : α) : String.Pos := (Positional.tailPos self) - (Positional.headPos self)
 
   def smallest? { α : Type u } [Positional α] (list : List α) : Option α := List.foldl (λ a y => 
     let y : α := y -- We need to help the compiler a bit here otherwise it thinks `y : Option α`

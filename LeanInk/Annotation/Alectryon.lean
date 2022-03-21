@@ -151,7 +151,7 @@ def minPos (x y : String.Pos) := if x < y then x else y
 def maxPos (x y : String.Pos) := if x > y then x else y
 
 partial def genTokens (contents : String) (head : String.Pos) (offset : String.Pos) (l : List Token)  (compounds : List (Compound Analysis.Token)) : AnalysisM (List Token) := do
-  let textTail := contents.utf8ByteSize + offset
+  let textTail := ⟨contents.utf8ByteSize⟩ + offset
   let mut head : String.Pos := head
   let mut tokens : List Token := []
   for x in compounds do
@@ -171,7 +171,7 @@ partial def genTokens (contents : String) (head : String.Pos) (offset : String.P
       match text with
       | none => logInfo s!"Empty 1 {text} {x.headPos} {tail}"
       | some text => tokens := { raw := text }::tokens
-  match extractContents offset contents head (contents.utf8ByteSize + offset) with
+  match extractContents offset contents head (⟨contents.utf8ByteSize⟩ + offset) with
   | none => return tokens.reverse
   | some x => return ({ raw := x }::tokens).reverse
   
@@ -233,7 +233,7 @@ Generates AlectryonFragments for the given CompoundFragments and input file cont
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Fragment)
 | [] => pure l
 | x::[] => do
-  let fragment ← genFragment x contents.utf8ByteSize (contents.extract x.sentence.headPos contents.utf8ByteSize)
+  let fragment ← genFragment x ⟨contents.utf8ByteSize⟩ (contents.extract x.sentence.headPos ⟨contents.utf8ByteSize⟩)
   return l.append [fragment]
 | x::y::ys => do
   let fragment ← genFragment x y.sentence.headPos (contents.extract x.sentence.headPos (y.sentence.headPos))

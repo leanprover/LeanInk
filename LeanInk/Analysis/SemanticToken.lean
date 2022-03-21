@@ -48,7 +48,7 @@ namespace SemanticTraversalInfo
 
   def highlightKeyword (headPos tailPos : String.Pos) (stx: Syntax) : AnalysisM (List Token) := do
     if let Syntax.atom info val := stx then
-      if (val.length > 0 && val[0].isAlpha) || (val.length > 1 && val[0] = '#' && val[1].isAlpha) then
+      if (val.length > 0 && val[0].isAlpha) || (val.length > 1 && val[0] = '#' && val[⟨1⟩].isAlpha) then
         return genSemanticToken stx SemanticTokenType.keyword
     return []
 
