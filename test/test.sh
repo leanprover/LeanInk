@@ -43,10 +43,10 @@ run_leanink () {
     # If the folder in which the file resides contains a lakefile we will use it to resolve any dependencies for the file
     if [[ -f "$directory/lakefile.lean" ]]; then
         echo "Running LeanInk with lakefile.lean - $file"
-        (cd $directory && $LEANINK analyze $filename --x-enable-type-info --x-enable-docStrings --x-enable-semantic-token --lake lakefile.lean) || error "LeanInk failed - $file"
+        (cd $directory && $LEANINK analyze $filename --x-enable-type-info --x-enable-docStrings --x-enable-semantic-token --lake lakefile.lean --verbose) || error "LeanInk failed - $file"
     else
         echo "Running LeanInk - $file"
-        (cd $directory && $LEANINK analyze $filename --x-enable-type-info --x-enable-docStrings --x-enable-semantic-token) || error "LeanInk failed - $file"
+        (cd $directory && $LEANINK analyze $filename --x-enable-type-info --x-enable-docStrings --x-enable-semantic-token --verbose) || error "LeanInk failed - $file"
     fi
 }
 
