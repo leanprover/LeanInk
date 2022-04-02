@@ -187,7 +187,9 @@ namespace TraversalFragment
 
   private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
-    return (← ctx.runMetaM {} (goals.mapM (evalGoal .))).filterMap (λ x => x)
+    -- We force inaccessible names to always be visible for goals, like Lean.
+    -- Let's still keep the logic around in case we want to print term goals in the future, where Lean does hide them.
+    return (← ctx.runMetaM {} (withPPInaccessibleNames (goals.mapM evalGoal))).filterMap id
 
   private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool): AnalysisM (List Goal) :=
     if beforeNode then
