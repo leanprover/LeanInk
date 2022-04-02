@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ulimit -s 8192
 DIFF=diff
@@ -57,7 +57,7 @@ run_tests () {
         if [[ ${file##*/} != "lakefile.lean" && $file != *"/lean_packages/"* ]]; then 
             if test "$file.leanInk.expected"; then
                 run_leanink $file
-                if $DIFF -au --strip-trailing-cr "$file.leanInk" "$file.leanInk.expected"; then
+                if $DIFF -au --strip-trailing-cr "$file.leanInk.expected" "$file.leanInk"; then
                     echo "SUCCESSFULL! ($file)"
                 else
                     echo "FAILED! ($file)"
