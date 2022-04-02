@@ -305,7 +305,11 @@
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"},
+     {"type": "n✝ = n✝",
+      "names": ["n_ih✝"],
+      "body": "",
+      "_type": "hypothesis"}],
     "conclusion": "Nat.succ n✝ = Nat.succ n✝",
     "_type": "goal"}],
   "contents":
@@ -965,7 +969,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≠ b", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "¬a = b",
     "_type": "goal"}],
   "contents":
@@ -996,7 +1001,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≠ b", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "¬a = b",
     "_type": "goal"}],
   "contents":
@@ -1175,7 +1181,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬a = b", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "a = b",
     "_type": "goal"}],
   "contents":
@@ -1207,6 +1214,7 @@
   [{"name": "h",
     "hypotheses":
     [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬a = b", "names": ["a✝"], "body": "", "_type": "hypothesis"},
      {"type": "¬a = b", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -1360,7 +1368,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬p", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -1392,6 +1401,7 @@
   [{"name": "h",
     "hypotheses":
     [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬p", "names": ["a✝"], "body": "", "_type": "hypothesis"},
      {"type": "¬p", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -1539,7 +1549,7 @@
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["m"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["m", "n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"}],
   "contents":
@@ -1584,12 +1594,13 @@
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "zero.succ",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["m"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["m", "n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"}],
   "contents":
@@ -1634,12 +1645,13 @@
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "zero.succ",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["m"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["m", "n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"}],
   "contents":
@@ -1786,7 +1798,7 @@
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["m"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["m", "n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"}],
   "contents":
@@ -1831,12 +1843,13 @@
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "zero.succ",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["m"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["m", "n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"}],
   "contents":
@@ -1881,12 +1894,13 @@
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "zero.succ",
-    "hypotheses": [],
+    "hypotheses":
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["m"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["m", "n✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "Unit",
     "_type": "goal"}],
   "contents":
@@ -2387,7 +2401,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ (r ∧ s ∧ p) ∧ p ∧ r ∧ q",
     "_type": "goal"}],
   "contents":
@@ -2424,7 +2442,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ (r ∧ s ∧ p) ∧ p ∧ r ∧ q",
     "_type": "goal"}],
   "contents":
@@ -2448,7 +2470,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "s",
     "_type": "goal"},
    {"name": "right.left.right.right",
@@ -2456,7 +2482,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -2493,7 +2523,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "left.right",
@@ -2501,7 +2535,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.left.left",
@@ -2509,7 +2547,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "r",
     "_type": "goal"},
    {"name": "right.left.right.left",
@@ -2517,7 +2559,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "s",
     "_type": "goal"},
    {"name": "right.left.right.right",
@@ -2525,7 +2571,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right.left",
@@ -2533,7 +2583,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right.right.left",
@@ -2541,7 +2595,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "r",
     "_type": "goal"},
    {"name": "right.right.right.right",
@@ -2549,7 +2607,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"}],
   "contents":
@@ -2749,7 +2811,9 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2780,12 +2844,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2816,12 +2884,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2842,12 +2914,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2868,7 +2944,9 @@
   "goals":
   [{"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2899,12 +2977,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2927,12 +3009,16 @@
   "goals":
   [{"name": "left.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "left.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"}],
   "contents":
@@ -2963,22 +3049,30 @@
   "goals":
   [{"name": "left.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "left.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2999,7 +3093,9 @@
   "goals":
   [{"name": "right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -3030,12 +3126,16 @@
   "goals":
   [{"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -3066,12 +3166,16 @@
   "goals":
   [{"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
