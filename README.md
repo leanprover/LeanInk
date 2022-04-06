@@ -23,7 +23,7 @@ Before you can build LeanInk from source make sure to install the latest version
 This will also automatically install the [Lake](https://github.com/leanprover/lake) package manager.
 
 ```bash
-git clone https://github.com/insightmind/LeanInk
+git clone https://github.com/leanprover/LeanInk
 cd LeanInk
 lake build
 ```
@@ -38,7 +38,7 @@ leanInk analyze Input.lean
 leanInk a Input.lean
 ```
 
-The `analyze` command will generate an output file `Input.lean.leanInk` with the annotate lean program, encoded using Alectryons fragment json format. (For more information about the json format take a look at [Alectryon.lean](https://github.com/insightmind/LeanInk/blob/main/LeanInk/Annotation/Alectryon.lean))
+The `analyze` command will generate an output file `Input.lean.leanInk` with the annotate lean program, encoded using Alectryons fragment json format. (For more information about the json format take a look at [Alectryon.lean](https://github.com/leanprover/LeanInk/blob/main/LeanInk/Annotation/Alectryon.lean))
 
 --- 
 
