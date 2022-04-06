@@ -14,7 +14,7 @@ For more information about Alectryon make sure to take a look at their repositor
 You can either build LeanInk and install it yourself or use the build script to install a LeanInk release version:
 
 ```bash
-sh -c "$(curl https://raw.githubusercontent.com/insightmind/LeanInk/main/init.sh -sSf)"
+sh -c "$(curl https://raw.githubusercontent.com/leanprover/LeanInk/main/init.sh -sSf)"
 ```
 
 ## Building from source
