@@ -39,7 +39,7 @@
     {"type": "∀ (p q : Prop), p → q → p ∧ q ∧ p",
      "name": "exampleTheorem",
      "_type": "typeinfo"},
-    "semanticType": null,
+    "semanticType": "Name.Variable",
     "raw": "exampleTheorem",
     "link": null,
     "docstring": null,

@@ -21,7 +21,7 @@
     {"type": "∀ (p q : Prop), p → q → p ∧ q ∧ p",
      "name": "test",
      "_type": "typeinfo"},
-    "semanticType": null,
+    "semanticType": "Name.Variable",
     "raw": "test",
     "link": null,
     "docstring": null,
