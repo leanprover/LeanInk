@@ -30,14 +30,6 @@ inductive TraversalFragment where
 | unknown (info: ContextBasedInfo ElabInfo)
 
 namespace TraversalFragment
-  private def Info.stx : Info -> Syntax
-  | Info.ofTacticInfo i => i.stx
-  | Info.ofTermInfo i => i.stx
-  | Info.ofCommandInfo i => i.stx
-  | Info.ofMacroExpansionInfo i => i.stx
-  | Info.ofFieldInfo i => i.stx
-  | Info.ofCompletionInfo i => i.stx
-
   def headPos : TraversalFragment -> String.Pos
   | term fragment => (fragment.info.toElabInfo.stx.getPos? false).getD 0
   | field fragment => (fragment.info.stx.getPos? false).getD 0
