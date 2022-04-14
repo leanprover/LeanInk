@@ -12,7 +12,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo": {"type": "IO Unit", "name": "main", "_type": "typeinfo"},
-    "semanticType": null,
+    "semanticType": "Name.Variable",
     "raw": "main",
     "link": null,
     "docstring": null,

@@ -12,7 +12,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo": {"type": "Nat → Nat → Nat", "name": "add", "_type": "typeinfo"},
-    "semanticType": null,
+    "semanticType": "Name.Variable",
     "raw": "add",
     "link": null,
     "docstring": null,
