@@ -26,7 +26,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   logInfo s!"Results written to file: {path}!"
 
 def generateOutput { α : Type } [ToJson α] (fragments : Array α) : AnalysisM String := do 
-  if (← read).verbose then
+  if (← read).prettifyOutput then
     return (toJson fragments).pretty
   else
     return (toJson fragments).compress

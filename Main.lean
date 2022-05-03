@@ -27,6 +27,10 @@ def analyzeCommand : Command := {
       help := "Enables verbose output."
     },
     flag {
+      identifiers := ["--prettify-output"]
+      help := "Prettifies the .leanInk output file"
+    },
+    flag {
       identifiers := ["--x-enable-type-info"]
       help := "Enables output of experimental type info support for Alectryon. Alectryon will show a hover popup with type information for certain tokens."
     },
