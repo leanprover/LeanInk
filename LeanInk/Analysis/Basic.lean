@@ -25,6 +25,7 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     inputFileContents := contents
     lakeFile := getLakeFile? arguments
     verbose := containsFlag arguments "--verbose"
+    prettifyOutput := containsFlag arguments "--prettify-output"
     experimentalTypeInfo := containsFlag arguments "--x-enable-type-info"
     experimentalDocString := containsFlag arguments "--x-enable-docStrings"
     experimentalSemanticType := containsFlag arguments "--x-enable-semantic-token"

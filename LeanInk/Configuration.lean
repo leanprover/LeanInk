@@ -10,6 +10,7 @@ structure Configuration where
   inputFileContents : String
   lakeFile : Option FilePath
   verbose : Bool
+  prettifyOutput : Bool
   experimentalTypeInfo : Bool
   experimentalDocString : Bool
   experimentalSemanticType : Bool
