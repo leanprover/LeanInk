@@ -1,6 +1,6 @@
 ![LeanInkLogo](https://user-images.githubusercontent.com/24965150/145307859-30350f23-4f7f-4aab-a1ab-34889ad44d9a.png)
 
-[![CI](https://github.com/insightmind/LeanInk/actions/workflows/build.yml/badge.svg)](https://github.com/insightmind/LeanInk/actions/workflows/build.yml)
+[![CI](https://github.com/leanprover/LeanInk/actions/workflows/build.yml/badge.svg)](https://github.com/insightmind/LeanInk/actions/workflows/build.yml)
 [![LƎⱯN - 4](https://img.shields.io/static/v1?label=LƎⱯN&message=4&color=black)](https://github.com/leanprover/lean4)
 
 LeanInk is a command line helper tool for [Alectryon](https://github.com/cpitclaudel/alectryon) which aims to ease the integration and support of [Lean 4](https://github.com/leanprover/lean4).
