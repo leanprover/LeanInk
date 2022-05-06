@@ -6670,7 +6670,7 @@
     "raw": "]",
     "link": null,
     "docstring":
-    "`rfl` is equivalent to `exact rfl`, but has a few optimizatons. ",
+    "This tactic tries to close the current goal using reflexivity.\nThis is supposed to be an extensible tactic and users can add their own support\nto new reflexive relations.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"contents":
