@@ -60,11 +60,19 @@ def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
     IO.println s!"Starting Analysis for: \"{file}\""
     let config ← _buildConfiguration args file
     return ← (execAuxM.run config)
-    
+
+/-
+`enableInitializersExecution` is usually only run from the C part of the
+frontend and needs to be used with care but it is required in order
+to work with custom user extensions correctly.
+-/
+@[implementedBy enableInitializersExecution]
+private def enableInitializersExecutionWrapper : IO Unit := pure ()
 
 def exec (args: List ResolvedArgument) : List String -> IO UInt32
   | [] => do Logger.logError s!"No input files provided"
   | files => do
+    enableInitializersExecutionWrapper
     -- Span task for every file?
     for file in files do
       if (← execAux args file) != 0 then
