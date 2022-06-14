@@ -40,7 +40,7 @@ leanInk a Input.lean
 
 The `analyze` command will generate an output file `Input.lean.leanInk` with the annotate lean program, encoded using Alectryons fragment json format. (For more information about the json format take a look at [Alectryon.lean](https://github.com/leanprover/LeanInk/blob/main/LeanInk/Annotation/Alectryon.lean))
 
---- 
+---
 
 If your lean program has external dependencies and uses Lake as its package manager you can use the `--lake` argument to provide the lakefile.
 
