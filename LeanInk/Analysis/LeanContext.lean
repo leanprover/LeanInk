@@ -30,12 +30,11 @@ def getLakePath : IO String := do
 open IO
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
-    logInfo s!"lakefile does not exist: {lakeFile}"
-    initializeLeanContext
+    throw <| IO.userError s!"lakefile does not exist: {lakeFile}"
   else if lakeFile.fileName != some "lakefile.lean" then
     match lakeFile.fileName with
-    | none => logInfo s!"lakefile is not a valid file!"
-    | some fileName => logInfo s!"lakefile [{fileName}] not called: lakefile.lean"
+    | none => throw <| IO.userError s!"lakefile is not a valid file!"
+    | some fileName => throw <| IO.userError s!"lakefile [{fileName}] not called: lakefile.lean"
   else
     logInfo s!"Loading Lake Context with lakefile ({lakeFile})..."
     let imports := Lean.Elab.headerToImports header
@@ -52,9 +51,9 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
     | 0 => do
       let stdout := stdout.split (· == '\n') |>.getLast!
       match Json.parse stdout with
-      | Except.error _ => logInfo s!"Failed to parse lake output: {stdout}"
+      | Except.error _ => throw <| IO.userError s!"Failed to parse lake output: {stdout}"
       | Except.ok val => match fromJson? val with
-        | Except.error _ => logInfo s!"Failed to decode lake output: {stdout}"
+        | Except.error _ => throw <| IO.userError s!"Failed to decode lake output: {stdout}"
         | Except.ok paths => do
           let paths : LeanPaths := paths 
           initializeLeanContext
@@ -62,7 +61,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
           logInfo s!"{paths.oleanPath}"
           logInfo s!"Successfully loaded lake search paths"
     | 2 => logInfo s!"No search paths required!"
-    | _ => logInfo s!"Using lake failed! Make sure that lake is installed!"
+    | _ => throw <| IO.userError s!"Using lake failed! Make sure that lake is installed!\n{← lakeProcess.stderr.readToEnd}"
 
 def configureLake : AnalysisM Unit := do
   let lakeProcess ← Process.spawn {
@@ -82,4 +81,3 @@ def initializeSearchPaths (header : Syntax) (config : Configuration) : AnalysisM
     configureLake
     initializeLakeContext lakeFile header
   | none => initializeLeanContext
-  
