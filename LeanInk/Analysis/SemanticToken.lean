@@ -37,18 +37,18 @@ namespace SemanticTraversalInfo
         | Expr.fvar .. => return genToken SemanticTokenType.variable
         | _ =>
           match info.stx.getPos? with
-          | some pos => 
+          | some pos =>
             if pos > globalTailPos then
               return genToken SemanticTokenType.property
             else
               return []
-          | _ => pure []  
+          | _ => pure []
       | _, _ => pure []
     | _ => pure []
 
   def highlightKeyword (headPos tailPos : String.Pos) (stx: Syntax) : AnalysisM (List Token) := do
     if let Syntax.atom info val := stx then
-      if (val.length > 0 && val[0].isAlpha) || (val.length > 1 && val[0] = '#' && val[⟨1⟩].isAlpha) then
+      if (val.length > 0 && val.front.isAlpha) || (val.length > 1 && val.front = '#' && (val.get ⟨1⟩).isAlpha) then
         return genSemanticToken stx SemanticTokenType.keyword
     return []
 
