@@ -16,8 +16,15 @@ open LeanInk.Analysis
 structure TypeInfo where
   _type : String := "typeinfo"
   name : String
-  type : String
-  deriving ToJson
+  type : Widget.CodeWithInfos × String
+
+instance : ToJson TypeInfo where
+  toJson tyi :=
+    Json.mkObj [
+      ("_type", tyi._type),
+      ("name", tyi.name),
+      ("type", tyi.type.snd)
+    ]
 
 structure Token where
   _type : String := "token"

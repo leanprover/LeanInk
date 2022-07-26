@@ -64,11 +64,25 @@ namespace TraversalFragment
   /- 
     Token Generation
   -/
-  def inferType? : TraversalFragment -> MetaM (Option String)
+  def prettyPrintTerm (expr : Expr) : MetaM (Widget.CodeWithInfos × String) := do
+    let (fmt, infos) ←  PrettyPrinter.ppExprWithInfos expr
+    let tt := Widget.TaggedText.prettyTagged fmt
+    let ctx := {
+      env := ← getEnv
+      mctx := ← getMCtx
+      options := ⟨[(`pp.tagAppFns, true)]⟩,
+      currNamespace := ← getCurrNamespace
+      openDecls := ← getOpenDecls
+      fileMap := ← getFileMap ,
+      ngen := ← getNGen
+    }
+    return (Widget.tagExprInfos ctx infos tt, s!"{fmt}")
+
+  def inferType? : TraversalFragment -> MetaM (Option (Widget.CodeWithInfos × String))
     | term termFragment => do
       -- This call requires almost half of the runtime of the tree traversal.
-      let format ← try Meta.ppExpr (← Meta.inferType termFragment.info.expr) catch e => e.toMessageData.toString
-      return s!"{format}"
+      let prettyTyp ← try prettyPrintTerm (←inferType termFragment.info.expr) catch e => pure (default, ←e.toMessageData.toString)
+      pure prettyTyp
     | _ => pure none
 
   def genDocString? (self : TraversalFragment) : MetaM (Option String) := do
@@ -89,13 +103,13 @@ namespace TraversalFragment
 
   def genTypeTokenInfo? (self : TraversalFragment) : AnalysisM (Option TypeTokenInfo) := do
     let mut docString : Option String := none
-    let mut type : Option String := none
+    let mut type : Option (Widget.CodeWithInfos × String) := none
     let config ← read
     if config.experimentalDocString then
       docString ← runMetaM (genDocString?) self
     if config.experimentalTypeInfo then
       type ← runMetaM (inferType?) self
-    if type == none ∧ docString == none then
+    if type.isNone ∧ docString == none then
       return none
     else
       return some { headPos := self.headPos, tailPos := self.tailPos, type := type, docString := docString }

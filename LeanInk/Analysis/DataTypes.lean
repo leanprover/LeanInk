@@ -66,7 +66,7 @@ instance : Positional SemanticTokenInfo where
   E.g.: A variable token `p` might conform to type `Nat` and has the docstring for `Nat`
 -/
 structure TypeTokenInfo extends Fragment where
-  type: Option String
+  type: Option (Widget.CodeWithInfos × String)
   docString: Option String
   deriving Inhabited
 
