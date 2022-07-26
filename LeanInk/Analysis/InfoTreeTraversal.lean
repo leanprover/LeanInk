@@ -121,18 +121,18 @@ namespace TraversalFragment
     return tokens
 
   /- Sentence Generation -/
-  private def genGoal (goalType : Format) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
+  private def genGoal (goalType : Widget.CodeWithInfos × String) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
     | Name.anonymous => do
       return { 
         name := ""
-        conclusion := toString goalType
+        conclusion := .typed goalType.fst goalType.snd
         hypotheses := hypotheses 
       }
     | name => do
       let goalFormatName := format name.eraseMacroScopes
       return { 
         name := toString goalFormatName
-        conclusion := toString goalType
+        conclusion := .typed goalType.fst goalType.snd
         hypotheses := hypotheses 
       }
 
@@ -154,9 +154,9 @@ namespace TraversalFragment
           match type? with
             | none      => pure list
             | some type => do
-              let typeFmt ← ppExpr type
+              let prettyType ← prettyPrintTerm type
               let names := ids.reverse.map (λ n => n.toString)
-              return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
+              return list.append [{ names := names, body := (default, ""), type := prettyType }]
         let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
           if hiddenProp.contains localDecl.fvarId then
             let newHypotheses ← pushPending [] prevType? varNames
@@ -179,17 +179,17 @@ namespace TraversalFragment
               let hypotheses ← pushPending hypotheses prevType? varNames
               let type ← instantiateMVars type
               let val  ← instantiateMVars val
-              let typeFmt ← ppExpr type
-              let valFmt ← ppExpr val
-              pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
+              let prettyType ← prettyPrintTerm type
+              let prettyVal ← prettyPrintTerm val
+              pure ([], none, hypotheses.append [{ names := [varName.toString], body := prettyVal , type := prettyType }])
         let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
           if !auxDecl && localDecl.isAuxDecl || hidden.contains localDecl.fvarId then
             pure (varNames, prevType?, hypotheses)
           else
             evalVar varNames prevType? hypotheses localDecl
         let hypotheses ← pushPending hypotheses type? varNames 
-        let typeFmt ← ppExpr (← instantiateMVars decl.type)
-        return (← genGoal typeFmt hypotheses decl.userName)
+        let prettyType ← prettyPrintTerm (← instantiateMVars decl.type)
+        return (← genGoal prettyType hypotheses decl.userName)
 
   private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
@@ -209,7 +209,7 @@ namespace TraversalFragment
       let goalsBefore ← genGoals fragment true
       let goalsAfter ← genGoals fragment false
       if goalsAfter.isEmpty then
-        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := .untyped "Goals accomplished! 🐙", hypotheses := [] }] }
       else
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
