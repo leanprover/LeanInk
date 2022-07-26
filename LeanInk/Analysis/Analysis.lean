@@ -25,7 +25,8 @@ def analyzeInput : AnalysisM AnalysisResult := do
   let config := ← read
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
-  initializeSearchPaths header config
+  -- doc-gen: Lake already configures us via LEAN_PATH
+  -- initializeSearchPaths header config
     let options := Options.empty.setBool `trace.Elab.info true
   let (environment, messages) ← processHeader header options messages context 0
   logInfo s!"Header: {environment.header.mainModule}"
