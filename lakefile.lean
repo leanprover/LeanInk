@@ -1,9 +1,13 @@
 import Lake
 open System Lake DSL
 
-package leanInk where
-  moreLinkArgs :=
-    if Platform.isWindows then
-      #[]
-    else
-      #["-rdynamic"]
+package leanInk
+
+lean_lib LeanInk
+
+@[defaultTarget]
+lean_exe leanInk {
+  root := `Main
+  supportInterpreter := true
+}
+
