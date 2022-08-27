@@ -10,8 +10,13 @@
     "raw": " ",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo":
+    "_type": "token"}],
+  "_type": "text"},
+ {"messages":
+  [{"contents": "Warning: declaration uses 'sorry'", "_type": "message"}],
+  "goals": [],
+  "contents":
+  [{"typeinfo":
     {"type": "∀ (p q : Prop), p → q → p ∧ q ∧ p",
      "name": "test",
      "_type": "typeinfo"},
@@ -19,8 +24,10 @@
     "raw": "test",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " (",
     "link": null,
@@ -145,17 +152,11 @@
     "raw": " :=\n  ",
     "link": null,
     "docstring": null,
-    "_type": "token"}],
-  "_type": "text"},
- {"messages":
-  [{"contents": "Warning: declaration uses 'sorry'", "_type": "message"}],
-  "goals": [],
-  "contents":
-  [{"typeinfo": {"type": "p ∧ q ∧ p", "name": "sorry", "_type": "typeinfo"},
+    "_type": "token"},
+   {"typeinfo": {"type": "p ∧ q ∧ p", "name": "sorry", "_type": "typeinfo"},
     "semanticType": null,
     "raw": "sorry",
     "link": null,
     "docstring": null,
     "_type": "token"}],
-  "_type": "sentence"},
- {"contents": [], "_type": "text"}]
+  "_type": "text"}]

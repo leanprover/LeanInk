@@ -167,13 +167,15 @@
     "semanticType": "Keyword",
     "raw": "by",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -198,14 +200,14 @@
     "raw": "apply",
     "link": null,
     "docstring":
-    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution, and first-order unification with dependent types.\n",
+    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution,\nand first-order unification with dependent types.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution, and first-order unification with dependent types.\n",
+    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution,\nand first-order unification with dependent types.\n",
     "_type": "token"},
    {"typeinfo":
     {"type": "∀ {a b : Prop}, a → b → a ∧ b",
@@ -214,7 +216,8 @@
     "semanticType": null,
     "raw": "And.intro",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`And.intro : a → b → a ∧ b` is the constructor for the And operation. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -231,7 +234,8 @@
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -249,14 +253,14 @@
     "raw": "case",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " right =>\n    ",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -281,14 +285,14 @@
     "raw": "apply",
     "link": null,
     "docstring":
-    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution, and first-order unification with dependent types.\n",
+    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution,\nand first-order unification with dependent types.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution, and first-order unification with dependent types.\n",
+    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution,\nand first-order unification with dependent types.\n",
     "_type": "token"},
    {"typeinfo":
     {"type": "∀ {a b : Prop}, a → b → a ∧ b",
@@ -297,7 +301,8 @@
     "semanticType": null,
     "raw": "And.intro",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`And.intro : a → b → a ∧ b` is the constructor for the And operation. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -315,7 +320,7 @@
     "raw": "\n    ",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -333,14 +338,14 @@
     "raw": "case",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " left => ",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -386,7 +391,7 @@
     "raw": "\n    ",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -404,14 +409,14 @@
     "raw": "case",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " right => ",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -456,7 +461,8 @@
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -474,14 +480,14 @@
     "raw": "case",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " left => ",
     "link": null,
     "docstring":
-    "`case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`, or else fails.\n`case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses with inaccessible names to the given names. ",
+    "* `case tag => tac` focuses on the goal with case name `tag` and solves it using `tac`,\n  or else fails.\n* `case tag x₁ ... xₙ => tac` additionally renames the `n` most recent hypotheses\n  with inaccessible names to the given names.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
