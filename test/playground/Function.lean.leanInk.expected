@@ -193,7 +193,8 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "(β → β → β) → (α → β) → β → α → β",
+    {"type":
+     "{α : Sort u₁} → {β : Sort u₂} → (β → β → β) → (α → β) → β → α → β",
      "name": "comp_right",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -863,8 +864,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "{α : Sort u₁} →\n  {β : Sort u₂} → {φ : Sort u₃} → {δ : Sort u₄} → {ζ : Sort u₁} → (α → β → φ) → (φ → δ → ζ) → (α → β → δ) → α → β → ζ",
+    {"type": "(α → β → φ) → (φ → δ → ζ) → (α → β → δ) → α → β → ζ",
      "name": "combine",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -1644,7 +1644,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ (f : α → β), id ∘ f = f",
+    {"type": "∀ {α : Sort u₁} {β : Sort u₂} (f : α → β), id ∘ f = f",
      "name": "left_id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -1699,7 +1699,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -1738,7 +1739,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -1826,7 +1828,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -1853,7 +1856,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2075,7 +2079,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2298,7 +2303,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2386,7 +2392,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2425,7 +2432,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2458,7 +2466,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ (f : α → β), f ∘ id = f",
+    {"type": "∀ {α : Sort u₁} {β : Sort u₂} (f : α → β), f ∘ id = f",
      "name": "comp.right_id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -2525,7 +2533,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2552,7 +2561,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2573,8 +2583,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "∀ {α : Sort u₁} {β : Sort u₂} {φ : Sort u₃} (f : β → φ) (b : β), f ∘ const α b = const α (f b)",
+    {"type": "∀ (f : β → φ) (b : β), f ∘ const α b = const α (f b)",
      "name": "comp_const_right",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -2667,7 +2676,8 @@
     "semanticType": null,
     "raw": "const",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The constant function. If `a : α`, then `Function.const β a : β → α` is the\n\"constant function with value `a`\", that is, `Function.const β a b = a`.\n```\nexample (b : Bool) : Function.const Bool 10 b = 10 :=\n  rfl\n\n#check Function.const Bool 10\n-- Bool → Nat\n```\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2706,7 +2716,8 @@
     "semanticType": null,
     "raw": "const",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The constant function. If `a : α`, then `Function.const β a : β → α` is the\n\"constant function with value `a`\", that is, `Function.const β a b = a`.\n```\nexample (b : Bool) : Function.const Bool 10 b = 10 :=\n  rfl\n\n#check Function.const Bool 10\n-- Bool → Nat\n```\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -2757,7 +2768,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -3357,7 +3369,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {g : β → φ} {f : α → β}, surjective g → surjective f → surjective (g ∘ f)",
+     "∀ {α : Sort u₁} {β : Sort u₂} {φ : Sort u₃} {g : β → φ} {f : α → β}, surjective g → surjective f → surjective (g ∘ f)",
      "name": "surjective.comp",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -3821,7 +3833,8 @@
     "semanticType": null,
     "raw": "Eq.trans",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₃`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -3837,7 +3850,8 @@
     "semanticType": null,
     "raw": "congrArg",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "Congruence in the function argument: if `a₁ = a₂` then `f a₁ = f a₂` for\nany (nondependent) function `f`. This is more powerful than it might look at first, because\nyou can also use a lambda expression for `f` to prove that\n`<something containing a₁> = <something containing a₂>`. This function is used\ninternally by tactics like `congr` and `simp` to apply equalities inside\nsubterms.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -4013,7 +4027,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {g : β → φ} {f : α → β}, bijective g → bijective f → bijective (g ∘ f)",
+     "∀ {α : Sort u₁} {β : Sort u₂} {φ : Sort u₃} {g : β → φ} {f : α → β}, bijective g → bijective f → bijective (g ∘ f)",
      "name": "bijective.comp",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -4967,7 +4981,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {g : β → α} {f : α → β}, left_inverse g f → Function.injective f",
+     "∀ {α : Sort u₁} {β : Sort u₂} {g : β → α} {f : α → β}, left_inverse g f → Function.injective f",
      "name": "left_inverse.injective",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -5236,7 +5250,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -5257,8 +5272,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β}, has_left_inverse f → Function.injective f",
+    {"type": "∀ {f : α → β}, has_left_inverse f → Function.injective f",
      "name": "has_left_inverse.injective",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -5405,14 +5419,22 @@
     "raw": " (λ ",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": {"type": "β → α", "name": "finv", "_type": "typeinfo"},
+    "_type": "token"}],
+  "_type": "text"},
+ {"messages":
+  [{"contents": "Warning: unused variable `finv` [linter.unusedVariables]",
+    "_type": "message"}],
+  "goals": [],
+  "contents":
+  [{"typeinfo": {"type": "β → α", "name": "finv", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "finv",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -5768,7 +5790,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {f : α → β} {g : β → α}, right_inverse g f → Function.surjective f",
+     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β} {g : β → α}, right_inverse g f → Function.surjective f",
      "name": "right_inverse.surjective",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -6112,14 +6134,22 @@
     "raw": "\n| ⟨",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": {"type": "β → α", "name": "finv", "_type": "typeinfo"},
+    "_type": "token"}],
+  "_type": "text"},
+ {"messages":
+  [{"contents": "Warning: unused variable `finv` [linter.unusedVariables]",
+    "_type": "message"}],
+  "goals": [],
+  "contents":
+  [{"typeinfo": {"type": "β → α", "name": "finv", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "finv",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": ", ",
     "link": null,
@@ -6181,7 +6211,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β} {g : β → α}, surjective f → right_inverse f g → left_inverse f g",
+     "∀ {f : α → β} {g : β → α}, surjective f → right_inverse f g → left_inverse f g",
      "name": "left_inverse_of_surjective_of_right_inverse",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -6502,13 +6532,15 @@
     "semanticType": "Keyword",
     "raw": "by",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -6540,13 +6572,15 @@
     "semanticType": "Keyword",
     "raw": "rw",
     "link": null,
-    "docstring": "An abbreviation for `rewrite`.\n",
+    "docstring":
+    "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " [",
     "link": null,
-    "docstring": "An abbreviation for `rewrite`.\n",
+    "docstring":
+    "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -6578,7 +6612,8 @@
     "semanticType": null,
     "raw": "← ",
     "link": null,
-    "docstring": "An abbreviation for `rewrite`.\n",
+    "docstring":
+    "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"},
    {"typeinfo": {"type": "f x = y", "name": "hx", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -6590,7 +6625,8 @@
     "semanticType": null,
     "raw": ",",
     "link": null,
-    "docstring": "An abbreviation for `rewrite`.\n",
+    "docstring":
+    "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -6622,7 +6658,8 @@
     "semanticType": null,
     "raw": " ",
     "link": null,
-    "docstring": "An abbreviation for `rewrite`.\n",
+    "docstring":
+    "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -6666,11 +6703,11 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
+    "semanticType": null,
     "raw": "]",
     "link": null,
     "docstring":
-    "This tactic tries to close the current goal using reflexivity.\nThis is supposed to be an extensible tactic and users can add their own support\nto new reflexive relations.\n",
+    "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"contents":
@@ -6726,7 +6763,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -6751,7 +6789,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -6772,7 +6811,9 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "surjective id", "name": "surjective_id", "_type": "typeinfo"},
+    {"type": "∀ {α : Sort u₁}, surjective id",
+     "name": "surjective_id",
+     "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "surjective_id",
     "link": null,
@@ -6805,7 +6846,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -6856,7 +6898,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -6877,7 +6920,9 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "bijective id", "name": "bijective_id", "_type": "typeinfo"},
+    {"type": "∀ {α : Sort u₁}, bijective id",
+     "name": "bijective_id",
+     "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "bijective_id",
     "link": null,
@@ -6910,7 +6955,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7085,11 +7131,15 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "(α × β → φ) → α → β → φ", "name": "curry", "_type": "typeinfo"},
+    {"type":
+     "{α : Type u₁} → {β : Type u₂} → {φ : Type u₃} → (α × β → φ) → α → β → φ",
+     "name": "curry",
+     "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "curry",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "Interpret a function on `α × β` as a function with two arguments. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7394,7 +7444,8 @@
     "semanticType": null,
     "raw": "1",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The first projection out of a pair. if `p : α × β` then `p.1 : α`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7421,7 +7472,8 @@
     "semanticType": null,
     "raw": "2",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The second projection out of a pair. if `p : α × β` then `p.2 : β`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7454,8 +7506,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "∀ {α : Type u₁} {β : Type u₂} {φ : Type u₃} (f : α → β → φ), curry (uncurry f) = f",
+    {"type": "∀ (f : α → β → φ), curry (uncurry f) = f",
      "name": "curry_uncurry",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -7582,7 +7633,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7615,8 +7667,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "∀ {α : Type u₁} {β : Type u₂} {φ : Type u₃} (f : α × β → φ), uncurry (curry f) = f",
+    {"type": "∀ (f : α × β → φ), uncurry (curry f) = f",
      "name": "uncurry_curry",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -7751,26 +7802,42 @@
     "raw": " (λ ⟨",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": {"type": "α", "name": "a", "_type": "typeinfo"},
+    "_type": "token"}],
+  "_type": "text"},
+ {"messages":
+  [{"contents": "Warning: unused variable `a` [linter.unusedVariables]",
+    "_type": "message"}],
+  "goals": [],
+  "contents":
+  [{"typeinfo": {"type": "α", "name": "a", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "a",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": ", ",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": {"type": "β", "name": "b", "_type": "typeinfo"},
+    "_type": "token"}],
+  "_type": "text"},
+ {"messages":
+  [{"contents": "Warning: unused variable `b` [linter.unusedVariables]",
+    "_type": "message"}],
+  "goals": [],
+  "contents":
+  [{"typeinfo": {"type": "β", "name": "b", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "b",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "⟩ => ",
     "link": null,
@@ -7783,7 +7850,8 @@
     "semanticType": null,
     "raw": "rfl",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nlean by `rfl`, because both sides are the same up to definitional equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7816,8 +7884,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "∀ {α : Type u₁} {β : Type u₂} {g : β → α} {f : α → β}, left_inverse g f → g ∘ f = id",
+    {"type": "∀ {g : β → α} {f : α → β}, left_inverse g f → g ∘ f = id",
      "name": "left_inverse.id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -7984,7 +8051,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -8213,7 +8281,8 @@
     "semanticType": null,
     "raw": "id",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,

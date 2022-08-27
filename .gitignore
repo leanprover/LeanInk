@@ -1,5 +1,5 @@
-/build
-/lean_packages
+build/
+lean_packages/
 
 /test/**/*.html
 /test/**/*.css

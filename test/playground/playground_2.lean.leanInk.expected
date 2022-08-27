@@ -34,8 +34,13 @@
     "raw": " ",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo":
+    "_type": "token"}],
+  "_type": "text"},
+ {"messages":
+  [{"contents": "Warning: declaration uses 'sorry'", "_type": "message"}],
+  "goals": [],
+  "contents":
+  [{"typeinfo":
     {"type": "∀ (p q : Prop), p → q → p ∧ q ∧ p",
      "name": "exampleTheorem",
      "_type": "typeinfo"},
@@ -43,8 +48,10 @@
     "raw": "exampleTheorem",
     "link": null,
     "docstring": null,
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " (",
     "link": null,
@@ -185,13 +192,15 @@
     "semanticType": "Keyword",
     "raw": "by",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -216,14 +225,14 @@
     "raw": "apply",
     "link": null,
     "docstring":
-    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution, and first-order unification with dependent types.\n",
+    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution,\nand first-order unification with dependent types.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution, and first-order unification with dependent types.\n",
+    "`apply e` tries to match the current goal against the conclusion of `e`'s type.\nIf it succeeds, then the tactic returns as many subgoals as the number of premises that\nhave not been fixed by type inference or type class resolution.\nNon-dependent premises are added before dependent ones.\n\nThe `apply` tactic uses higher-order pattern matching, type class resolution,\nand first-order unification with dependent types.\n",
     "_type": "token"},
    {"typeinfo":
     {"type": "∀ {a b : Prop}, a → b → a ∧ b",
@@ -232,7 +241,8 @@
     "semanticType": null,
     "raw": "And.intro",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`And.intro : a → b → a ∧ b` is the constructor for the And operation. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -249,7 +259,8 @@
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -337,7 +348,8 @@
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -376,8 +388,7 @@
     "`· tac` focuses on the main goal and tries to solve it using `tac`, or else fails. ",
     "_type": "token"}],
   "_type": "sentence"},
- {"messages":
-  [{"contents": "Warning: declaration uses 'sorry'", "_type": "message"}],
+ {"messages": [],
   "goals":
   [{"name": "",
     "hypotheses": [],
@@ -388,7 +399,8 @@
     "semanticType": "Keyword",
     "raw": "sorry",
     "link": null,
-    "docstring": "The `sorry` tactic is a shorthand for `exact sorry`. ",
+    "docstring":
+    "The `sorry` tactic closes the goal using `sorryAx`. This is intended for stubbing out incomplete\nparts of a proof while still having a syntactically correct proof skeleton. Lean will give\na warning whenever a proof uses `sorry`, so you aren't likely to miss it, but\nyou can double check if a theorem depends on `sorry` by using\n`#print axioms my_thm` and looking for `sorryAx` in the axiom list.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"contents": [], "_type": "text"}]
