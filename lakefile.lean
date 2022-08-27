@@ -7,3 +7,13 @@ package leanInk where
       #[]
     else
       #["-rdynamic"]
+      
+      
+lean_lib LeanInk {
+  -- add library configuration options here
+}
+
+@[defaultTarget]
+lean_exe leanInk {
+  root := `Main
+}
