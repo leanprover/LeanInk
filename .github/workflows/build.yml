@@ -25,7 +25,7 @@ jobs:
           os: macos-latest
         - name: Windows
           os: windows-latest
-          shell: msys2 {0}
+          shell: pwsh
     steps:
       # Checkout repository
       - uses: actions/checkout@v2
@@ -35,27 +35,21 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           set -o pipefail
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain leanprover/lean4:nightly -y
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
       - name: Install Elan (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain leanprover/lean4:nightly -y
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
-      - name: Install MSYS2 (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: msys2/setup-msys2@v2
-        with:
-          path-type: inherit
-          install: curl unzip make mingw-w64-x86_64-gcc mingw-w64-x86_64-gmp diffutils
       - name: Install Elan (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          curl -sSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh > elan-init.sh
-          ./elan-init.sh -y
-          cygpath -w "$USERPROFILE/.elan/bin" >> $GITHUB_PATH
+          curl -O --location https://raw.githubusercontent.com/leanprover/elan/master/elan-init.ps1
+          .\elan-init.ps1 -NoPrompt 1 -DefaultToolchain none
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
       # Build and test
       - name: Build LeanInk
