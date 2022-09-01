@@ -59,6 +59,7 @@ different. -/
 def execute (capture : Bool) : IO UInt32 := do
   let root : FilePath := "." / "test"
   let dirs ← walkDir root
+  let mut retVal : UInt32 := 0
   for test in dirs do
     if test.extension = "lean" && test.fileName != "lakefile.lean" && !test.components.contains "lean_packages" then
       if let some fileName := test.fileName then
@@ -76,8 +77,10 @@ def execute (capture : Bool) : IO UInt32 := do
               IO.println s!"  SUCCESS"
             else
               IO.println s!"  FAILED: diff {expected} {actual}"
-              return 1
-  return 0
+              retVal := retVal + 1
+  if retVal > 0 then
+    IO.println s!"FAILED: {retVal} tests failed!"
+  return retVal
 
 script tests (args) do
   IO.println "Running diff tests for leanInk"
