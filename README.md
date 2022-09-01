@@ -93,7 +93,7 @@ There are some aspects you might want to take note of when attempting to develop
 
 LeanInk uses simple diffing tests to make sure the core functionality works as expected. These tests are located in the `./test` folder.
 
-You can run these tests using `lake script run runTests`. This will run LeanInk for every `.lean`, that's not a `lakefile` or part of an `lean_package`. It will compare the output of LeanInk to the expected output within the `.lean.leanInk.expected` file.
+You can run these tests using `lake script run tests`. This will run LeanInk for every `.lean`, that's not a `lakefile` or part of an `lean_package`. It will compare the output of LeanInk to the expected output within the `.lean.leanInk.expected` file.
 
 To capture a new expected output file you can either run `lake script run capture` to capture the output for all files or use leanInk itself to generate an output for a single file and rename it afterwards.  Be sure to carefully examine the git diff before committing the new expected baselines.
 

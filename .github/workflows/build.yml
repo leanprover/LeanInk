@@ -63,4 +63,4 @@ jobs:
           path: build
 
       - name: Run tests
-        run: lake script run runTests
+        run: lake script run tests
