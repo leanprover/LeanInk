@@ -13,7 +13,7 @@ lean_exe leanInk {
   supportInterpreter := true
 }
 
-def fileExists (p : FilePath) : BaseIO Bool :=
+def fileExists (p : FilePath) : IO Bool :=
   return (← p.metadata.toBaseIO).toBool
 
 /-! Run the leanInk that is built locally to analyze the given test file.

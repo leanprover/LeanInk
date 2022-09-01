@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build: 
+  build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     defaults:
@@ -37,7 +37,7 @@ jobs:
           set -o pipefail
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain leanprover/lean4:nightly -y
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
-      
+
       - name: Install Elan (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -60,7 +60,7 @@ jobs:
       # Build and test
       - name: Build LeanInk
         run: lake build
-        
+
       # Upload artifact
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -69,4 +69,4 @@ jobs:
           path: build
 
       - name: Run tests
-        run: make -C test run_tests
+        run: lake script run runTests
