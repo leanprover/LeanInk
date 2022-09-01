@@ -78,6 +78,10 @@ def execute (capture : Bool) : IO UInt32 := do
             else
               IO.println s!"  FAILED: diff {expected} {actual}"
               retVal := retVal + 1
+        else
+          IO.println s!"  FAILED: expected output file is missing: {expected}"
+          retVal := retVal + 1
+
   if retVal > 0 then
     IO.println s!"FAILED: {retVal} tests failed!"
   return retVal
