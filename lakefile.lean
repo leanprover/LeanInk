@@ -65,7 +65,10 @@ def getTargetLeanInkPath : IO (Option (FilePath × FilePath)) := do
     let loc := if System.Platform.isWindows then "LOCALAPPDATA" else "HOME"
     let val? ← getEnv loc
     if let some homePath := val? then
-      let targetPath : FilePath := homePath / ".leanink" / "bin"
+      let targetPath : FilePath := if System.Platform.isWindows then
+        homePath / "Programs" / "LeanInk" / "bin"
+      else
+        homePath / ".leanink" / "bin"
       if !(← targetPath.pathExists) then
         createDirAll targetPath
       return (targetPath, targetPath / fileName)
@@ -126,14 +129,14 @@ script install (args) do
     if System.Platform.isWindows then
       println s!"set PATH=%PATH%:{targetPath.1}"
     else
-      println s!"echo 'export PATH=$PATH:{targetPath.1}' >> ~/.profile && source ~/.profile"
+      println s!"echo 'export PATH=$PATH;{targetPath.1}' >> ~/.profile && source ~/.profile"
     println "  Building leanInk..."
     let out ← Process.output { cmd := "lake", args := #["build"] }
       if out.exitCode = 0 then
         let leanInkExe := getLeanInkExePath
         let realPath ← realPath leanInkExe
         println s!"  Built {realPath}"
-        println s!"  Copying to {targetPath}"
+        println s!"  Copying to {targetPath.2}"
         copyFile realPath targetPath.2
         setAccessRights targetPath.2  { user := { read := true, write := true, execution := true } };
         println s!"  LeanInk successfully installed!"
