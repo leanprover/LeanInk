@@ -11,7 +11,7 @@ For more information about Alectryon make sure to take a look at their repositor
 
 # Installation
 
-You can either build LeanInk and install it yourself or use the build script to install a LeanInk release version:
+You can either build LeanInk and install it yourself as shown below, or you can use the build script to install a LeanInk release version:
 
 ```bash
 sh -c "$(curl https://raw.githubusercontent.com/leanprover/LeanInk/main/init.sh -sSf)"
@@ -26,6 +26,11 @@ This will also automatically install the [Lake](https://github.com/leanprover/la
 git clone https://github.com/leanprover/LeanInk
 cd LeanInk
 lake build
+```
+
+To install this built version to your `$HOME/.elan/bin` folder run:
+```bash
+lake script run install
 ```
 
 # Usage

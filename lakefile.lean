@@ -13,12 +13,16 @@ lean_exe leanInk {
   supportInterpreter := true
 }
 
-/-! Run the leanInk that is built locally to analyze the given test file.
-If there is a lakefile.lean present then pass the additional `--lake` option -/
-def runLeanInk (test : FilePath) : IO UInt32 := do
+def getLeanInkExePath : IO (FilePath × FilePath) := do
   let leanInk : FilePath := "build" / "bin" / "leanInk"
   let leanInkExe := leanInk.withExtension FilePath.exeExtension
   let realPath ← IO.FS.realPath leanInkExe
+  return (leanInkExe, realPath)
+
+/-! Run the leanInk that is built locally to analyze the given test file.
+If there is a lakefile.lean present then pass the additional `--lake` option -/
+def runLeanInk (test : FilePath) : IO UInt32 := do
+  let (leanInkExe, realPath) ← getLeanInkExePath
 
   if ! (← leanInkExe.pathExists) then
     IO.println s!"Could not find leanInk executable at {leanInkExe}"
@@ -50,7 +54,25 @@ def runDiff (actual : FilePath) (expected : FilePath) : IO Bool := do
   return actualStr.trim = expectedStr.trim
 
 def copyFile (src : FilePath) (dst : FilePath) : IO Unit := do
-  IO.FS.writeFile dst (← IO.FS.readFile src)
+  IO.FS.writeBinFile dst (← IO.FS.readBinFile src)
+
+def indexOf? [BEq α] (xs : List α) (s : α) (start := 0): Option Nat :=
+  match xs with
+  | [] => none
+  | a :: tail => if a == s then some start else indexOf? tail s (start+1)
+
+def getTargetLeanInkPath : IO (Option FilePath) := do
+  let (leanInkExe, _) ← getLeanInkExePath
+  let lakePath ← IO.appPath
+  let index := indexOf? lakePath.components ".elan"
+  if let some i := index then
+    if let some fileName := leanInkExe.fileName then
+      let elanPath := lakePath.components.take (i + 1)
+      let sep := pathSeparator.toString
+      let elanPath : FilePath := sep.intercalate elanPath
+      let leanInkPath := elanPath / "bin" / fileName
+      return some leanInkPath
+  return none
 
 /-! Walk the `test` folder looking for every `.lean` file that's not a `lakefile` or part of an
 `lean_package` and run `leanInk` on it. If `capture` is true then update the `.lean.leanInk.expected`
@@ -93,3 +115,22 @@ script tests (args) do
 script capture (args) do
   IO.println "Updating .leanInk.expected output files"
   execute True
+
+script install (args) do
+  IO.println "Installing leanInk..."
+  IO.println "  Building leanInk..."
+  if let some targetPath ← getTargetLeanInkPath then
+    let (_, realPath) ← getLeanInkExePath
+    let out ← IO.Process.output { cmd := "lake", args := #["build"] }
+      if out.exitCode = 0 then
+        IO.println s!"  Built {realPath}..."
+        IO.println s!"  Installing {targetPath}..."
+        copyFile realPath targetPath
+        IO.println s!"  LeanInk successfully installed!"
+        return 0
+      else
+        IO.println s!"### Failed to build leanInk:\n{out.stdout} {out.stderr}"
+        return out.exitCode
+  else
+    IO.println "### Cannot find .elan target directory"
+    return 1
