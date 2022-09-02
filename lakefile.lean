@@ -13,17 +13,15 @@ lean_exe leanInk {
   supportInterpreter := true
 }
 
-def getLeanInkExePath : IO (FilePath × FilePath) := do
+def getLeanInkExePath : FilePath :=
   let leanInk : FilePath := "build" / "bin" / "leanInk"
-  let leanInkExe := leanInk.withExtension FilePath.exeExtension
-  let realPath ← realPath leanInkExe
-  return (leanInkExe, realPath)
+  leanInk.withExtension FilePath.exeExtension
 
 /-! Run the leanInk that is built locally to analyze the given test file.
 If there is a lakefile.lean present then pass the additional `--lake` option -/
 def runLeanInk (test : FilePath) : IO UInt32 := do
-  let (leanInkExe, realPath) ← getLeanInkExePath
-
+  let leanInkExe := getLeanInkExePath
+  let realPath ← realPath leanInkExe
   if ! (← leanInkExe.pathExists) then
     println s!"Could not find leanInk executable at {leanInkExe}"
     println s!"Please run `lake build` in the LeanInk directory"
@@ -61,8 +59,8 @@ def indexOf? [BEq α] (xs : List α) (s : α) (start := 0): Option Nat :=
   | [] => none
   | a :: tail => if a == s then some start else indexOf? tail s (start+1)
 
-def getTargetLeanInkPath : IO (Option FilePath) := do
-  let (leanInkExe, _) ← getLeanInkExePath
+def getTargetLeanInkPath : IO (Option (FilePath × FilePath)) := do
+  let leanInkExe := getLeanInkExePath
   if let some fileName := leanInkExe.fileName then
     let loc := if System.Platform.isWindows then "LOCALAPPDATA" else "HOME"
     let val? ← getEnv loc
@@ -70,7 +68,7 @@ def getTargetLeanInkPath : IO (Option FilePath) := do
       let targetPath : FilePath := homePath / ".leanink" / "bin"
       if !(← targetPath.pathExists) then
         createDirAll targetPath
-      return some (targetPath / fileName)
+      return (targetPath, targetPath / fileName)
   return none
 
 /-! Walk the `test` folder looking for every `.lean` file that's not a `lakefile` or part of an
@@ -123,15 +121,21 @@ script install (args) do
   if args.length > 0 then
     println s!"Unexpected arguments: {args}"
   if let some targetPath ← getTargetLeanInkPath then
-    println s!"Installing leanInk to {targetPath}"
-    println "Please ensure this location is in your PATH"
-    let (_, realPath) ← getLeanInkExePath
+    println s!"Installing leanInk to {targetPath.1}"
+    println "Please ensure this location is in your PATH using:"
+    if System.Platform.isWindows then
+      println s!"set PATH=%PATH%:{targetPath.1}"
+    else
+      println s!"echo 'export PATH=$PATH:{targetPath.1}' >> ~/.profile && source ~/.profile"
     println "  Building leanInk..."
     let out ← Process.output { cmd := "lake", args := #["build"] }
       if out.exitCode = 0 then
-        println s!"  Built {realPath}..."
-        println s!"  Copying to {targetPath}..."
-        copyFile realPath targetPath
+        let leanInkExe := getLeanInkExePath
+        let realPath ← realPath leanInkExe
+        println s!"  Built {realPath}"
+        println s!"  Copying to {targetPath}"
+        copyFile realPath targetPath.2
+        setAccessRights targetPath.2  { user := { read := true, write := true, execution := true } };
         println s!"  LeanInk successfully installed!"
         return 0
       else
