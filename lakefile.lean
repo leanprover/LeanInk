@@ -145,5 +145,5 @@ script install (args) do
         println s!"### Failed to build leanInk:\n{out.stdout} {out.stderr}"
         return out.exitCode
   else
-    println "### Cannot find .elan target directory"
+    println "### Cannot find target install directory"
     return 1

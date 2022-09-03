@@ -28,7 +28,7 @@ cd LeanInk
 lake build
 ```
 
-To install this built version to your `$HOME/.elan/bin` folder run:
+To install this built version run:
 ```bash
 lake script run install
 ```
