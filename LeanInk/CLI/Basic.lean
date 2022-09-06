@@ -95,9 +95,12 @@ def runHelp (app : AppInfo) (available : List Command) (arguments : List String)
 
 -- ENTRY
 def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt32 := do
-
   let context : AppContext := { app := app }
-  -- We automatically add the help and version commands that we've implemented here.
+
+  -- We automatically add the help and version commands.
+  let available := helpCommand :: versionCommand :: leanVersionCommand :: commands
+  -- helpCommand needs additional context, so we can only implement the run method here.
+  let helpCommand := { helpCommand with run := λ _ unres => (runHelp app available unres) }
   let available := helpCommand :: versionCommand :: leanVersionCommand :: commands
 
   match _resolveCommandList available args with
@@ -106,9 +109,5 @@ def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt
     return 1
   | Result.success result => do
     let (command, args) := result
-    if command.identifiers == helpCommand.identifiers then
-      -- this command is special as it needs access to the List Command, which a normal run method does not.
-      return (← runHelp app available args)
-    else
-      let (resArgs, unresArgs) := resolveArgumentList command.arguments args
-      return (← command.run resArgs unresArgs |>.run context)
+    let (resArgs, unresArgs) := resolveArgumentList command.arguments args
+    return (← command.run resArgs unresArgs |>.run context)

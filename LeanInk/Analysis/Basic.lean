@@ -69,7 +69,7 @@ to work with custom user extensions correctly.
 @[implementedBy enableInitializersExecution]
 private def enableInitializersExecutionWrapper : IO Unit := pure ()
 
-def exec (args: List ResolvedArgument) : List String -> ReaderT AppContext IO UInt32
+def exec (args: List ResolvedArgument) : List String -> CliContextM
   | [] => do Logger.logError s!"No input files provided"
   | files => do
     enableInitializersExecutionWrapper

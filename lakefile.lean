@@ -127,9 +127,9 @@ script install (args) do
     println s!"Installing leanInk to {targetPath.1}"
     println "Please ensure this location is in your PATH using:"
     if System.Platform.isWindows then
-      println s!"set PATH=%PATH%:{targetPath.1}"
+      println s!"set PATH=%PATH%;{targetPath.1}"
     else
-      println s!"echo 'export PATH=$PATH;{targetPath.1}' >> ~/.profile && source ~/.profile"
+      println s!"echo 'export PATH=$PATH:{targetPath.1}' >> ~/.profile && source ~/.profile"
     println "  Building leanInk..."
     let out ← Process.output { cmd := "lake", args := #["build"] }
       if out.exitCode = 0 then

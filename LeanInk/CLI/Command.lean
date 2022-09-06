@@ -7,20 +7,22 @@ namespace LeanInk.CLI
 structure AppContext where
   app : AppInfo
 
+abbrev CliContextM := ReaderT AppContext IO UInt32
+
 -- COMMAND
 structure Command where
   identifiers : List String
   help : String
   additionalUsageInfo : String := ""
   arguments : List Argument
-  run: (List ResolvedArgument) → (List String) → ReaderT AppContext IO UInt32
+  run: (List ResolvedArgument) → (List String) → CliContextM
 
 structure ResolvedCommand where
   command: Command
   arguments: List ResolvedArgument
 
 -- VERSION COMMAND
-def printVersion : ReaderT AppContext IO UInt32 := do
+def printVersion : CliContextM := do
   let context ← read
   IO.println context.app.versionString
   return 0
