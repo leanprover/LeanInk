@@ -46,7 +46,6 @@ def leanVersionCommand : Command := {
   run := λ _ _ => printLeanVersion
 }
 
-
 -- HELP COMMAND
 def helpCommand : Command := {
   identifiers := ["help", "-h"]
