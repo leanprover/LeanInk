@@ -107,7 +107,6 @@ script tests (args) do
 script capture (args) do
   if args.length > 0 then
     println s!"Unexpected arguments: {args}"
-  let leanInkExe ← getLeanInkExePath
   if let some leanInkExe ← getLeanInkExePath then
     println "Updating .leanInk.expected output files"
     execute leanInkExe True
