@@ -4,6 +4,4 @@ cd leanInk
 git fetch --tags -q
 latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
 git checkout $latestTag -q
-sh install.sh
-cd ..
-rm -rf ./leanInk
+lake script run install && cd .. && rm -rf ./leanInk
