@@ -28,10 +28,7 @@ cd LeanInk
 lake build
 ```
 
-To install this built version run:
-```bash
-lake script run install
-```
+To install this built version it is recommended you simply add the `LeanInk/build/bin` folder to your PATH environment.
 
 # Usage
 
