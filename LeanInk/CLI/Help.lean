@@ -9,7 +9,7 @@ def header (app : AppInfo) : String := s!"
 
 def generateRows (rowEntries : List (String × String)) : List String :=
   let maxKeyLength := (rowEntries.map (λ x => x.1.length)).maximum?
-  match (rowEntries.map (λ x => x.1.length)).maximum? with
+  match maxKeyLength with
   | none => []
   | some maxLength => rowEntries.map (λ x =>
       let extendedKey := x.1.pushn ' ' (maxLength - x.1.length)
