@@ -130,10 +130,10 @@ namespace TraversalFragment
     match (← getMCtx).findDecl? mvarId with
     | none => return none
     | some decl => do
-      let auxDecl := pp.auxDecls.get (<- getOptions)
+      let ppAuxDecls := pp.auxDecls.get (← getOptions)
+      let ppImplDetailHyps := pp.implementationDetailHyps.get (← getOptions)
       let lctx := decl.lctx.sanitizeNames.run' { options := (← getOptions) }
       withLCtx lctx decl.localInstances do
-        let (hidden, hiddenProp) ← ToHide.collect decl.type
         let pushPending (list : List Hypothesis) (type? : Option Expr) : List Name -> MetaM (List Hypothesis)
         | [] => pure list
         | ids => do
@@ -144,15 +144,8 @@ namespace TraversalFragment
               let names := ids.reverse.map (λ n => n.toString)
               return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
         let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
-          if hiddenProp.contains localDecl.fvarId then
-            let newHypotheses ← pushPending [] prevType? varNames
-            let type ← instantiateMVars localDecl.type
-            let typeFmt ← ppExpr type
-            let newHypotheses := newHypotheses.map (λ h => { h with type := h.type})
-            pure ([], none, hypotheses.append newHypotheses)
-          else
             match localDecl with
-            | LocalDecl.cdecl _ _ varName type _ =>
+            | LocalDecl.cdecl _ _ varName type _ _ =>
               let varName := varName.simpMacroScopes
               let type ← instantiateMVars type
               if prevType? == none || prevType? == some type then
@@ -160,7 +153,7 @@ namespace TraversalFragment
               else do
                 let hypotheses ← pushPending hypotheses prevType? varNames
                 pure ([varName], some type, hypotheses)
-            | LocalDecl.ldecl _ _ varName type val _ => do
+            | LocalDecl.ldecl _ _ varName type val _ _ => do
               let varName := varName.simpMacroScopes
               let hypotheses ← pushPending hypotheses prevType? varNames
               let type ← instantiateMVars type
@@ -169,7 +162,7 @@ namespace TraversalFragment
               let valFmt ← ppExpr val
               pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
         let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
-          if !auxDecl && localDecl.isAuxDecl || hidden.contains localDecl.fvarId then
+         if !ppAuxDecls && localDecl.isAuxDecl || !ppImplDetailHyps && localDecl.isImplementationDetail then
             pure (varNames, prevType?, hypotheses)
           else
             evalVar varNames prevType? hypotheses localDecl
@@ -179,9 +172,7 @@ namespace TraversalFragment
 
   private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
-    -- We force inaccessible names to always be visible for goals, like Lean.
-    -- Let's still keep the logic around in case we want to print term goals in the future, where Lean does hide them.
-    return (← ctx.runMetaM {} (withPPInaccessibleNames (goals.mapM evalGoal))).filterMap id
+    return (← ctx.runMetaM {} (goals.mapM evalGoal)).filterMap id
 
   private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool): AnalysisM (List Goal) :=
     if beforeNode then
