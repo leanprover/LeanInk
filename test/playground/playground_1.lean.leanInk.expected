@@ -269,7 +269,7 @@
     "semanticType": null,
     "raw": "Iff.intro",
     "link": null,
-    "docstring": null,
+    "docstring": "If `a → b` and `b → a` then `a` and `b` are equivalent. ",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
