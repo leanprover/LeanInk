@@ -3734,7 +3734,8 @@
     "semanticType": null,
     "raw": "Exists.intro",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "Existential introduction. If `a : α` and `h : p a`,\nthen `⟨a, h⟩` is a proof that `∃ x : α, p x`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -3834,7 +3835,7 @@
     "raw": "Eq.trans",
     "link": null,
     "docstring":
-    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₃`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
+    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₂`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7789,13 +7790,14 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {α : Type (max u₁ u₂)} {β : α → Type u₃} {f₁ f₂ : (x : α) → β x}, (∀ (x : α), f₁ x = f₂ x) → f₁ = f₂",
+     "∀ {α : Type (max u₁ u₂)} {β : α → Type u₃} {f g : (x : α) → β x}, (∀ (x : α), f x = g x) → f = g",
      "name": "funext",
      "_type": "typeinfo"},
     "semanticType": null,
     "raw": "funext",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "**Function extensionality** is the statement that if two functions take equal values\nevery point, then the functions themselves are equal: `(∀ x, f x = g x) → f = g`.\nIt is called \"extensionality\" because it talks about how to prove two objects are equal\nbased on the properties of the object (compare with set extensionality,\nwhich is `(∀ x, x ∈ s ↔ x ∈ t) → s = t`).\n\nThis is often an axiom in dependent type theory systems, because it cannot be proved\nfrom the core logic alone. However in lean's type theory this follows from the existence\nof quotient types (note the `Quot.sound` in the proof, as well as the `show` line\nwhich makes use of the definitional equality `Quot.lift f h (Quot.mk x) = f x`).\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -8062,13 +8064,14 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {α : Type u₁} {β : α → Type u₁} {f₁ f₂ : (x : α) → β x}, (∀ (x : α), f₁ x = f₂ x) → f₁ = f₂",
+     "∀ {α : Type u₁} {β : α → Type u₁} {f g : (x : α) → β x}, (∀ (x : α), f x = g x) → f = g",
      "name": "funext",
      "_type": "typeinfo"},
     "semanticType": null,
     "raw": "funext",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "**Function extensionality** is the statement that if two functions take equal values\nevery point, then the functions themselves are equal: `(∀ x, f x = g x) → f = g`.\nIt is called \"extensionality\" because it talks about how to prove two objects are equal\nbased on the properties of the object (compare with set extensionality,\nwhich is `(∀ x, x ∈ s ↔ x ∈ t) → s = t`).\n\nThis is often an axiom in dependent type theory systems, because it cannot be proved\nfrom the core logic alone. However in lean's type theory this follows from the existence\nof quotient types (note the `Quot.sound` in the proof, as well as the `show` line\nwhich makes use of the definitional equality `Quot.lift f h (Quot.mk x) = f x`).\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -8292,13 +8295,14 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {α : Type u₂} {β : α → Type u₂} {f₁ f₂ : (x : α) → β x}, (∀ (x : α), f₁ x = f₂ x) → f₁ = f₂",
+     "∀ {α : Type u₂} {β : α → Type u₂} {f g : (x : α) → β x}, (∀ (x : α), f x = g x) → f = g",
      "name": "funext",
      "_type": "typeinfo"},
     "semanticType": null,
     "raw": "funext",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "**Function extensionality** is the statement that if two functions take equal values\nevery point, then the functions themselves are equal: `(∀ x, f x = g x) → f = g`.\nIt is called \"extensionality\" because it talks about how to prove two objects are equal\nbased on the properties of the object (compare with set extensionality,\nwhich is `(∀ x, x ∈ s ↔ x ∈ t) → s = t`).\n\nThis is often an axiom in dependent type theory systems, because it cannot be proved\nfrom the core logic alone. However in lean's type theory this follows from the existence\nof quotient types (note the `Quot.sound` in the proof, as well as the `show` line\nwhich makes use of the definitional equality `Quot.lift f h (Quot.mk x) = f x`).\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,

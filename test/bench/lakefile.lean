@@ -4,6 +4,6 @@ open Lake DSL
 package basic {
 }
 
-@[defaultTarget]
+@[default_target]
 lean_lib Basic {
 }

@@ -319,7 +319,11 @@
     "_type": "goal"},
    {"name": "succ",
     "hypotheses":
-    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["n✝"], "body": "", "_type": "hypothesis"},
+     {"type": "n✝ = n✝",
+      "names": ["n_ih✝"],
+      "body": "",
+      "_type": "hypothesis"}],
     "conclusion": "Nat.succ n✝ = Nat.succ n✝",
     "_type": "goal"}],
   "contents":
@@ -544,14 +548,14 @@
     "raw": "guard_hyp",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "n", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -564,7 +568,7 @@
     "raw": " : ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Type", "name": "Nat", "_type": "typeinfo"},
     "semanticType": null,
@@ -677,14 +681,14 @@
     "raw": "guard_hyp",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "m", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -697,7 +701,7 @@
     "raw": " := ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "1", "_type": "typeinfo"},
     "semanticType": null,
@@ -736,14 +740,14 @@
     "raw": "guard_hyp",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "m", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -756,7 +760,7 @@
     "raw": " : ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Type", "name": "Nat", "_type": "typeinfo"},
     "semanticType": null,
@@ -770,7 +774,7 @@
     "raw": " := ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n`guardHyp h : t` checks the type up to syntactic equality,\nwhile `guardHyp h :ₐ t` checks the type up to alpha equality.\n`guardHyp h := v` checks value up to syntactic equality,\nwhile `guardHyp h :=ₐ v` checks the value up to alpha equality. ",
+    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "1", "_type": "typeinfo"},
     "semanticType": null,
@@ -809,14 +813,14 @@
     "raw": "guard_target",
     "link": null,
     "docstring":
-    "Check the target agrees (syntactically) with a given expression.\nSee also `guardTarget` and `guardTarget'` for testing\nup to alpha equality and definitional equality. ",
+    "Check the target agrees with a given expression.\n* `guard_target == e` checks that the target is syntactically equal to `e`.\n* `guard_target =ₐ e` checks that the target is alpha-equivalent to `e`.\n* `guard_target = e` checks that the target is definitionally equal to `e`.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " == ",
     "link": null,
     "docstring":
-    "Check the target agrees (syntactically) with a given expression.\nSee also `guardTarget` and `guardTarget'` for testing\nup to alpha equality and definitional equality. ",
+    "Check the target agrees with a given expression.\n* `guard_target == e` checks that the target is syntactically equal to `e`.\n* `guard_target =ₐ e` checks that the target is alpha-equivalent to `e`.\n* `guard_target = e` checks that the target is definitionally equal to `e`.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Type", "name": "Nat", "_type": "typeinfo"},
     "semanticType": null,
@@ -1005,7 +1009,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≠ b", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "¬a = b",
     "_type": "goal"}],
   "contents":
@@ -1038,6 +1043,7 @@
   [{"name": "",
     "hypotheses":
     [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≠ b", "names": ["a✝"], "body": "", "_type": "hypothesis"},
      {"type": "a = b", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -1047,14 +1053,14 @@
     "raw": "by_contra",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`by_contra h` proves `⊢ p` by contradiction,\nintroducing a hypothesis `h : ¬p` and proving `False`.\n* If `p` is a negation `¬q`, `h : q` will be introduced instead of `¬¬q`.\n* If `p` is decidable, it uses `Decidable.byContradiction` instead of `Classical.byContradiction`.\n* If `h` is omitted, the introduced variable `_: ¬p` will be anonymous.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`by_contra h` proves `⊢ p` by contradiction,\nintroducing a hypothesis `h : ¬p` and proving `False`.\n* If `p` is a negation `¬q`, `h : q` will be introduced instead of `¬¬q`.\n* If `p` is decidable, it uses `Decidable.byContradiction` instead of `Classical.byContradiction`.\n* If `h` is omitted, the introduced variable `_: ¬p` will be anonymous.\n",
     "_type": "token"},
    {"typeinfo": {"type": "a = b", "name": "H", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -1229,7 +1235,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬a = b", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "a = b",
     "_type": "goal"}],
   "contents":
@@ -1259,9 +1266,10 @@
   "_type": "sentence"},
  {"messages": [],
   "goals":
-  [{"name": "h",
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬a = b", "names": ["a✝"], "body": "", "_type": "hypothesis"},
      {"type": "¬a = b", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -1271,14 +1279,14 @@
     "raw": "by_contra",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`by_contra h` proves `⊢ p` by contradiction,\nintroducing a hypothesis `h : ¬p` and proving `False`.\n* If `p` is a negation `¬q`, `h : q` will be introduced instead of `¬¬q`.\n* If `p` is decidable, it uses `Decidable.byContradiction` instead of `Classical.byContradiction`.\n* If `h` is omitted, the introduced variable `_: ¬p` will be anonymous.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`by_contra h` proves `⊢ p` by contradiction,\nintroducing a hypothesis `h : ¬p` and proving `False`.\n* If `p` is a negation `¬q`, `h : q` will be introduced instead of `¬¬q`.\n* If `p` is decidable, it uses `Decidable.byContradiction` instead of `Classical.byContradiction`.\n* If `h` is omitted, the introduced variable `_: ¬p` will be anonymous.\n",
     "_type": "token"},
    {"typeinfo": {"type": "¬a = b", "name": "H", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -1326,7 +1334,9 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ (p q : Prop), ¬¬p → p", "name": "example", "_type": "typeinfo"},
+    {"type": "∀ (p : Prop), Prop → ¬¬p → p",
+     "name": "example",
+     "_type": "typeinfo"},
     "semanticType": "Keyword",
     "raw": "example",
     "link": null,
@@ -1434,7 +1444,8 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬p", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -1464,9 +1475,10 @@
   "_type": "sentence"},
  {"messages": [],
   "goals":
-  [{"name": "h",
+  [{"name": "",
     "hypotheses":
     [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "¬¬p", "names": ["a✝"], "body": "", "_type": "hypothesis"},
      {"type": "¬p", "names": ["H"], "body": "", "_type": "hypothesis"}],
     "conclusion": "False",
     "_type": "goal"}],
@@ -1476,14 +1488,14 @@
     "raw": "by_contra",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`by_contra h` proves `⊢ p` by contradiction,\nintroducing a hypothesis `h : ¬p` and proving `False`.\n* If `p` is a negation `¬q`, `h : q` will be introduced instead of `¬¬q`.\n* If `p` is decidable, it uses `Decidable.byContradiction` instead of `Classical.byContradiction`.\n* If `h` is omitted, the introduced variable `_: ¬p` will be anonymous.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`by_contra h` proves `⊢ p` by contradiction,\nintroducing a hypothesis `h : ¬p` and proving `False`.\n* If `p` is a negation `¬q`, `h : q` will be introduced instead of `¬¬q`.\n* If `p` is decidable, it uses `Decidable.byContradiction` instead of `Classical.byContradiction`.\n* If `h` is omitted, the introduced variable `_: ¬p` will be anonymous.\n",
     "_type": "token"},
    {"typeinfo": {"type": "¬p", "name": "H", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -2503,7 +2515,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ (r ∧ s ∧ p) ∧ p ∧ r ∧ q",
     "_type": "goal"}],
   "contents":
@@ -2541,7 +2557,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ (r ∧ s ∧ p) ∧ p ∧ r ∧ q",
     "_type": "goal"}],
   "contents":
@@ -2550,14 +2570,14 @@
     "raw": "repeat'",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`repeat' tac` runs `tac` on all of the goals to produce a new list of goals,\nthen runs `tac` again on all of those goals, and repeats until `tac` fails on all remaining goals.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`repeat' tac` runs `tac` on all of the goals to produce a new list of goals,\nthen runs `tac` again on all of those goals, and repeats until `tac` fails on all remaining goals.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -2567,7 +2587,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -2605,7 +2629,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "left.right",
@@ -2613,7 +2641,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.left.left",
@@ -2621,7 +2653,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "r",
     "_type": "goal"},
    {"name": "right.left.right.left",
@@ -2629,7 +2665,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "s",
     "_type": "goal"},
    {"name": "right.left.right.right",
@@ -2637,7 +2677,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right.left",
@@ -2645,7 +2689,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right.right.left",
@@ -2653,7 +2701,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "r",
     "_type": "goal"},
    {"name": "right.right.right.right",
@@ -2661,7 +2713,11 @@
     [{"type": "Prop",
       "names": ["p", "q", "r", "s"],
       "body": "",
-      "_type": "hypothesis"}],
+      "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝³"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝²"], "body": "", "_type": "hypothesis"},
+     {"type": "r", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "s", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"}],
   "contents":
@@ -2670,14 +2726,14 @@
     "raw": "repeat'",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`repeat' tac` runs `tac` on all of the goals to produce a new list of goals,\nthen runs `tac` again on all of those goals, and repeats until `tac` fails on all remaining goals.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`repeat' tac` runs `tac` on all of the goals to produce a new list of goals,\nthen runs `tac` again on all of those goals, and repeats until `tac` fails on all remaining goals.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
@@ -2865,7 +2921,9 @@
   "goals":
   [{"name": "",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "(p ∧ q) ∧ p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2897,12 +2955,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2934,12 +2996,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2960,12 +3026,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -2973,20 +3043,24 @@
     "semanticType": "Keyword",
     "raw": "any_goals",
     "link": null,
-    "docstring": "`fail_if_success t` fails if the tactic `t` succeeds. ",
+    "docstring":
+    "`any_goals tac` applies the tactic `tac` to every goal, and succeeds if at\nleast one application succeeds.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
-    "docstring": "`fail_if_success t` fails if the tactic `t` succeeds. ",
+    "docstring":
+    "`any_goals tac` applies the tactic `tac` to every goal, and succeeds if at\nleast one application succeeds.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -3018,12 +3092,16 @@
   "goals":
   [{"name": "left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q",
     "_type": "goal"},
    {"name": "right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p ∧ q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -3046,12 +3124,16 @@
   "goals":
   [{"name": "right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -3083,22 +3165,30 @@
   "goals":
   [{"name": "left.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "left.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"},
    {"name": "right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -3107,21 +3197,23 @@
     "raw": "any_goals",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`any_goals tac` applies the tactic `tac` to every goal, and succeeds if at\nleast one application succeeds.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`any_goals tac` applies the tactic `tac` to every goal, and succeeds if at\nleast one application succeeds.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q ∧ p",
     "_type": "goal"}],
   "contents":
@@ -3153,12 +3245,16 @@
   "goals":
   [{"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -3190,12 +3286,16 @@
   "goals":
   [{"name": "right.right.left",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "q",
     "_type": "goal"},
    {"name": "right.right.right",
     "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"}],
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["a✝¹"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["a✝"], "body": "", "_type": "hypothesis"}],
     "conclusion": "p",
     "_type": "goal"}],
   "contents":
@@ -3204,14 +3304,14 @@
     "raw": "any_goals",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`any_goals tac` applies the tactic `tac` to every goal, and succeeds if at\nleast one application succeeds.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "`any_goals tac` applies the tactic `tac` to every goal, and succeeds if at\nleast one application succeeds.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
