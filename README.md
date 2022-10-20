@@ -11,7 +11,7 @@ For more information about Alectryon make sure to take a look at their repositor
 
 # Installation
 
-You can either build LeanInk and install it yourself or use the build script to install a LeanInk release version:
+You can either build LeanInk and install it yourself as shown below, or you can use the build script to install a LeanInk release version:
 
 ```bash
 sh -c "$(curl https://raw.githubusercontent.com/leanprover/LeanInk/main/init.sh -sSf)"
@@ -27,6 +27,8 @@ git clone https://github.com/leanprover/LeanInk
 cd LeanInk
 lake build
 ```
+
+To install this built version it is recommended you simply add the `LeanInk/build/bin` folder to your PATH environment.
 
 # Usage
 
@@ -93,9 +95,9 @@ There are some aspects you might want to take note of when attempting to develop
 
 LeanInk uses simple diffing tests to make sure the core functionality works as expected. These tests are located in the `./test` folder.
 
-You can run these tests using `make -C test run_tests`. This will run LeanInk for every `.lean`, that's not a `lakefile` or part of an `lean_package`. It will compare the output of LeanInk to the expected output within the `.lean.leanInk.expected` file.
+You can run these tests using `lake script run tests`. This will run LeanInk for every `.lean`, that's not a `lakefile` or part of an `lean_package`. It will compare the output of LeanInk to the expected output within the `.lean.leanInk.expected` file.
 
-To capture a new expected output file you can either run `make -C test capture` to capture the output for all files or use leanInk itself to generate an output for a single file and rename it afterwards.
+To capture a new expected output file you can either run `lake script run capture` to capture the output for all files or use leanInk itself to generate an output for a single file and rename it afterwards.  Be sure to carefully examine the git diff before committing the new expected baselines.
 
 # Contributing
 

@@ -40,7 +40,7 @@
     "raw": "Unit",
     "link": null,
     "docstring":
-    "An abbreviation for `PUnit.{0}`, its most common instantiation.\n    This Type should be preferred over `PUnit` where possible to avoid\n    unnecessary universe parameters. ",
+    "The unit type, the canonical type with one element, named `unit` or `()`.\nIn other words, it describes only a single value, which consists of said constructor applied\nto no arguments whatsoever.\nThe `Unit` type is similar to `void` in languages derived from C.\n\n`Unit` is actually defined as `PUnit.{0}` where `PUnit` is the universe\npolymorphic version. The `Unit` should be preferred over `PUnit` where possible to avoid\nunnecessary universe parameters.\n\nIn functional programming, `Unit` is the return type of things that \"return\nnothing\", since a type with one element conveys no additional information.\nWhen programming with monads, the type `m Unit` represents an action that has\nsome side effects but does not return a value, while `m α` would be an action\nthat has side effects and returns a value of type `α`.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,

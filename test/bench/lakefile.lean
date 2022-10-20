@@ -2,6 +2,8 @@ import Lake
 open Lake DSL
 
 package basic {
-  defaultFacet := PackageFacet.oleans
-  dependencies := #[]
+}
+
+@[default_target]
+lean_lib Basic {
 }

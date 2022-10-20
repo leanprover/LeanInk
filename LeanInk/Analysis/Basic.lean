@@ -20,7 +20,7 @@ private def _validateInputFile (file : FilePath) : Bool := isLeanFile file
 
 private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
   let contents ← IO.FS.readFile file
-  return { 
+  return {
     inputFilePath := file
     inputFileContents := contents
     lakeFile := getLakeFile? arguments
@@ -48,10 +48,10 @@ def runAnalysis (output : Output) : AnalysisM UInt32 := do
 
 -- EXECUTION
 def execAuxM : AnalysisM UInt32 := do
-  return ← runAnalysis { 
+  return ← runAnalysis {
     name := "Alectryon"
     genOutput := Alectryon.genOutput
-  } 
+  }
 
 def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
   if not (_validateInputFile file) then do
@@ -66,7 +66,7 @@ def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
 frontend and needs to be used with care but it is required in order
 to work with custom user extensions correctly.
 -/
-@[implementedBy enableInitializersExecution]
+@[implemented_by enableInitializersExecution]
 private def enableInitializersExecutionWrapper : IO Unit := pure ()
 
 def exec (args: List ResolvedArgument) : List String -> IO UInt32
