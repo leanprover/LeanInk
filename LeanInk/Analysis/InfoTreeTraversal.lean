@@ -66,7 +66,7 @@ namespace TraversalFragment
   -/
   def prettyPrintTerm (expr : Expr) : MetaM (Widget.CodeWithInfos × String) := do
     withOptions (·.set `pp.tagAppFns true) do
-      let (fmt, infos) ←  PrettyPrinter.ppExprWithInfos expr
+      let ⟨fmt, infos⟩ ←  PrettyPrinter.ppExprWithInfos expr
       let tt := Widget.TaggedText.prettyTagged fmt
       let ctx := {
         env := ← getEnv
@@ -77,7 +77,7 @@ namespace TraversalFragment
         fileMap := ← getFileMap ,
         ngen := ← getNGen
       }
-      return (Widget.tagExprInfos ctx infos tt, s!"{fmt}")
+      return (Widget.tagCodeInfos ctx infos tt, s!"{fmt}")
 
   def inferType? : TraversalFragment -> MetaM (Option (Widget.CodeWithInfos × String))
     | term termFragment => do
@@ -295,7 +295,7 @@ namespace TraversalAux
         return { self with allowsNewField := false, result := newResult }
       else 
         return self
-    | TraversalFragment.tactic contextInfo => do
+    | TraversalFragment.tactic _ => do
       let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
       if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self
