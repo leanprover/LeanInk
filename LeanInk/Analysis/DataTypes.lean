@@ -66,7 +66,7 @@ instance : Positional SemanticTokenInfo where
   E.g.: A variable token `p` might conform to type `Nat` and has the docstring for `Nat`
 -/
 structure TypeTokenInfo extends Fragment where
-  type: Option String
+  type: Option (Widget.CodeWithInfos × String)
   docString: Option String
   deriving Inhabited
 
@@ -112,12 +112,21 @@ instance : Positional Token where
 /- Tactics -/
 structure Hypothesis where
   names : List String
-  type : String
-  body : String
+  type : Widget.CodeWithInfos × String
+  body : Widget.CodeWithInfos × String
+
+inductive Conclusion where
+| typed (infos : Widget.CodeWithInfos) (val : String)
+| untyped (val : String)
+
+instance : ToString Conclusion where
+  toString
+    | .typed _ s => s
+    | .untyped s => s
 
 structure Goal where
   name : String
-  conclusion : String
+  conclusion : Conclusion
   hypotheses : List Hypothesis
 
 structure Tactic extends Fragment where

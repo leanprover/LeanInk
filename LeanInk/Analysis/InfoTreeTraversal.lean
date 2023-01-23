@@ -64,11 +64,31 @@ namespace TraversalFragment
   /- 
     Token Generation
   -/
-  def inferType? : TraversalFragment -> MetaM (Option String)
+  def prettyPrintTerm (expr : Expr) : MetaM (Widget.CodeWithInfos × String) := do
+    withOptions (·.set `pp.tagAppFns true) do
+      let ⟨fmt, infos⟩ ←  PrettyPrinter.ppExprWithInfos expr
+      let tt := Widget.TaggedText.prettyTagged fmt
+      let ctx := {
+        env := ← getEnv
+        mctx := ← getMCtx
+        options := ←getOptions,
+        currNamespace := ← getCurrNamespace
+        openDecls := ← getOpenDecls
+        fileMap := ← getFileMap ,
+        ngen := ← getNGen
+      }
+      return (Widget.tagCodeInfos ctx infos tt, s!"{fmt}")
+
+  def inferType? : TraversalFragment -> MetaM (Option (Widget.CodeWithInfos × String))
     | term termFragment => do
       -- This call requires almost half of the runtime of the tree traversal.
-      let format ← try Meta.ppExpr (← Meta.inferType termFragment.info.expr) catch e => e.toMessageData.toString
-      return s!"{format}"
+      let prettyTyp ←
+        try
+          prettyPrintTerm (←inferType termFragment.info.expr)
+        catch e =>
+          let msg ← e.toMessageData.toString
+          pure (Widget.TaggedText.text msg, msg)
+      pure prettyTyp
     | _ => pure none
 
   def genDocString? (self : TraversalFragment) : MetaM (Option String) := do
@@ -89,13 +109,13 @@ namespace TraversalFragment
 
   def genTypeTokenInfo? (self : TraversalFragment) : AnalysisM (Option TypeTokenInfo) := do
     let mut docString : Option String := none
-    let mut type : Option String := none
+    let mut type : Option (Widget.CodeWithInfos × String) := none
     let config ← read
     if config.experimentalDocString then
       docString ← runMetaM (genDocString?) self
     if config.experimentalTypeInfo then
       type ← runMetaM (inferType?) self
-    if type == none ∧ docString == none then
+    if type.isNone ∧ docString == none then
       return none
     else
       return some { headPos := self.headPos, tailPos := self.tailPos, type := type, docString := docString }
@@ -107,18 +127,18 @@ namespace TraversalFragment
     return tokens
 
   /- Sentence Generation -/
-  private def genGoal (goalType : Format) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
+  private def genGoal (goalType : Widget.CodeWithInfos × String) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
     | Name.anonymous => do
       return { 
         name := ""
-        conclusion := toString goalType
+        conclusion := .typed goalType.fst goalType.snd
         hypotheses := hypotheses 
       }
     | name => do
       let goalFormatName := format name.eraseMacroScopes
       return { 
         name := toString goalFormatName
-        conclusion := toString goalType
+        conclusion := .typed goalType.fst goalType.snd
         hypotheses := hypotheses 
       }
 
@@ -140,9 +160,9 @@ namespace TraversalFragment
           match type? with
             | none      => pure list
             | some type => do
-              let typeFmt ← ppExpr type
+              let prettyType ← prettyPrintTerm type
               let names := ids.reverse.map (λ n => n.toString)
-              return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
+              return list.append [{ names := names, body := (default, ""), type := prettyType }]
         let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
             match localDecl with
             | LocalDecl.cdecl _ _ varName type _ _ =>
@@ -158,17 +178,17 @@ namespace TraversalFragment
               let hypotheses ← pushPending hypotheses prevType? varNames
               let type ← instantiateMVars type
               let val  ← instantiateMVars val
-              let typeFmt ← ppExpr type
-              let valFmt ← ppExpr val
-              pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
+              let prettyType ← prettyPrintTerm type
+              let prettyVal ← prettyPrintTerm val
+              pure ([], none, hypotheses.append [{ names := [varName.toString], body := prettyVal , type := prettyType }])
         let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
          if !ppAuxDecls && localDecl.isAuxDecl || !ppImplDetailHyps && localDecl.isImplementationDetail then
             pure (varNames, prevType?, hypotheses)
           else
             evalVar varNames prevType? hypotheses localDecl
         let hypotheses ← pushPending hypotheses type? varNames 
-        let typeFmt ← ppExpr (← instantiateMVars decl.type)
-        return (← genGoal typeFmt hypotheses decl.userName)
+        let prettyType ← prettyPrintTerm (← instantiateMVars decl.type)
+        return (← genGoal prettyType hypotheses decl.userName)
 
   private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
@@ -186,7 +206,7 @@ namespace TraversalFragment
       let goalsBefore ← genGoals fragment true
       let goalsAfter ← genGoals fragment false
       if goalsAfter.isEmpty then
-        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := .untyped "Goals accomplished! 🐙", hypotheses := [] }] }
       else
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
@@ -275,7 +295,7 @@ namespace TraversalAux
         return { self with allowsNewField := false, result := newResult }
       else 
         return self
-    | TraversalFragment.tactic contextInfo => do
+    | TraversalFragment.tactic _ => do
       let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
       if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self

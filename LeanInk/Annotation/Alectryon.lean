@@ -16,8 +16,15 @@ open LeanInk.Analysis
 structure TypeInfo where
   _type : String := "typeinfo"
   name : String
-  type : String
-  deriving ToJson
+  type : Widget.CodeWithInfos × String
+
+instance : ToJson TypeInfo where
+  toJson tyi :=
+    Json.mkObj [
+      ("_type", tyi._type),
+      ("name", tyi.name),
+      ("type", tyi.type.snd)
+    ]
 
 structure Token where
   _type : String := "token"
@@ -44,16 +51,32 @@ instance : ToJson Contents where
 structure Hypothesis where
   _type : String := "hypothesis"
   names : List String
-  body : String
-  type : String
-  deriving ToJson
+  body : Widget.CodeWithInfos × String
+  type : Widget.CodeWithInfos × String
+
+instance : ToJson Hypothesis where
+  toJson hyp :=
+    Json.mkObj [
+      ("_type", hyp._type),
+      ("names", toJson hyp.names),
+      ("body", hyp.body.snd),
+      ("type", hyp.type.snd)
+    ]
 
 structure Goal where
   _type : String := "goal"
   name : String
-  conclusion : String
+  conclusion : Conclusion
   hypotheses : Array Hypothesis
-  deriving ToJson
+
+instance : ToJson Goal where
+  toJson goal :=
+    Json.mkObj [
+      ("_type", goal._type),
+      ("name", goal.name),
+      ("conclusion", toString goal.conclusion),
+      ("hypotheses", toJson goal.hypotheses)
+    ]
 
 structure Message where
   _type : String := "message"  

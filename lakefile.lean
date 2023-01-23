@@ -113,3 +113,4 @@ script capture (args) do
   else
     println "Cannot find `leanInk` target path"
     return 1
+
