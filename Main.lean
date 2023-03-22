@@ -41,6 +41,10 @@ def analyzeCommand : Command := {
     flag {
       identifiers := ["--x-enable-semantic-token"],
       help := "Enables output of experimental semantic token support for Alectryon. Alectryon uses this information to implement semantic syntax highlighting."
+    },
+    flag {
+      identifiers := ["--x-disable-sorry-info"],
+      help := "Disables alectryon bubbles on blocks containing sorry's."
     }
   ]
   run := Analysis.exec

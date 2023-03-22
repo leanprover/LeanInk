@@ -126,73 +126,78 @@ namespace TraversalFragment
   This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
   of a single formatted string to support the Alectryon.Goal datatype.
   -/
-  private def evalGoal (mvarId : MVarId)  : MetaM (Option Goal) := do
+  private def evalGoal (mvarId : MVarId) (hasSorry: Bool) : MetaM (Option Goal) := do
     match (← getMCtx).findDecl? mvarId with
     | none => return none
     | some decl => do
-      let ppAuxDecls := pp.auxDecls.get (← getOptions)
-      let ppImplDetailHyps := pp.implementationDetailHyps.get (← getOptions)
-      let lctx := decl.lctx.sanitizeNames.run' { options := (← getOptions) }
-      withLCtx lctx decl.localInstances do
-        let pushPending (list : List Hypothesis) (type? : Option Expr) : List Name -> MetaM (List Hypothesis)
-        | [] => pure list
-        | ids => do
-          match type? with
-            | none      => pure list
-            | some type => do
-              let typeFmt ← ppExpr type
-              let names := ids.reverse.map (λ n => n.toString)
-              return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
-        let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
-            match localDecl with
-            | LocalDecl.cdecl _ _ varName type _ _ =>
-              let varName := varName.simpMacroScopes
-              let type ← instantiateMVars type
-              if prevType? == none || prevType? == some type then
-                pure (varName::varNames, some type, hypotheses)
-              else do
+      if hasSorry then 
+        return none
+      else
+        let ppAuxDecls := pp.auxDecls.get (← getOptions)
+        let ppImplDetailHyps := pp.implementationDetailHyps.get (← getOptions)
+        let lctx := decl.lctx.sanitizeNames.run' { options := (← getOptions) }
+        withLCtx lctx decl.localInstances do
+          let pushPending (list : List Hypothesis) (type? : Option Expr) : List Name -> MetaM (List Hypothesis)
+          | [] => pure list
+          | ids => do
+            match type? with
+              | none      => pure list
+              | some type => do
+                let typeFmt ← ppExpr type
+                let names := ids.reverse.map (λ n => n.toString)
+                return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
+          let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
+              match localDecl with
+              | LocalDecl.cdecl _ _ varName type _ _ =>
+                let varName := varName.simpMacroScopes
+                let type ← instantiateMVars type
+                if prevType? == none || prevType? == some type then
+                  pure (varName::varNames, some type, hypotheses)
+                else do
+                  let hypotheses ← pushPending hypotheses prevType? varNames
+                  pure ([varName], some type, hypotheses)
+              | LocalDecl.ldecl _ _ varName type val _ _ => do
+                let varName := varName.simpMacroScopes
                 let hypotheses ← pushPending hypotheses prevType? varNames
-                pure ([varName], some type, hypotheses)
-            | LocalDecl.ldecl _ _ varName type val _ _ => do
-              let varName := varName.simpMacroScopes
-              let hypotheses ← pushPending hypotheses prevType? varNames
-              let type ← instantiateMVars type
-              let val  ← instantiateMVars val
-              let typeFmt ← ppExpr type
-              let valFmt ← ppExpr val
-              pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
-        let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
-         if !ppAuxDecls && localDecl.isAuxDecl || !ppImplDetailHyps && localDecl.isImplementationDetail then
-            pure (varNames, prevType?, hypotheses)
-          else
-            evalVar varNames prevType? hypotheses localDecl
-        let hypotheses ← pushPending hypotheses type? varNames 
-        let typeFmt ← ppExpr (← instantiateMVars decl.type)
-        return (← genGoal typeFmt hypotheses decl.userName)
+                let type ← instantiateMVars type
+                let val  ← instantiateMVars val
+                let typeFmt ← ppExpr type
+                let valFmt ← ppExpr val
+                pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
+          let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
+          if !ppAuxDecls && localDecl.isAuxDecl || !ppImplDetailHyps && localDecl.isImplementationDetail then
+              pure (varNames, prevType?, hypotheses)
+            else
+              evalVar varNames prevType? hypotheses localDecl
+          let hypotheses ← pushPending hypotheses type? varNames 
+          let typeFmt ← ppExpr (← instantiateMVars decl.type)
+          return (← genGoal typeFmt hypotheses decl.userName)
 
-  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
+  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) (hasSorry: Bool) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
-    return (← ctx.runMetaM {} (goals.mapM evalGoal)).filterMap id
+    return (← ctx.runMetaM {} (goals.mapM (fun x => evalGoal x hasSorry))).filterMap id
 
-  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool): AnalysisM (List Goal) :=
+  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool) (hasSorry : Bool): AnalysisM (List Goal) :=
     if beforeNode then
-      _genGoals contextInfo contextInfo.info.goalsBefore contextInfo.info.mctxBefore
+      _genGoals contextInfo contextInfo.info.goalsBefore contextInfo.info.mctxBefore hasSorry
     else
-      _genGoals contextInfo contextInfo.info.goalsAfter contextInfo.info.mctxAfter
+      _genGoals contextInfo contextInfo.info.goalsAfter contextInfo.info.mctxAfter hasSorry
 
-  def genTactic? (self : TraversalFragment) : AnalysisM (Option Tactic) := do
+  def genTactic? (self : TraversalFragment) (hasSorry : Bool) : AnalysisM (Option Tactic) := do
     match self with
     | tactic fragment => do 
-      let goalsBefore ← genGoals fragment true
-      let goalsAfter ← genGoals fragment false
-      if goalsAfter.isEmpty then
+      let goalsBefore ← genGoals fragment true hasSorry
+      let goalsAfter ← genGoals fragment false hasSorry
+      if hasSorry then do 
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := [], goalsAfter := [] }
+      if goalsAfter.isEmpty then  
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
       else
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
 
-  def genSentences (self : TraversalFragment) : AnalysisM (List Sentence) := do
-    if let some t ← self.genTactic? then
+  def genSentences (self : TraversalFragment) (hasSorry : Bool) : AnalysisM (List Sentence) := do
+    if let some t ← self.genTactic? hasSorry then
       return [Sentence.tactic t]
     else
       return []
@@ -214,9 +219,9 @@ namespace AnalysisResult
 
   def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
 
-  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) : AnalysisM AnalysisResult := do
+  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) (hasSorry : Bool) : AnalysisM AnalysisResult := do
     let newTokens : List Token := ← fragment.genTokens
-    let newSentences ← fragment.genSentences
+    let newSentences ← fragment.genSentences hasSorry
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
   def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := do
@@ -240,7 +245,7 @@ namespace AnalysisResult
       string := "Error: " ++ string
     return { headPos := headPos, tailPos := tailPos, msg := string }
 
-  def insertMessages (self : AnalysisResult) (messages : List Lean.Message) (fileMap : FileMap): AnalysisM AnalysisResult := do
+  def insertMessages (self : AnalysisResult) (messages : List Lean.Message) (fileMap : FileMap) : AnalysisM AnalysisResult := do
     let messages ← messages.mapM (genMessage fileMap)
     let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) messages
     let newSentences := sortedMessages.map (λ x => Sentence.message x)
@@ -261,17 +266,17 @@ namespace TraversalAux
     result := AnalysisResult.merge x.result y.result
   }
 
-  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) : AnalysisM TraversalAux :=
+  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) (hasSorry : Bool) : AnalysisM TraversalAux := do
     match fragment with
     | TraversalFragment.term _ => do
       if self.allowsNewTerm then
-        let newResult ← self.result.insertFragment fragment
+        let newResult ← self.result.insertFragment fragment hasSorry
         return { self with allowsNewTerm := false, result := newResult }
       else 
         return self
     | TraversalFragment.field _ => do
       if self.allowsNewField then
-        let newResult ← self.result.insertFragment fragment
+        let newResult ← self.result.insertFragment fragment hasSorry
         return { self with allowsNewField := false, result := newResult }
       else 
         return self
@@ -280,7 +285,7 @@ namespace TraversalAux
       if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self
       else
-        let newResult ← self.result.insertFragment fragment
+        let newResult ← self.result.insertFragment fragment hasSorry
         return { self with result := newResult }
     | _ => pure self
 
@@ -292,20 +297,20 @@ namespace TraversalAux
         return self
 end TraversalAux
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) : AnalysisM TraversalAux :=
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (hasSorry : Bool): AnalysisM TraversalAux :=
   match tree with
-  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
+  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree hasSorry
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
       let ctx? := info.updateContext? ctx
-      let resolvedChildrenLeafs ← children.toList.mapM (_resolveTacticList ctx? aux)
+      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x hasSorry) 
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       match (← TraversalFragment.create ctx info) with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        sortedChildrenLeafs.insertFragment fragment          
-      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment          
+        sortedChildrenLeafs.insertFragment fragment hasSorry         
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment hasSorry         
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
     | none => pure aux
@@ -315,9 +320,24 @@ inductive TraversalEvent
 | result (r : TraversalAux)
 | error (e : IO.Error)
 
-def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
+partial def _hasSorry (t : InfoTree) : Bool := 
+  let rec go (ci? : Option ContextInfo) (t : InfoTree) : Bool :=
+    match t with
+    | InfoTree.context ci t => go ci t
+    | InfoTree.node i cs =>
+      if let (some _, .ofTermInfo ti) := (ci?, i) then 
+        -- let expr := ti.runMetaM ci (instantiateMVars ti.expr)
+        ti.expr.hasSorry
+        -- we assume that `cs` are subterms of `ti.expr` and
+        -- thus do not have to be checked as well
+      else 
+        cs.any (go ci?)
+    | _ => false
+  go none t
+
+def _resolveTask (tree : InfoTree) (hasSorry : Bool) : AnalysisM (Task TraversalEvent) := do
   let taskBody : AnalysisM TraversalEvent := do
-    let res ← _resolveTacticList none {} tree
+    let res ← _resolveTacticList none {} tree hasSorry
     return TraversalEvent.result res
   let task ← IO.asTask (taskBody $ ← read)
   return task.map fun
@@ -325,7 +345,11 @@ def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
     | Except.error e => TraversalEvent.error e
 
 def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
-  let auxResults ← (trees.map _resolveTacticList).mapM (λ x => x)
+  let config ← read
+  let auxResults ← (trees.map (λ t => 
+  if config.experimentalSorryConfig 
+    then _resolveTacticList none {} t (_hasSorry t)
+    else _resolveTacticList none {} t false)).mapM (λ x => x)
   let results := auxResults.map (λ x => x.result)
   return results.foldl AnalysisResult.merge AnalysisResult.empty
 
@@ -339,7 +363,10 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM (Option (List
   return results
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
-  let tasks ← trees.toArray.mapM (λ t => _resolveTask t)
+  let config ← read
+  let tasks ← trees.toArray.mapM (λ t => if config.experimentalSorryConfig 
+    then _resolveTask t (_hasSorry t)
+    else _resolveTask t false)
   match (← resolveTasks tasks) with
   | some auxResults => do
     let results := auxResults.map (λ x => x.result)
