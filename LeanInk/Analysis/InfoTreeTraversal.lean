@@ -334,7 +334,7 @@ namespace TraversalAux
         return self
 end TraversalAux
 
-partial def _resolveTacticList (config : Configuration) (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
+partial def _resolveTacticList (config : Configuration) (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux :=
   match tree with
   | InfoTree.context ctx tree => _resolveTacticList config ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree) 
   | InfoTree.node info children =>
