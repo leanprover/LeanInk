@@ -45,6 +45,10 @@ def analyzeCommand : Command := {
     flag {
       identifiers := ["--x-disable-sorry-info"],
       help := "Disables alectryon bubbles on blocks containing sorry's."
+    },
+    flag {
+      identifiers := ["--x-disable-calc-info"],
+      help := "Disables alectryon bubbles on calc blocks."
     }
   ]
   run := Analysis.exec

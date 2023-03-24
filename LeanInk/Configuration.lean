@@ -15,6 +15,7 @@ structure Configuration where
   experimentalDocString : Bool
   experimentalSemanticType : Bool
   experimentalSorryConfig : Bool
+  experimentalCalcConfig : Bool
 
 namespace Configuration
   def inputFileName (self : Configuration) : String :=

@@ -19,6 +19,43 @@ open Lean.Elab
 open Lean.Meta
 open IO
 
+structure InfoTreeContext where 
+  hasSorry : Bool 
+  isCalcTatic : Bool
+deriving Repr
+
+partial def _hasSorry (t : InfoTree) : Bool := 
+  let rec go (ci? : Option ContextInfo) (t : InfoTree) : Bool :=
+    match t with
+    | InfoTree.context ci t => go ci t
+    | InfoTree.node i cs =>
+      if let (some _, .ofTermInfo ti) := (ci?, i) then 
+        ti.expr.hasSorry
+      else 
+        cs.any (go ci?)
+    | _ => false
+  go none t
+
+partial def _isCalcTatic (tree: InfoTree) : Bool :=
+  match tree with
+  | .context _ _ => false
+  | .node i _ => 
+    if let .ofTacticInfo ti := i then 
+      if ti.stx.getKind == ``calcTactic
+        then true
+        else false
+    else 
+      false
+  | _ => false
+
+def _buildInfoTreeContext (config: Configuration) (tree : InfoTree) : InfoTreeContext := 
+  let hasSorry := config.experimentalSorryConfig && (_hasSorry tree)
+  let isCalcTatic := config.experimentalCalcConfig && (_isCalcTatic tree)
+  InfoTreeContext.mk hasSorry isCalcTatic
+
+def _updateIsCalcTatic (config: Configuration) (ctx : InfoTreeContext) (tree : InfoTree) : InfoTreeContext := 
+  { ctx with isCalcTatic := if config.experimentalCalcConfig then ctx.isCalcTatic || _isCalcTatic tree else false }
+
 structure ContextBasedInfo (β : Type) where
   ctx : ContextInfo
   info : β
@@ -126,11 +163,11 @@ namespace TraversalFragment
   This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
   of a single formatted string to support the Alectryon.Goal datatype.
   -/
-  private def evalGoal (mvarId : MVarId) (hasSorry: Bool) : MetaM (Option Goal) := do
+  private def evalGoal (mvarId : MVarId) (infoTreeCtx : InfoTreeContext) : MetaM (Option Goal) := do
     match (← getMCtx).findDecl? mvarId with
     | none => return none
     | some decl => do
-      if hasSorry then 
+      if infoTreeCtx.hasSorry || infoTreeCtx.isCalcTatic then 
         return none
       else
         let ppAuxDecls := pp.auxDecls.get (← getOptions)
@@ -173,22 +210,22 @@ namespace TraversalFragment
           let typeFmt ← ppExpr (← instantiateMVars decl.type)
           return (← genGoal typeFmt hypotheses decl.userName)
 
-  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) (hasSorry: Bool) : AnalysisM (List Goal) := 
+  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) (infoTreeCtx : InfoTreeContext) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
-    return (← ctx.runMetaM {} (goals.mapM (fun x => evalGoal x hasSorry))).filterMap id
+    return (← ctx.runMetaM {} (goals.mapM (fun x => evalGoal x infoTreeCtx))).filterMap id
 
-  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool) (hasSorry : Bool): AnalysisM (List Goal) :=
+  private def genGoals (contextInfo : ContextBasedInfo TacticInfo) (beforeNode: Bool) (infoTreeCtx : InfoTreeContext) : AnalysisM (List Goal) :=
     if beforeNode then
-      _genGoals contextInfo contextInfo.info.goalsBefore contextInfo.info.mctxBefore hasSorry
+      _genGoals contextInfo contextInfo.info.goalsBefore contextInfo.info.mctxBefore infoTreeCtx
     else
-      _genGoals contextInfo contextInfo.info.goalsAfter contextInfo.info.mctxAfter hasSorry
+      _genGoals contextInfo contextInfo.info.goalsAfter contextInfo.info.mctxAfter infoTreeCtx
 
-  def genTactic? (self : TraversalFragment) (hasSorry : Bool) : AnalysisM (Option Tactic) := do
+  def genTactic? (self : TraversalFragment) (infoTreeCtx : InfoTreeContext) : AnalysisM (Option Tactic) := do
     match self with
     | tactic fragment => do 
-      let goalsBefore ← genGoals fragment true hasSorry
-      let goalsAfter ← genGoals fragment false hasSorry
-      if hasSorry then do 
+      let goalsBefore ← genGoals fragment true infoTreeCtx
+      let goalsAfter ← genGoals fragment false infoTreeCtx
+      if infoTreeCtx.hasSorry || infoTreeCtx.isCalcTatic then do 
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := [], goalsAfter := [] }
       if goalsAfter.isEmpty then  
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
@@ -196,8 +233,8 @@ namespace TraversalFragment
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
 
-  def genSentences (self : TraversalFragment) (hasSorry : Bool) : AnalysisM (List Sentence) := do
-    if let some t ← self.genTactic? hasSorry then
+  def genSentences (self : TraversalFragment) (infoTreeCtx : InfoTreeContext) : AnalysisM (List Sentence) := do
+    if let some t ← self.genTactic? infoTreeCtx then
       return [Sentence.tactic t]
     else
       return []
@@ -219,9 +256,9 @@ namespace AnalysisResult
 
   def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
 
-  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) (hasSorry : Bool) : AnalysisM AnalysisResult := do
+  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) (infoTreeCtx : InfoTreeContext) : AnalysisM AnalysisResult := do
     let newTokens : List Token := ← fragment.genTokens
-    let newSentences ← fragment.genSentences hasSorry
+    let newSentences ← fragment.genSentences infoTreeCtx
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
   def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := do
@@ -266,17 +303,17 @@ namespace TraversalAux
     result := AnalysisResult.merge x.result y.result
   }
 
-  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) (hasSorry : Bool) : AnalysisM TraversalAux := do
+  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
     match fragment with
     | TraversalFragment.term _ => do
       if self.allowsNewTerm then
-        let newResult ← self.result.insertFragment fragment hasSorry
+        let newResult ← self.result.insertFragment fragment infoTreeCtx
         return { self with allowsNewTerm := false, result := newResult }
       else 
         return self
     | TraversalFragment.field _ => do
       if self.allowsNewField then
-        let newResult ← self.result.insertFragment fragment hasSorry
+        let newResult ← self.result.insertFragment fragment infoTreeCtx
         return { self with allowsNewField := false, result := newResult }
       else 
         return self
@@ -285,7 +322,7 @@ namespace TraversalAux
       if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self
       else
-        let newResult ← self.result.insertFragment fragment hasSorry
+        let newResult ← self.result.insertFragment fragment infoTreeCtx
         return { self with result := newResult }
     | _ => pure self
 
@@ -297,20 +334,20 @@ namespace TraversalAux
         return self
 end TraversalAux
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (hasSorry : Bool): AnalysisM TraversalAux :=
+partial def _resolveTacticList (config : Configuration) (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
   match tree with
-  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree hasSorry
+  | InfoTree.context ctx tree => _resolveTacticList config ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree) 
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
       let ctx? := info.updateContext? ctx
-      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x hasSorry) 
+      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList config ctx? aux x (_updateIsCalcTatic config infoTreeCtx x)) 
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       match (← TraversalFragment.create ctx info) with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        sortedChildrenLeafs.insertFragment fragment hasSorry         
-      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment hasSorry         
+        sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
     | none => pure aux
@@ -320,24 +357,9 @@ inductive TraversalEvent
 | result (r : TraversalAux)
 | error (e : IO.Error)
 
-partial def _hasSorry (t : InfoTree) : Bool := 
-  let rec go (ci? : Option ContextInfo) (t : InfoTree) : Bool :=
-    match t with
-    | InfoTree.context ci t => go ci t
-    | InfoTree.node i cs =>
-      if let (some _, .ofTermInfo ti) := (ci?, i) then 
-        -- let expr := ti.runMetaM ci (instantiateMVars ti.expr)
-        ti.expr.hasSorry
-        -- we assume that `cs` are subterms of `ti.expr` and
-        -- thus do not have to be checked as well
-      else 
-        cs.any (go ci?)
-    | _ => false
-  go none t
-
-def _resolveTask (tree : InfoTree) (hasSorry : Bool) : AnalysisM (Task TraversalEvent) := do
+def _resolveTask (config : Configuration) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM (Task TraversalEvent) := do
   let taskBody : AnalysisM TraversalEvent := do
-    let res ← _resolveTacticList none {} tree hasSorry
+    let res ← _resolveTacticList config none {} tree infoTreeCtx
     return TraversalEvent.result res
   let task ← IO.asTask (taskBody $ ← read)
   return task.map fun
@@ -347,9 +369,7 @@ def _resolveTask (tree : InfoTree) (hasSorry : Bool) : AnalysisM (Task Traversal
 def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let config ← read
   let auxResults ← (trees.map (λ t => 
-  if config.experimentalSorryConfig 
-    then _resolveTacticList none {} t (_hasSorry t)
-    else _resolveTacticList none {} t false)).mapM (λ x => x)
+    _resolveTacticList config none {} t (_buildInfoTreeContext config t))).mapM (λ x => x)
   let results := auxResults.map (λ x => x.result)
   return results.foldl AnalysisResult.merge AnalysisResult.empty
 
@@ -364,9 +384,7 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM (Option (List
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let config ← read
-  let tasks ← trees.toArray.mapM (λ t => if config.experimentalSorryConfig 
-    then _resolveTask t (_hasSorry t)
-    else _resolveTask t false)
+  let tasks ← trees.toArray.mapM (λ t => _resolveTask config t (_buildInfoTreeContext config t))
   match (← resolveTasks tasks) with
   | some auxResults => do
     let results := auxResults.map (λ x => x.result)
