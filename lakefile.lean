@@ -23,8 +23,7 @@ def runLeanInk (leanInkExe: FilePath) (test : FilePath) : IO UInt32 := do
     return 1
 
   if let some fileName := test.fileName then
-    let mut args := #["analyze", fileName, "--x-enable-type-info", "--x-enable-docStrings", 
-      "--x-enable-semantic-token", "--prettify-output", "--x-disable-sorry-info", "--x-disable-calc-info"]
+    let mut args := #["analyze", fileName, "--x-enable-type-info", "--x-enable-docStrings", "--x-enable-semantic-token", "--prettify-output"]
     if let some dir := test.parent then
       let lakefile := dir / "lakefile.lean"
       if (← lakefile.pathExists) then
@@ -61,10 +60,10 @@ file, otherwise compare the new output to the expected output and return an erro
 different. -/
 def execute (leanInkExe: FilePath) (capture : Bool) : IO UInt32 := do
   let root : FilePath := "." / "test"
-  let dirs ← walkDir root
+  let dirs ← walkDir root (enter := fun path => return path.fileName != "lake-packages")
   let mut retVal : UInt32 := 0
   for test in dirs do
-    if test.extension = "lean" && test.fileName != "lakefile.lean" && !test.components.contains "lean_packages" then
+    if test.extension = "lean" && test.fileName != "lakefile.lean" then
       if let some fileName := test.fileName then
         let actual := test.withFileName (fileName ++ ".leanInk")
         let expected := test.withFileName (fileName ++ ".leanInk.expected")
