@@ -77,9 +77,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "Nat",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -88,8 +87,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "Nat",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,

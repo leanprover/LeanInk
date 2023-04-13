@@ -505,10 +505,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["x", "y"], "body": "", "_type": "hypothesis"},
-     {"type": "Bool", "names": ["b"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "x + 0 = x",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -517,8 +515,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["x", "y"], "body": "", "_type": "hypothesis"},
+     {"type": "Bool", "names": ["b"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "x + 0 = x",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n    ",
     "link": null,

@@ -633,13 +633,15 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "(β → β → φ) → (α → β) → α → α → φ",
+    {"type":
+     "{α : Sort u₁} → {β : Sort u₂} → {φ : Sort u₃} → (β → β → φ) → (α → β) → α → α → φ",
      "name": "on_fun",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "on_fun",
     "link": null,
-    "docstring": null,
+    "docstring":
+    "Given functions `f : β → β → φ` and `g : α → β`, produce a function `α → α → φ` that evaluates\n`g` on each argument, then applies `f` to the results. Can be used, e.g., to transfer a relation\nfrom `β` to `α`. ",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -1644,7 +1646,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {α : Sort u₁} {β : Sort u₂} (f : α → β), id ∘ f = f",
+    {"type": "∀ (f : α → β), id ∘ f = f",
      "name": "left_id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -1890,7 +1892,8 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ (f : β → φ) (g : α → β) (a : α), comp f g a = f (g a)",
+    {"type":
+     "∀ {α : Sort u₁} {β : Sort u₂} {φ : Sort u₃} (f : β → φ) (g : α → β) (a : α), (f ∘ g) a = f (g a)",
      "name": "comp_app",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -2337,7 +2340,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {α : Sort u₁} {β : Sort u₂} (f : α → β), id ∘ f = f",
+    {"type": "∀ (f : α → β), id ∘ f = f",
      "name": "comp.left_id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -2466,7 +2469,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {α : Sort u₁} {β : Sort u₂} (f : α → β), f ∘ id = f",
+    {"type": "∀ (f : α → β), f ∘ id = f",
      "name": "comp.right_id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -2961,7 +2964,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {g : β → φ} {f : α → β}, injective g → injective f → injective (g ∘ f)",
+     "∀ {α : Sort u₁} {β : Sort u₂} {φ : Sort u₃} {g : β → φ} {f : α → β}, injective g → injective f → injective (g ∘ f)",
      "name": "injective.comp",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -3168,9 +3171,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "Function.comp g f a₁✝ = Function.comp g f a₂✝",
-     "name": "h",
-     "_type": "typeinfo"},
+    {"type": "(g ∘ f) a₁✝ = (g ∘ f) a₂✝", "name": "h", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "h",
     "link": null,
@@ -3207,9 +3208,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "Function.comp g f a₁✝ = Function.comp g f a₂✝",
-     "name": "h",
-     "_type": "typeinfo"},
+    {"type": "(g ∘ f) a₁✝ = (g ∘ f) a₂✝", "name": "h", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "h",
     "link": null,
@@ -3835,7 +3834,7 @@
     "raw": "Eq.trans",
     "link": null,
     "docstring":
-    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₂`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
+    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you have variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₂`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -5273,7 +5272,8 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {f : α → β}, has_left_inverse f → Function.injective f",
+    {"type":
+     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β}, has_left_inverse f → Function.injective f",
      "name": "has_left_inverse.injective",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -5497,7 +5497,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β} {g : β → α}, injective f → left_inverse f g → right_inverse f g",
+     "∀ {f : α → β} {g : β → α}, injective f → left_inverse f g → right_inverse f g",
      "name": "right_inverse_of_injective_of_left_inverse",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -6212,7 +6212,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {f : α → β} {g : β → α}, surjective f → right_inverse f g → left_inverse f g",
+     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β} {g : β → α}, surjective f → right_inverse f g → left_inverse f g",
      "name": "left_inverse_of_surjective_of_right_inverse",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -6507,6 +6507,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Sort u₁", "names": ["α"], "body": "", "_type": "hypothesis"},
      {"type": "Sort u₂", "names": ["β"], "body": "", "_type": "hypothesis"},
@@ -6530,13 +6545,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -7132,15 +7140,11 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type":
-     "{α : Type u₁} → {β : Type u₂} → {φ : Type u₃} → (α × β → φ) → α → β → φ",
-     "name": "curry",
-     "_type": "typeinfo"},
+    {"type": "(α × β → φ) → α → β → φ", "name": "curry", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "curry",
     "link": null,
-    "docstring":
-    "Interpret a function on `α × β` as a function with two arguments. ",
+    "docstring": null,
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -7507,7 +7511,8 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ (f : α → β → φ), curry (uncurry f) = f",
+    {"type":
+     "∀ {α : Type u₁} {β : Type u₂} {φ : Type u₃} (f : α → β → φ), curry (uncurry f) = f",
      "name": "curry_uncurry",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -7668,7 +7673,8 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ (f : α × β → φ), uncurry (curry f) = f",
+    {"type":
+     "∀ {α : Type u₁} {β : Type u₂} {φ : Type u₃} (f : α × β → φ), uncurry (curry f) = f",
      "name": "uncurry_curry",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -7886,7 +7892,8 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {g : β → α} {f : α → β}, left_inverse g f → g ∘ f = id",
+    {"type":
+     "∀ {α : Type u₁} {β : Type u₂} {g : β → α} {f : α → β}, left_inverse g f → g ∘ f = id",
      "name": "left_inverse.id",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
