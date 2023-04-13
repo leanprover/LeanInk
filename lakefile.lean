@@ -23,7 +23,8 @@ def runLeanInk (leanInkExe: FilePath) (test : FilePath) : IO UInt32 := do
     return 1
 
   if let some fileName := test.fileName then
-    let mut args := #["analyze", fileName, "--x-enable-type-info", "--x-enable-docStrings", "--x-enable-semantic-token", "--prettify-output"]
+    let mut args := #["analyze", fileName, "--x-enable-type-info", "--x-enable-docStrings", 
+      "--x-enable-semantic-token", "--prettify-output", "--x-disable-sorry-info", "--x-disable-calc-info"]
     if let some dir := test.parent then
       let lakefile := dir / "lakefile.lean"
       if (← lakefile.pathExists) then
