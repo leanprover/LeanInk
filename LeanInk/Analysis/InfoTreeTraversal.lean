@@ -41,19 +41,17 @@ partial def _isCalcTatic (tree: InfoTree) : Bool :=
   | .context _ _ => false
   | .node i _ => 
     if let .ofTacticInfo ti := i then 
-      if ti.stx.getKind == ``calcTactic
-        then true
-        else false
+      ti.stx.getKind == ``calcTactic
     else 
       false
   | _ => false
 
-def _buildInfoTreeContext (config: Configuration) (tree : InfoTree) : InfoTreeContext := 
+def _buildInfoTreeContext (config : Configuration) (tree : InfoTree) : InfoTreeContext := 
   let hasSorry := config.experimentalSorryConfig && (_hasSorry tree)
   let isCalcTatic := config.experimentalCalcConfig && (_isCalcTatic tree)
   InfoTreeContext.mk hasSorry isCalcTatic
 
-def _updateIsCalcTatic (config: Configuration) (ctx : InfoTreeContext) (tree : InfoTree) : InfoTreeContext := 
+def _updateIsCalcTatic (config : Configuration) (ctx : InfoTreeContext) (tree : InfoTree) : InfoTreeContext := 
   { ctx with isCalcTatic := if config.experimentalCalcConfig then ctx.isCalcTatic || _isCalcTatic tree else false }
 
 structure ContextBasedInfo (β : Type) where
@@ -334,14 +332,15 @@ namespace TraversalAux
         return self
 end TraversalAux
 
-partial def _resolveTacticList (config : Configuration) (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux :=
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
+  let config ← read
   match tree with
-  | InfoTree.context ctx tree => _resolveTacticList config ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree) 
+  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree) 
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
       let ctx? := info.updateContext? ctx
-      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList config ctx? aux x (_updateIsCalcTatic config infoTreeCtx x)) 
+      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x (_updateIsCalcTatic config infoTreeCtx x)) 
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       match (← TraversalFragment.create ctx info) with
       | (some fragment, some semantic) => do
@@ -357,9 +356,9 @@ inductive TraversalEvent
 | result (r : TraversalAux)
 | error (e : IO.Error)
 
-def _resolveTask (config : Configuration) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM (Task TraversalEvent) := do
+def _resolveTask (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM (Task TraversalEvent) := do
   let taskBody : AnalysisM TraversalEvent := do
-    let res ← _resolveTacticList config none {} tree infoTreeCtx
+    let res ← _resolveTacticList none {} tree infoTreeCtx
     return TraversalEvent.result res
   let task ← IO.asTask (taskBody $ ← read)
   return task.map fun
@@ -369,7 +368,7 @@ def _resolveTask (config : Configuration) (tree : InfoTree) (infoTreeCtx : InfoT
 def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let config ← read
   let auxResults ← (trees.map (λ t => 
-    _resolveTacticList config none {} t (_buildInfoTreeContext config t))).mapM (λ x => x)
+    _resolveTacticList none {} t (_buildInfoTreeContext config t))).mapM (λ x => x)
   let results := auxResults.map (λ x => x.result)
   return results.foldl AnalysisResult.merge AnalysisResult.empty
 
@@ -384,7 +383,7 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM (Option (List
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let config ← read
-  let tasks ← trees.toArray.mapM (λ t => _resolveTask config t (_buildInfoTreeContext config t))
+  let tasks ← trees.toArray.mapM (λ t => _resolveTask t (_buildInfoTreeContext config t))
   match (← resolveTasks tasks) with
   | some auxResults => do
     let results := auxResults.map (λ x => x.result)
