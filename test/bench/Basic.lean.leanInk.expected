@@ -811,7 +811,10 @@
     "link": null,
     "docstring": null,
     "_type": "token"},
-   {"typeinfo": {"type": "Nat → α → α", "name": "loop", "_type": "typeinfo"},
+   {"typeinfo":
+    {"type": "{α : Type u} → (Nat → α → α) → Nat → α → α",
+     "name": "loop",
+     "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "loop",
     "link": null,
@@ -2886,9 +2889,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "beq a a = true",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -2897,8 +2899,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "beq a a = true",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -3806,7 +3817,7 @@
   "goals":
   [{"name": "",
     "hypotheses": [],
-    "conclusion": "∀ {a : Nat}, (a == a) = true",
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -3815,8 +3826,16 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "∀ {a : Nat}, (a == a) = true",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -4082,10 +4101,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
-     {"type": "a = b", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "(a == b) = true",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -4094,8 +4111,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "a = b", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "(a == b) = true",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -4412,6 +4439,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
      {"type": "(!a == b) = true",
@@ -4423,13 +4465,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -4842,6 +4877,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
      {"type": "¬a = b", "names": ["h"], "body": "", "_type": "hypothesis"},
@@ -4853,13 +4903,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -4890,7 +4933,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type": "¬(a == b) = true", "name": "this", "_type": "typeinfo"},
-    "semanticType": "Keyword",
+    "semanticType": "Name.Variable",
     "raw": "this",
     "link": null,
     "docstring": null,
@@ -5971,9 +6014,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n + (m + 1) = m + 1 + n",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -5982,8 +6024,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n + (m + 1) = m + 1 + n",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n    ",
     "link": null,
@@ -6097,9 +6148,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "succ (n + m) = succ (m + n)",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -6108,8 +6158,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "succ (n + m) = succ (m + n)",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -6857,6 +6916,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -6866,13 +6940,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -7240,6 +7307,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -7249,13 +7331,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -7623,6 +7698,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -7632,13 +7722,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -8332,6 +8415,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -8345,13 +8443,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -8580,7 +8671,7 @@
     "docstring":
     "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"},
-   {"typeinfo": {"type": "n + m = k + m", "name": "h", "_type": "typeinfo"},
+   {"typeinfo": {"type": "m + n = k + m", "name": "h", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "h",
     "link": null,
@@ -9334,9 +9425,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "succ n * m = n * m + m",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -9345,8 +9435,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "succ n * m = n * m + m",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -10781,6 +10880,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -10790,13 +10904,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -10975,10 +11082,9 @@
   "_type": "sentence"},
  {"messages": [],
   "goals":
-  [{"name": "zero",
-    "hypotheses":
-    [{"type": "Nat", "names": ["m", "k"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "0 = zero * m + zero * k",
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo":
@@ -11684,6 +11790,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -11693,13 +11814,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -12612,6 +12726,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -12621,13 +12750,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -12915,6 +13037,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -12924,13 +13061,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -13730,9 +13860,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "succ n - succ m = n - m",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -13741,8 +13870,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "succ n - succ m = n - m",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -14492,9 +14630,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n - m ≤ n",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -14503,8 +14640,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n - m ≤ n",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -15794,7 +15940,10 @@
   "_type": "text"},
  {"messages": [],
   "goals":
-  [{"name": "", "hypotheses": [], "conclusion": "0 - 0 = 0", "_type": "goal"}],
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
     "semanticType": "Keyword",
@@ -15802,8 +15951,13 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "", "hypotheses": [], "conclusion": "0 - 0 = 0", "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -15895,9 +16049,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "succ n - succ n = 0",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -15906,8 +16059,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "succ n - succ n = 0",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -16429,7 +16591,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "Trans (fun a a_1 => a < a_1) (fun a a_1 => a < a_1) fun a a_1 => a < a_1",
+     "Trans (fun x x_1 => x < x_1) (fun x x_1 => x < x_1) fun x x_1 => x < x_1",
      "name": "instance",
      "_type": "typeinfo"},
     "semanticType": "Keyword",
@@ -16616,7 +16778,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "Trans (fun a a_1 => a ≤ a_1) (fun a a_1 => a ≤ a_1) fun a a_1 => a ≤ a_1",
+     "Trans (fun x x_1 => x ≤ x_1) (fun x x_1 => x ≤ x_1) fun x x_1 => x ≤ x_1",
      "name": "instance",
      "_type": "typeinfo"},
     "semanticType": "Keyword",
@@ -16803,7 +16965,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "Trans (fun a a_1 => a < a_1) (fun a a_1 => a ≤ a_1) fun a a_1 => a < a_1",
+     "Trans (fun x x_1 => x < x_1) (fun x x_1 => x ≤ x_1) fun x x_1 => x < x_1",
      "name": "instance",
      "_type": "typeinfo"},
     "semanticType": "Keyword",
@@ -16990,7 +17152,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "Trans (fun a a_1 => a ≤ a_1) (fun a a_1 => a < a_1) fun a a_1 => a < a_1",
+     "Trans (fun x x_1 => x ≤ x_1) (fun x x_1 => x < x_1) fun x x_1 => x < x_1",
      "name": "instance",
      "_type": "typeinfo"},
     "semanticType": "Keyword",
@@ -19762,10 +19924,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a"], "body": "", "_type": "hypothesis"},
-     {"type": "a ≠ 0", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "0 < a",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -19774,8 +19934,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≠ 0", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "0 < a",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -20758,7 +20928,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo": {"type": "m < succ n", "name": "this", "_type": "typeinfo"},
-    "semanticType": "Name.Variable",
+    "semanticType": "Keyword",
     "raw": "this",
     "link": null,
     "docstring": null,
@@ -23506,7 +23676,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "Antisymm fun a a_1 => a ≤ a_1",
+    {"type": "Antisymm fun x x_1 => x ≤ x_1",
      "name": "instance",
      "_type": "typeinfo"},
     "semanticType": "Keyword",
@@ -23663,7 +23833,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "Antisymm fun a a_1 => ¬a < a_1",
+    {"type": "Antisymm fun x x_1 => ¬x < x_1",
      "name": "instance",
      "_type": "typeinfo"},
     "semanticType": "Keyword",
@@ -24382,7 +24552,7 @@
     "raw": "trans",
     "link": null,
     "docstring":
-    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₂`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
+    "Equality is transitive: if `a = b` and `b = c` then `a = c`.\n\nBecause this is in the `Eq` namespace, if you have variables or expressions\n`h₁ : a = b` and `h₂ : b = c`, you can use `h₁.trans h₂ : a = c` as shorthand\nfor `Eq.trans h₁ h₂`.\n\nFor more information: [Equality](https://leanprover.github.io/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
@@ -24592,11 +24762,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"},
-     {"type": "n ≤ m", "names": ["h"], "body": "", "_type": "hypothesis"},
-     {"type": "Nat", "names": ["k"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n + k ≤ m + k",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -24605,8 +24772,19 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"},
+     {"type": "n ≤ m", "names": ["h"], "body": "", "_type": "hypothesis"},
+     {"type": "Nat", "names": ["k"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n + k ≤ m + k",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -26339,6 +26517,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -26352,13 +26545,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -27014,6 +27200,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -27023,13 +27224,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -30768,6 +30962,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -30782,13 +30991,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -31023,7 +31225,7 @@
     "docstring":
     "`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n",
     "_type": "token"},
-   {"typeinfo": {"type": "n * m = k * m", "name": "h", "_type": "typeinfo"},
+   {"typeinfo": {"type": "m * n = k * m", "name": "h", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "h",
     "link": null,
@@ -33146,10 +33348,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["b", "a"], "body": "", "_type": "hypothesis"},
-     {"type": "b < a", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "a ≠ 0",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -33158,8 +33358,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["b", "a"], "body": "", "_type": "hypothesis"},
+     {"type": "b < a", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "a ≠ 0",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -33660,9 +33870,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "a + b - a = b",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -33671,8 +33880,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "a + b - a = b",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -34140,9 +34358,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "a + b - b = a",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -34151,8 +34368,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "a + b - b = a",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -34416,9 +34642,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a", "i"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "a - i ≤ succ a - i",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -34427,8 +34652,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a", "i"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "a - i ≤ succ a - i",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -34941,10 +35175,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["i", "a"], "body": "", "_type": "hypothesis"},
-     {"type": "i < a", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "0 < a - i",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -34953,8 +35185,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["i", "a"], "body": "", "_type": "hypothesis"},
+     {"type": "i < a", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "0 < a - i",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -36163,10 +36405,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a", "i"], "body": "", "_type": "hypothesis"},
-     {"type": "i < a", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "a - (i + 1) < a - i",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -36175,8 +36415,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a", "i"], "body": "", "_type": "hypothesis"},
+     {"type": "i < a", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "a - (i + 1) < a - i",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -36624,10 +36874,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a"], "body": "", "_type": "hypothesis"},
-     {"type": "a ≠ 0", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "succ (pred a) = a",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -36636,8 +36884,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≠ 0", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "succ (pred a) = a",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -37074,6 +37332,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat", "names": ["b"], "body": "", "_type": "hypothesis"},
      {"type": "0 < succ b",
@@ -37084,13 +37357,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -37303,6 +37569,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
      {"type": "succ a < succ b",
@@ -37313,13 +37594,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -37662,10 +37936,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
-     {"type": "a ≤ b", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "a + (b - a) = b",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -37674,8 +37946,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["a", "b"], "body": "", "_type": "hypothesis"},
+     {"type": "a ≤ b", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "a + (b - a) = b",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -38577,10 +38859,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"},
-     {"type": "m ≤ n", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n - m + m = n",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -38589,8 +38869,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"},
+     {"type": "m ≤ n", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n - m + m = n",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -38883,6 +39173,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "k", "m"],
@@ -38892,13 +39197,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -39342,6 +39640,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["k", "n", "m"],
@@ -39351,13 +39664,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -39963,9 +40269,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n + m - (0 + m) = n",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -39974,8 +40279,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n + m - (0 + m) = n",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -40299,9 +40613,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n + m - (n + 0) = m",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -40310,8 +40623,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n + m - (n + 0) = m",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -40636,11 +40958,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["m", "k"], "body": "", "_type": "hypothesis"},
-     {"type": "k ≤ m", "names": ["h"], "body": "", "_type": "hypothesis"},
-     {"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n + m - k = n + (m - k)",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -40649,8 +40968,19 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["m", "k"], "body": "", "_type": "hypothesis"},
+     {"type": "k ≤ m", "names": ["h"], "body": "", "_type": "hypothesis"},
+     {"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n + m - k = n + (m - k)",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n ",
     "link": null,
@@ -41283,6 +41613,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -41294,13 +41639,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -41635,6 +41973,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -41645,13 +41998,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -41940,6 +42286,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -41950,13 +42311,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -43101,9 +43455,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "0 - n = 0",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -43112,8 +43465,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "0 - n = 0",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -43474,9 +43836,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n - (n + m) = 0",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -43485,8 +43846,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n - (n + m) = 0",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -43847,10 +44217,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"},
-     {"type": "n ≤ m", "names": ["h"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n - m = 0",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -43859,8 +44227,18 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"},
+     {"type": "n ≤ m", "names": ["h"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n - m = 0",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -44281,6 +44659,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -44291,13 +44684,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -45488,6 +45874,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -45499,13 +45900,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -46161,6 +46555,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -46171,13 +46580,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -46531,6 +46933,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -46546,13 +46963,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -47001,6 +47411,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -47011,13 +47436,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -47094,6 +47512,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -47104,13 +47537,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n    ",
     "link": null,
@@ -48004,6 +48430,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["a", "b", "c"],
@@ -48014,13 +48455,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
@@ -48162,7 +48596,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo": {"type": "succ a + b ≤ c", "name": "this", "_type": "typeinfo"},
-    "semanticType": "Name.Variable",
+    "semanticType": "Keyword",
     "raw": "this",
     "link": null,
     "docstring": null,
@@ -48739,6 +49173,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat → Prop",
       "names": ["motive"],
@@ -48757,13 +49206,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -49507,9 +49949,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "pred n * m = n * m - m",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -49518,8 +49959,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "pred n * m = n * m - m",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -49967,9 +50417,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "n * pred m = n * m - n",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -49978,8 +50427,17 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n", "m"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n * pred m = n * m - n",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -50296,6 +50754,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -50305,13 +50778,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -50916,6 +51382,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -50925,13 +51406,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,
@@ -51643,6 +52117,21 @@
  {"messages": [],
   "goals":
   [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
+    "semanticType": "Keyword",
+    "raw": "by",
+    "link": null,
+    "docstring":
+    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
     "hypotheses":
     [{"type": "Nat",
       "names": ["n", "m", "k"],
@@ -51652,13 +52141,6 @@
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
-    "semanticType": "Keyword",
-    "raw": "by",
-    "link": null,
-    "docstring":
-    "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,

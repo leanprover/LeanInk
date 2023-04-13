@@ -156,11 +156,8 @@
  {"messages": [],
   "goals":
   [{"name": "",
-    "hypotheses":
-    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
-     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
-     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
-    "conclusion": "p ∧ q ∧ p",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
     "_type": "goal"}],
   "contents":
   [{"typeinfo": null,
@@ -169,8 +166,19 @@
     "link": null,
     "docstring":
     "`by tac` constructs a term of the expected type by running the tactic(s) `tac`. ",
-    "_type": "token"},
-   {"typeinfo": null,
+    "_type": "token"}],
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Prop", "names": ["p", "q"], "body": "", "_type": "hypothesis"},
+     {"type": "p", "names": ["hp"], "body": "", "_type": "hypothesis"},
+     {"type": "q", "names": ["hq"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "p ∧ q ∧ p",
+    "_type": "goal"}],
+  "contents":
+  [{"typeinfo": null,
     "semanticType": null,
     "raw": "\n  ",
     "link": null,

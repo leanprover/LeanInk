@@ -1,5 +1,5 @@
 build/
-lean_packages/
+lake-packages/
 
 /test/**/*.html
 /test/**/*.css
@@ -11,3 +11,4 @@ lean_packages/
 
 *.trace
 *.json
+!lake-manifest.json
