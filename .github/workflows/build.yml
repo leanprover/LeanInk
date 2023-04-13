@@ -27,6 +27,10 @@ jobs:
           os: windows-latest
           shell: pwsh
     steps:
+      # Fix CR/LF mangling on Windows
+      - name: Disable autocrlf in git
+        run: git config --global core.autocrlf false
+
       # Checkout repository
       - uses: actions/checkout@v2
 
