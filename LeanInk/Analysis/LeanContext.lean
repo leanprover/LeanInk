@@ -42,7 +42,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
     let lakeProcess ← Process.spawn {
       stdin := Process.Stdio.null
       stdout := Process.Stdio.piped
-      stderr := Process.Stdio.piped
+      stderr := Process.Stdio.inherit
       cmd := ← getLakePath
       args := arguments
     }
@@ -61,23 +61,10 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
           logInfo s!"{paths.oleanPath}"
           logInfo s!"Successfully loaded lake search paths"
     | 2 => logInfo s!"No search paths required!"
-    | _ => throw <| IO.userError s!"Using lake failed! Make sure that lake is installed!\n{← lakeProcess.stderr.readToEnd}"
-
-def configureLake : AnalysisM Unit := do
-  let lakeProcess ← Process.spawn {
-      stdin := Process.Stdio.null
-      stdout := Process.Stdio.piped
-      stderr := Process.Stdio.piped
-      cmd := ← getLakePath
-      args := #["configure"]
-    }
-    let stdout := String.trim (← lakeProcess.stdout.readToEnd)
-    match (← lakeProcess.wait) with
-    | _ => logInfo s!"Lake configured dependencies!"
+    | _ => throw <| IO.userError s!"Using lake failed! Make sure that lake is installed!"
 
 def initializeSearchPaths (header : Syntax) (config : Configuration) : AnalysisM Unit := do
   match config.lakeFile with
   | some lakeFile => do 
-    configureLake
     initializeLakeContext lakeFile header
   | none => initializeLeanContext
