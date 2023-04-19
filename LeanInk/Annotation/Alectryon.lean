@@ -205,6 +205,7 @@ def isComment (contents : String) : Bool :=
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let config ← read
+  /- When contents is a comment, the goals are duplicates -/
   if (isComment contents) then
     return Fragment.text { contents := Contents.string contents }
   if annotation.sentence.fragments.isEmpty then
