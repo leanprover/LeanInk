@@ -1,5 +1,5 @@
 [{"contents":
-    "/-|\n=======\n Title\n=======\n\nProse. *Emphasis*; **strong emphasis**; ``code``; `coq code`; `link <url>`__.\n|-/\n\n",
+  "/-|\n=======\n Title\n=======\n\nProse. *Emphasis*; **strong emphasis**; ``code``; `coq code`; `link <url>`__.\n|-/\n\n",
   "_type": "text"},
  {"messages": [{"contents": "Bool : Type", "_type": "message"}],
   "goals": [],
