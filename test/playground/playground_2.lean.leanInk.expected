@@ -1,11 +1,4 @@
-[{"contents":
-  [{"typeinfo": null,
-    "semanticType": null,
-    "raw": "/-| \nHello World!\n-/\n",
-    "link": null,
-    "docstring": null,
-    "_type": "token"}],
-  "_type": "text"},
+[{"contents": "/-| \nHello World!\n-/\n", "_type": "text"},
  {"messages": [{"contents": "Hello World!", "_type": "message"}],
   "goals": [],
   "contents":
