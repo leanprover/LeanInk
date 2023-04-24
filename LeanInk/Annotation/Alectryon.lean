@@ -199,8 +199,15 @@ def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal :=
 
 def genMessages (message : Analysis.Message) : Message := { contents := message.msg }
 
+def isComment (contents : String) : Bool := 
+  let contents := contents.trim
+  contents.startsWith "--" || contents.startsWith "/-"
+
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let config ← read
+  /- When contents is a comment, the goals are duplicates -/
+  if (isComment contents) then
+    return Fragment.text { contents := Contents.string contents }
   if annotation.sentence.fragments.isEmpty then
     if config.experimentalTypeInfo ∨ config.experimentalDocString then
       let headPos := annotation.sentence.headPos
