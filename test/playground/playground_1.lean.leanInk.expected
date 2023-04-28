@@ -1,11 +1,5 @@
 [{"contents":
-  [{"typeinfo": null,
-    "semanticType": null,
-    "raw":
-    "/-|\n=======\n Title\n=======\n\nProse. *Emphasis*; **strong emphasis**; ``code``; `coq code`; `link <url>`__.\n|-/\n\n",
-    "link": null,
-    "docstring": null,
-    "_type": "token"}],
+  "/-|\n=======\n Title\n=======\n\nProse. *Emphasis*; **strong emphasis**; ``code``; `coq code`; `link <url>`__.\n|-/\n\n",
   "_type": "text"},
  {"messages": [{"contents": "Bool : Type", "_type": "message"}],
   "goals": [],
