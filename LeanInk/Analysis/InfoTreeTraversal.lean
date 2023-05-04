@@ -75,16 +75,15 @@ namespace TraversalFragment
   | tactic fragment => (fragment.info.toElabInfo.stx.getTailPos? false).getD 0
   | unknown fragment => (fragment.info.stx.getTailPos? false).getD 0
 
-  def create (ctx : ContextInfo) (info : Info) : AnalysisM ((Option TraversalFragment) × (Option SemanticTraversalInfo)) := do
+  def create (ctx : ContextInfo) (info : Info) : AnalysisM <| (Option TraversalFragment) := do
     if Info.isExpanded info then
-      pure (none, none)
+      pure none
     else
-      let mut semantic : Option SemanticTraversalInfo := none
       match info with 
-      | Info.ofTacticInfo info => pure (tactic { info := info, ctx := ctx }, semantic)
-      | Info.ofTermInfo info => pure (term { info := info, ctx := ctx }, semantic)
-      | Info.ofFieldInfo info => pure (field { info := info, ctx := ctx }, semantic)
-      | _ => pure (none, semantic)
+      | Info.ofTacticInfo info => pure <| tactic { info := info, ctx := ctx }
+      | Info.ofTermInfo info => pure <| term { info := info, ctx := ctx }
+      | Info.ofFieldInfo info => pure <| field { info := info, ctx := ctx }
+      | _ => pure none
 
   def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) : TraversalFragment -> AnalysisM α
   | term fragment => fragment.ctx.runMetaM fragment.info.lctx (func (term fragment))
@@ -252,8 +251,6 @@ namespace AnalysisResult
     let newSentences ← fragment.genSentences infoTreeCtx
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
-  def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := pure self
-
   def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
     FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
 
@@ -313,12 +310,6 @@ namespace TraversalAux
         return { self with result := newResult }
     | _ => pure self
 
-    def insertSemanticInfo (self : TraversalAux) (info : SemanticTraversalInfo) : AnalysisM TraversalAux := do
-      if self.allowsNewSemantic then
-        let newResult ← self.result.insertSemanticInfo info
-        return { self with allowsNewSemantic := false,  result := newResult }
-      else
-        return self
 end TraversalAux
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
@@ -332,12 +323,8 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x (_updateIsCalcTatic config infoTreeCtx x)) 
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       match (← TraversalFragment.create ctx info) with
-      | (some fragment, some semantic) => do
-        let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
-      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
-      | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
-      | (_, _) => pure sortedChildrenLeafs
+      | some fragment => sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
+      | none => pure sortedChildrenLeafs
     | none => pure aux
   | _ => pure aux
 
