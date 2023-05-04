@@ -1,1 +1,27 @@
-[]
+[{"contents": "example (n : Nat) : n = n := ", "_type": "text"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents": "by",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses":
+    [{"type": "Nat", "names": ["n"], "body": "", "_type": "hypothesis"}],
+    "conclusion": "n = n",
+    "_type": "goal"}],
+  "contents": " ",
+  "_type": "sentence"},
+ {"messages": [],
+  "goals":
+  [{"name": "",
+    "hypotheses": [],
+    "conclusion": "Goals accomplished! 🐙",
+    "_type": "goal"}],
+  "contents": "rfl",
+  "_type": "sentence"},
+ {"contents": "", "_type": "text"}]
