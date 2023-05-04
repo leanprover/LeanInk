@@ -15,18 +15,6 @@ open LeanInk.Analysis
 /-
   Annotation
 -/
-def tokensBetween (head : String.Pos) (tail : Option String.Pos) (compounds: List (Compound Token)) : List (Compound Token) := Id.run do
-  let mut tokens : Array (Compound Token) := #[]
-  for token in compounds do
-    match (tail, token.tailPos) with
-    | (_, none) => continue
-    | (some tail, some tokenTail) =>
-      if token.headPos <= tail && tokenTail > head then
-        tokens ← tokens.push token
-    | (none, some tokenTail) => 
-      if tokenTail > head then
-        tokens ← tokens.push token
-  return tokens.toList
 
 def matchTokenToAnalysis (aux : List Annotation) : List (Compound Sentence) -> List Annotation
   | [] => aux

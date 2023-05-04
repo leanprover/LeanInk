@@ -90,9 +90,6 @@ namespace TraversalFragment
   | tactic fragment => fragment.ctx.runMetaM {} (func (tactic fragment))
   | unknown fragment => fragment.ctx.runMetaM {} (func (unknown fragment))
 
-  /- 
-    Token Generation
-  -/
   def inferType? : TraversalFragment -> MetaM (Option String)
     | term termFragment => do
       -- This call requires almost half of the runtime of the tree traversal.
