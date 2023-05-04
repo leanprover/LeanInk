@@ -11,11 +11,6 @@ structure Configuration where
   lakeFile : Option FilePath
   verbose : Bool
   prettifyOutput : Bool
-  experimentalTypeInfo : Bool
-  experimentalDocString : Bool
-  experimentalSemanticType : Bool
-  experimentalSorryConfig : Bool
-  experimentalCalcConfig : Bool
 
 namespace Configuration
   def inputFileName (self : Configuration) : String :=

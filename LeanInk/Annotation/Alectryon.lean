@@ -34,12 +34,10 @@ structure Token where
 -/
 inductive Contents where
   | string (value : String)
-  | experimentalTokens (value : Array Token)
 
 instance : ToJson Contents where
   toJson
     | Contents.string v => toJson v
-    | Contents.experimentalTokens v => toJson v
 
 structure Hypothesis where
   _type : String := "hypothesis"
@@ -209,12 +207,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
   if (isComment contents) then
     return Fragment.text { contents := Contents.string contents }
   if annotation.sentence.fragments.isEmpty then
-    if config.experimentalTypeInfo ∨ config.experimentalDocString then
-      let headPos := annotation.sentence.headPos
-      let tokens ← genTokens contents headPos headPos [] annotation.tokens
-      return Fragment.text { contents := Contents.experimentalTokens tokens.toArray }
-    else
-      return Fragment.text { contents := Contents.string contents }
+    return Fragment.text { contents := Contents.string contents }
   else
     let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
     let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
@@ -223,10 +216,6 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
       let useBefore : Bool := tactic.tailPos > globalTailPos
       goals := genGoals useBefore tactic
     let mut fragmentContents : Contents := Contents.string contents
-    if config.experimentalTypeInfo ∨ config.experimentalDocString then
-      let headPos := annotation.sentence.headPos
-      let tokens ← genTokens contents headPos headPos [] annotation.tokens
-      fragmentContents := Contents.experimentalTokens tokens.toArray
     return Fragment.sentence { 
       contents := fragmentContents
       goals := goals.toArray

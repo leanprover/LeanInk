@@ -47,12 +47,10 @@ partial def _isCalcTatic (tree: InfoTree) : Bool :=
   | _ => false
 
 def _buildInfoTreeContext (config : Configuration) (tree : InfoTree) : InfoTreeContext := 
-  let hasSorry := config.experimentalSorryConfig && (_hasSorry tree)
-  let isCalcTatic := config.experimentalCalcConfig && (_isCalcTatic tree)
-  InfoTreeContext.mk hasSorry isCalcTatic
+  InfoTreeContext.mk false false
 
 def _updateIsCalcTatic (config : Configuration) (ctx : InfoTreeContext) (tree : InfoTree) : InfoTreeContext := 
-  { ctx with isCalcTatic := if config.experimentalCalcConfig then ctx.isCalcTatic || _isCalcTatic tree else false }
+  { ctx with isCalcTatic :=  false }
 
 structure ContextBasedInfo (β : Type) where
   ctx : ContextInfo
@@ -81,9 +79,7 @@ namespace TraversalFragment
     if Info.isExpanded info then
       pure (none, none)
     else
-      let mut semantic : Option SemanticTraversalInfo := none 
-      if (← read).experimentalSemanticType then
-        semantic := some { node := info, stx := info.stx }
+      let mut semantic : Option SemanticTraversalInfo := none
       match info with 
       | Info.ofTacticInfo info => pure (tactic { info := info, ctx := ctx }, semantic)
       | Info.ofTermInfo info => pure (term { info := info, ctx := ctx }, semantic)
@@ -126,10 +122,7 @@ namespace TraversalFragment
     let mut docString : Option String := none
     let mut type : Option String := none
     let config ← read
-    if config.experimentalDocString then
-      docString ← runMetaM (genDocString?) self
-    if config.experimentalTypeInfo then
-      type ← runMetaM (inferType?) self
+    docString ← runMetaM (genDocString?) self
     if type == none ∧ docString == none then
       return none
     else
@@ -259,11 +252,7 @@ namespace AnalysisResult
     let newSentences ← fragment.genSentences infoTreeCtx
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
-  def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := do
-    if (← read).experimentalSemanticType then
-      pure { self with tokens := self.tokens ++ (← info._resolveSemanticTokens []) }
-    else
-      return self
+  def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := self
 
   def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
     FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)

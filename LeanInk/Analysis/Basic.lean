@@ -26,11 +26,6 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     lakeFile := getLakeFile? arguments
     verbose := containsFlag arguments "--verbose"
     prettifyOutput := containsFlag arguments "--prettify-output"
-    experimentalTypeInfo := containsFlag arguments "--x-enable-type-info"
-    experimentalDocString := containsFlag arguments "--x-enable-docStrings"
-    experimentalSemanticType := containsFlag arguments "--x-enable-semantic-token"
-    experimentalSorryConfig := containsFlag arguments "--x-disable-sorry-info"  
-    experimentalCalcConfig := containsFlag arguments "--x-disable-calc-info"  
   }
 where
   getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=
