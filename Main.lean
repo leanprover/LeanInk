@@ -1,6 +1,5 @@
 import LeanInk.CLI
 import LeanInk.Analysis
-import LeanInk.Version
 
 open LeanInk
 open LeanInk.CLI

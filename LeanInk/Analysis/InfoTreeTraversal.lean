@@ -2,7 +2,6 @@ import Init.System.IO
 import Init.Control.Except
 
 import LeanInk.Analysis.DataTypes
-import LeanInk.Analysis.SemanticToken
 
 import LeanInk.ListUtil
 import LeanInk.Configuration
