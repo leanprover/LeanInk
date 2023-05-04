@@ -252,7 +252,7 @@ namespace AnalysisResult
     let newSentences ← fragment.genSentences infoTreeCtx
     pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
 
-  def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := self
+  def insertSemanticInfo (self : AnalysisResult) (info: SemanticTraversalInfo) : AnalysisM AnalysisResult := pure self
 
   def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
     FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
