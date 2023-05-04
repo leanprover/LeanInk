@@ -15,7 +15,6 @@ structure Compound (β : Type u) where
 
 structure Annotation where
   sentence : Compound Sentence
-  tokens : List (Compound Token)
 
 namespace Compound
   def getFragments (self : Compound b) : List b := self.fragments.map (λ f => f.2)

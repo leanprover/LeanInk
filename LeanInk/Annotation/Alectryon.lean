@@ -89,44 +89,6 @@ instance : ToJson Fragment where
     | Fragment.text v => toJson v
     | Fragment.sentence v => toJson v
 
-/- 
-  Token Generation
--/
-
-def genTypeInfo? (getContents : String.Pos -> String.Pos -> Option String) (token : Analysis.TypeTokenInfo) : AnalysisM (Option TypeInfo) := do
-  match token.type with
-  | some type => do
-    let headPos := Positional.headPos token
-    let tailPos := Positional.tailPos token
-    match getContents headPos tailPos with 
-    | none => pure none
-    | "" => pure none
-    | some x => return some { name := x, type := type }
-  | none => pure none
-
-def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String)
-  | none => pure none
-  | some info =>
-    match info.semanticType with
-    | SemanticTokenType.property => pure (some "Name.Attribute")
-    | SemanticTokenType.keyword => pure (some "Keyword")
-    | SemanticTokenType.variable => pure (some "Name.Variable")
-    | default => pure none
-
-def genToken (token : Compound Analysis.Token) (contents : Option String) (getContents : String.Pos -> String.Pos -> Option String) : AnalysisM (Option Token) := do
-  match contents with
-  | none => return none
-  | "" => return none
-  | some contents => do
-    let typeTokens := token.getFragments.filterMap (λ x => x.toTypeTokenInfo?)
-    let semanticTokens := token.getFragments.filterMap (λ x => x.toSemanticTokenInfo?)
-    let semanticToken := Positional.smallest? semanticTokens
-    let semanticTokenType ← genSemanticTokenValue semanticToken
-    match (Positional.smallest? typeTokens) with
-    | none => do 
-      return some { raw := contents, semanticType := semanticTokenType }
-    | some token => do 
-      return some { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString, semanticType := semanticTokenType }
 
 def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
   if head >= tail then
@@ -137,30 +99,6 @@ def extractContents (offset : String.Pos) (contents : String) (head tail: String
 def minPos (x y : String.Pos) := if x < y then x else y
 def maxPos (x y : String.Pos) := if x > y then x else y
 
-partial def genTokens (contents : String) (head : String.Pos) (offset : String.Pos) (l : List Token)  (compounds : List (Compound Analysis.Token)) : AnalysisM (List Token) := do
-  let textTail := ⟨contents.utf8ByteSize⟩ + offset
-  let mut head : String.Pos := head
-  let mut tokens : List Token := []
-  for x in compounds do
-    let extract := extractContents offset contents
-    let tail := x.tailPos.getD textTail
-    if x.headPos <= head then
-      let text := extract head tail
-      head := tail
-      logInfo s!"Text-B1: {text}"
-      match (← genToken x text extract) with
-      | none => logInfo s!"Empty 1 {text} {x.headPos} {tail}"
-      | some fragment => tokens := fragment::tokens
-    else
-      let text := extract head x.headPos
-      head := x.headPos
-      logInfo s!"Text-B2: {text}"
-      match text with
-      | none => logInfo s!"Empty 1 {text} {x.headPos} {tail}"
-      | some text => tokens := { raw := text }::tokens
-  match extractContents offset contents head (⟨contents.utf8ByteSize⟩ + offset) with
-  | none => return tokens.reverse
-  | some x => return ({ raw := x }::tokens).reverse
   
 /- 
   Fragment Generation

@@ -116,22 +116,6 @@ namespace TraversalFragment
       let elabInfo := fragment.info
       return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
 
-  def genTypeTokenInfo? (self : TraversalFragment) : AnalysisM (Option TypeTokenInfo) := do
-    let mut docString : Option String := none
-    let mut type : Option String := none
-    let config ← read
-    docString ← runMetaM (genDocString?) self
-    if type == none ∧ docString == none then
-      return none
-    else
-      return some { headPos := self.headPos, tailPos := self.tailPos, type := type, docString := docString }
-
-  def genTokens (self : TraversalFragment) : AnalysisM (List Token) := do
-    let mut tokens : List Token := []
-    if let some typeToken ← self.genTypeTokenInfo? then
-      tokens := tokens.append [Token.type typeToken]
-    return tokens
-
   /- Sentence Generation -/
   private def genGoal (goalType : Format) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
     | Name.anonymous => do
@@ -231,24 +215,19 @@ end TraversalFragment
 
 /- Traversal -/
 structure AnalysisResult where
-  tokens : List Token
   sentences : List Sentence
   deriving Inhabited
 
 namespace AnalysisResult
-  def empty : AnalysisResult := { tokens := [], sentences := [] }
+  def empty : AnalysisResult := { sentences := [] }
 
   def merge (x y : AnalysisResult) : AnalysisResult := {
-    tokens := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.tokens y.tokens
     sentences := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.sentences y.sentences
   }
 
-  def insertTokens (self : AnalysisResult) (tokens : List Token) :  AnalysisResult := merge self { tokens := tokens, sentences := [] }
-
   def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) (infoTreeCtx : InfoTreeContext) : AnalysisM AnalysisResult := do
-    let newTokens : List Token := ← fragment.genTokens
     let newSentences ← fragment.genSentences infoTreeCtx
-    pure { self with tokens := self.tokens.append newTokens, sentences := self.sentences.append newSentences }
+    pure { self with sentences := self.sentences.append newSentences }
 
   def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
     FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
@@ -363,4 +342,4 @@ def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   | some auxResults => do
     let results := auxResults.map (λ x => x.result)
     return results.foldl AnalysisResult.merge AnalysisResult.empty
-  | _ => return { tokens := [], sentences := []}
+  | _ => return { sentences := [] }
