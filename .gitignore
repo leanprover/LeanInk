@@ -10,5 +10,4 @@ lake-packages/
 /.vscode
 
 *.trace
-*.json
 !lake-manifest.json
