@@ -65,8 +65,8 @@ def execute (leanInkExe: FilePath) (capture : Bool) : IO UInt32 := do
   for test in dirs do
     if test.extension = "lean" && test.fileName != "lakefile.lean" then
       if let some fileName := test.fileName then
-        let actual := test.withFileName (fileName ++ ".leanInk")
-        let expected := test.withFileName (fileName ++ ".leanInk.expected")
+        let actual := test.withFileName (fileName ++ ".json")
+        let expected := test.withFileName (fileName ++ ".json.expected")
         if (← expected.pathExists) then
           let rc ← runLeanInk leanInkExe test
           if rc ≠ 0 then

@@ -19,7 +19,7 @@ open IO.FS
 def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : AnalysisM Unit := do
   let dirEntry : DirEntry := { 
     root := folderPath,
-    fileName := fileName ++ ".leanInk"
+    fileName := fileName ++ ".json"
   }
   let path := dirEntry.path
   IO.FS.writeFile path content
