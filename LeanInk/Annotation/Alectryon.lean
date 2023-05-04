@@ -28,17 +28,6 @@ structure Token where
   semanticType : Option String :=  Option.none
   deriving ToJson
 
-/--
-  Support type for experimental --experimental-type-tokens feature
-  If flag not set please only use the string case.
--/
-inductive Contents where
-  | string (value : String)
-
-instance : ToJson Contents where
-  toJson
-    | Contents.string v => toJson v
-
 structure Hypothesis where
   _type : String := "hypothesis"
   names : List String
@@ -60,14 +49,14 @@ structure Message where
 
 structure Sentence where
   _type : String := "sentence"
-  contents : Contents
+  contents : String
   messages : Array Message
   goals : Array Goal
   deriving ToJson
 
 structure Text where
   _type : String := "text"
-  contents : Contents
+  contents : String
   deriving ToJson
 
 /-- 
@@ -205,9 +194,9 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
   let config ← read
   /- When contents is a comment, the goals are duplicates -/
   if (isComment contents) then
-    return Fragment.text { contents := Contents.string contents }
+    return Fragment.text { contents := contents }
   if annotation.sentence.fragments.isEmpty then
-    return Fragment.text { contents := Contents.string contents }
+    return Fragment.text { contents := contents }
   else
     let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
     let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
@@ -215,7 +204,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
     if let (some tactic) := Positional.smallest? tactics then
       let useBefore : Bool := tactic.tailPos > globalTailPos
       goals := genGoals useBefore tactic
-    let mut fragmentContents : Contents := Contents.string contents
+    let mut fragmentContents : String := contents
     return Fragment.sentence { 
       contents := fragmentContents
       goals := goals.toArray

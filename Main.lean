@@ -54,11 +54,4 @@ def analyzeCommand : Command := {
   run := Analysis.exec
 }
 
-def leanVersionCommand : Command := {
-  identifiers := ["leanVersion", "lV"],
-  help := "Returns the lean version supported by this leanInk instance.",
-  arguments := [],
-  run := λ _ _ => Version.printLeanVersion
-}
-
-def main : List String -> IO UInt32 := runCLI app [analyzeCommand, leanVersionCommand]
+def main : List String -> IO UInt32 := runCLI app [analyzeCommand]
