@@ -13,11 +13,10 @@ structure Compound (β : Type u) where
   fragments : List (Nat × β)
   deriving Inhabited
 
-structure Annotation where
-  sentence : Compound Sentence
+abbrev Annotation := Compound Sentence
 
 namespace Compound
-  def getFragments (self : Compound b) : List b := self.fragments.map (λ f => f.2)
+  def getFragments (self : Compound b) : List b := self.fragments.map (·.snd)
 
   def empty { x : Type u } (headPos : String.Pos) : Compound x := { headPos := headPos, tailPos := none, fragments := [] }
 end Compound
