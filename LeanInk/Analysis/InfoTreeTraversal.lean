@@ -91,12 +91,6 @@ namespace AnalysisResult
       string := "Error: " ++ string
     return { headPos := headPos, tailPos := tailPos, msg := string }
 
-  def insertMessages (self : AnalysisResult) (messages : List Lean.Message) (fileMap : FileMap) : AnalysisM AnalysisResult := do
-    let messages ← messages.mapM (genMessage fileMap)
-    let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) messages
-    let newSentences := sortedMessages.map (λ x => Sentence.message x)
-    let mergedSentences := List.mergeSortedLists (λ x y => (Positional.headPos x) < (Positional.headPos y)) newSentences self
-    return mergedSentences
 end AnalysisResult
 
 structure TraversalAux where

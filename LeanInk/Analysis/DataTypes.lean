@@ -68,26 +68,22 @@ structure Message extends Fragment where
 /- Sentence -/
 inductive Sentence where
 | tactic (info: Tactic)
-| message (info: Message)
 deriving Inhabited
 
 instance : ToString Sentence where -- TODO: Improve this
   toString : Sentence -> String
   | Sentence.tactic t => s!"Tactic {t.headPos}-{t.tailPos}"
-  | Sentence.message _ => "Message"
 
 namespace Sentence
   def toFragment : Sentence -> Fragment
   | tactic info => info.toFragment
-  | message info => info.toFragment
 
   def asTactic? : Sentence -> Option Tactic
   | tactic info => info
-  | _ => none
 
   def asMessage? : Sentence -> Option Message
-  | message info => info
   | _ => none
+  
 end Sentence
 
 instance : Positional Sentence where

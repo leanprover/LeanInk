@@ -38,4 +38,4 @@ def analyzeInput : AnalysisM AnalysisResult := do
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
   let messages := s.commandState.messages.msgs.toList.filter (λ m => m.endPos.isSome )
-  return ← result.insertMessages messages context.fileMap
+  return result
