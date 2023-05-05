@@ -80,14 +80,9 @@ instead of:
 This is because of the way Alectryon decodes the json files. It uses the _type field to
 determine the namedTuple type with Alectryon.
 -/
-inductive Fragment where
-  | text (value : Text)
-  | sentence (value : Sentence)
+abbrev Fragment := Sentence
 
-instance : ToJson Fragment where
-  toJson
-    | Fragment.text v => toJson v
-    | Fragment.sentence v => toJson v
+instance : ToJson Fragment := inferInstance
 
 
 def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
@@ -130,24 +125,20 @@ def isComment (contents : String) : Bool :=
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let config ← read
-  /- When contents is a comment, the goals are duplicates -/
-  if (isComment contents) then
-    return Fragment.text { contents := contents }
-  if annotation.sentence.fragments.isEmpty then
-    return Fragment.text { contents := contents }
-  else
-    let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
-    let messages : List Analysis.Message := annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
-    let mut goals : List Goal := []
-    if let (some tactic) := Positional.smallest? tactics then
-      let useBefore : Bool := tactic.tailPos > globalTailPos
-      goals := genGoals useBefore tactic
-    let mut fragmentContents : String := contents
-    return Fragment.sentence { 
-      contents := fragmentContents
-      goals := goals.toArray
-      messages := (messages.map genMessages).toArray
-    }
+  let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
+  let messages : List Analysis.Message := 
+    (if isComment contents || annotation.sentence.fragments.isEmpty then [⟨⟨globalTailPos, globalTailPos⟩, "This is text"⟩] else []) ++
+    annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
+  let mut goals : List Goal := []
+  if let (some tactic) := Positional.smallest? tactics then
+    let useBefore : Bool := tactic.tailPos > globalTailPos
+    goals := genGoals useBefore tactic
+  let mut fragmentContents : String := contents
+  return { 
+    contents := fragmentContents
+    goals := goals.toArray
+    messages := (messages.map genMessages).toArray
+  }
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).

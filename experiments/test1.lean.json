@@ -1,4 +1,7 @@
-[{"contents": "example (n : Nat) : n = n := ", "_type": "text"},
+[{"messages": [{"contents": "This is text", "_type": "message"}],
+  "goals": [],
+  "contents": "example (n : Nat) : n = n := ",
+  "_type": "sentence"},
  {"messages": [],
   "goals":
   [{"name": "",
@@ -24,4 +27,7 @@
     "_type": "goal"}],
   "contents": "rfl",
   "_type": "sentence"},
- {"contents": "", "_type": "text"}]
+ {"messages": [{"contents": "This is text", "_type": "message"}],
+  "goals": [],
+  "contents": "",
+  "_type": "sentence"}]
