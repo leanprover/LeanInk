@@ -19,16 +19,6 @@ structure Fragment where
   contents : String
   goals : Array String
   deriving ToJson
-
-def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
-  if head >= tail then
-    none
-  else
-    contents.extract (head - offset) (tail - offset)
-
-def minPos (x y : String.Pos) := if x < y then x else y
-def maxPos (x y : String.Pos) := if x > y then x else y
-
   
 /- 
   Fragment Generation
@@ -39,10 +29,6 @@ def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List String :=
     tactic.goalsBefore
   else
     tactic.goalsAfter
-
-def isComment (contents : String) : Bool := 
-  let contents := contents.trim
-  contents.startsWith "--" || contents.startsWith "/-"
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let tactics : List Analysis.Tactic := annotation.sentence.getFragments
