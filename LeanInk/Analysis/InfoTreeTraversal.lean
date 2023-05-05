@@ -64,20 +64,17 @@ namespace TraversalFragment
 end TraversalFragment
 
 /- Traversal -/
-structure AnalysisResult where
-  sentences : List Sentence
-  deriving Inhabited
+abbrev AnalysisResult := List Sentence
 
 namespace AnalysisResult
-  def empty : AnalysisResult := { sentences := [] }
+  def empty : AnalysisResult := []
 
-  def merge (x y : AnalysisResult) : AnalysisResult := {
-    sentences := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.sentences y.sentences
-  }
+  def merge : AnalysisResult → AnalysisResult → AnalysisResult :=
+    List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos)
 
-  def insertFragment (self : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult := do
+  def insertFragment (sentences : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult := do
     let newSentences ← TraversalFragment.genSentences ctx info
-    pure { self with sentences := self.sentences.append newSentences }
+    return sentences ++ newSentences
 
   def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
     FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
@@ -98,8 +95,8 @@ namespace AnalysisResult
     let messages ← messages.mapM (genMessage fileMap)
     let sortedMessages := List.sort (λ x y => x.headPos < y.headPos) messages
     let newSentences := sortedMessages.map (λ x => Sentence.message x)
-    let mergedSentences := List.mergeSortedLists (λ x y => (Positional.headPos x) < (Positional.headPos y)) newSentences self.sentences
-    return { self with sentences := mergedSentences }
+    let mergedSentences := List.mergeSortedLists (λ x y => (Positional.headPos x) < (Positional.headPos y)) newSentences self
+    return mergedSentences
 end AnalysisResult
 
 structure TraversalAux where
@@ -116,7 +113,7 @@ namespace TraversalAux
   }
 
   def insertFragment (self : TraversalAux) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM TraversalAux := do
-    let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
+    let tacticChildren := self.result.filterMap (λ f => f.asTactic?)
     if tacticChildren.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getPos?) then
       return self
     else
@@ -177,4 +174,4 @@ def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   | some auxResults => do
     let results := auxResults.map (λ x => x.result)
     return results.foldl AnalysisResult.merge AnalysisResult.empty
-  | _ => return { sentences := [] }
+  | _ => return []
