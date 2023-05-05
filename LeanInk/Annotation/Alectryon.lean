@@ -59,31 +59,7 @@ structure Text where
   contents : String
   deriving ToJson
 
-/-- 
-We need a custom ToJson implementation for Alectryons fragments.
-
-For example we have following fragment:
-```
-Fragment.text { contents := "Test" }
-```
-
-We want to serialize this to:
-```
-[{"contents": "Test", "_type": "text"}]
-```
-
-instead of:
-```
-[{"text": {"contents": "Test", "_type": "text"}}]
-```
-
-This is because of the way Alectryon decodes the json files. It uses the _type field to
-determine the namedTuple type with Alectryon.
--/
 abbrev Fragment := Sentence
-
-instance : ToJson Fragment := inferInstance
-
 
 def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
   if head >= tail then
