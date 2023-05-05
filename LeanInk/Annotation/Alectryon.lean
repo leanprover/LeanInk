@@ -13,27 +13,6 @@ namespace LeanInk.Annotation.Alectryon
 open Lean
 open LeanInk.Analysis
 
-structure TypeInfo where
-  _type : String := "typeinfo"
-  name : String
-  type : String
-  deriving ToJson
-
-structure Token where
-  _type : String := "token"
-  raw : String
-  typeinfo : Option TypeInfo := Option.none
-  link : Option String := Option.none
-  docstring : Option String := Option.none
-  semanticType : Option String :=  Option.none
-  deriving ToJson
-
-structure Hypothesis where
-  _type : String := "hypothesis"
-  names : List String
-  body : String
-  type : String
-  deriving ToJson
 
 structure Goal where
   _type : String := "goal"
@@ -51,11 +30,6 @@ structure Sentence where
   contents : String
   messages : Array Message
   goals : Array Goal
-  deriving ToJson
-
-structure Text where
-  _type : String := "text"
-  contents : String
   deriving ToJson
 
 abbrev Fragment := Sentence
