@@ -38,8 +38,7 @@ structure Hypothesis where
 structure Goal where
   _type : String := "goal"
   name : String
-  conclusion : String
-  hypotheses : Array Hypothesis
+  goalState : String
   deriving ToJson
 
 structure Message where
@@ -83,8 +82,7 @@ def genHypothesis (hypothesis : Analysis.Hypothesis) : Hypothesis := {
 
 def genGoal (goal : Analysis.Goal) : Goal := {
   name := goal.name
-  conclusion := goal.goalState
-  hypotheses := #[]
+  goalState := goal.goalState
 }
 
 def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal := 
