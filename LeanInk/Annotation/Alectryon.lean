@@ -72,7 +72,6 @@ def isComment (contents : String) : Bool :=
   contents.startsWith "--" || contents.startsWith "/-"
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
-  let config ← read
   let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
   let messages : List Analysis.Message := 
     (if isComment contents || annotation.sentence.fragments.isEmpty then [⟨⟨globalTailPos, globalTailPos⟩, "This is text"⟩] else []) ++

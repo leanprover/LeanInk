@@ -204,7 +204,6 @@ namespace TraversalAux
 end TraversalAux
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) : AnalysisM TraversalAux := do
-  let config ← read
   match tree with
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
@@ -233,7 +232,6 @@ def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
     | Except.error e => TraversalEvent.error e
 
 def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
-  let config ← read
   let auxResults ← (trees.map (λ t => 
     _resolveTacticList none {} t)).mapM (λ x => x)
   let results := auxResults.map (λ x => x.result)
@@ -242,14 +240,13 @@ def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
 def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM (Option (List TraversalAux)) := do
   let mut results : List TraversalAux := []
   for task in tasks do
-    let result ← BaseIO.toIO (IO.wait task)
+    let result ← BaseIO.toIO <| IO.wait task
     match result with
     | TraversalEvent.result r => results := r::results
     | _ => return none
   return results
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
-  let config ← read
   let tasks ← trees.toArray.mapM (λ t => _resolveTask t)
   match (← resolveTasks tasks) with
   | some auxResults => do
