@@ -43,17 +43,10 @@ instance : Positional Fragment where
   tailPos := Fragment.tailPos
 
 /- Tactics -/
-structure Hypothesis where
-  names : List String
-  type : String
-  body : String
-
-structure Goal where
-  goalState : String
 
 structure Tactic extends Fragment where
-  goalsBefore : List Goal
-  goalsAfter : List Goal
+  goalsBefore : List String
+  goalsAfter : List String
   deriving Inhabited
 
 instance : Positional Tactic where

@@ -13,16 +13,12 @@ namespace LeanInk.Annotation.Alectryon
 open Lean
 open LeanInk.Analysis
 
-
-structure Goal where
-  _type : String := "goal"
-  goalState : String
-  deriving ToJson
+set_option autoImplicit false
 
 structure Sentence where
   _type : String := "sentence"
   contents : String
-  goals : Array Goal
+  goals : Array String
   deriving ToJson
 
 abbrev Fragment := Sentence
@@ -41,21 +37,11 @@ def maxPos (x y : String.Pos) := if x > y then x else y
   Fragment Generation
 -/
 
-def genHypothesis (hypothesis : Analysis.Hypothesis) : Hypothesis := {
-  names := hypothesis.names
-  body := hypothesis.body
-  type := hypothesis.type
-}
-
-def genGoal (goal : Analysis.Goal) : Goal := {
-  goalState := goal.goalState
-}
-
-def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal := 
+def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List String := 
   if beforeNode then 
-    tactic.goalsBefore.map (λ g => genGoal g)
+    tactic.goalsBefore
   else
-    tactic.goalsAfter.map (λ g => genGoal g)
+    tactic.goalsAfter
 
 def isComment (contents : String) : Bool := 
   let contents := contents.trim
@@ -63,7 +49,7 @@ def isComment (contents : String) : Bool :=
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let tactics : List Analysis.Tactic := annotation.sentence.getFragments
-  let mut goals : List Goal := []
+  let mut goals : List String := []
   if let (some tactic) := Positional.smallest? tactics then
     let useBefore : Bool := tactic.tailPos > globalTailPos
     goals := genGoals useBefore tactic

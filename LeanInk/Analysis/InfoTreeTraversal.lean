@@ -21,27 +21,24 @@ namespace TraversalFragment
 
   /-! Sentence Generation -/
 
-  private def genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode: Bool) : AnalysisM (List Goal) :=
+  private def genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode: Bool) : AnalysisM (List String) :=
     if beforeNode then
       _genGoals ctx info.goalsBefore info.mctxBefore
     else
       _genGoals ctx info.goalsAfter info.mctxAfter
   where
-    _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
+    _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List String) := 
       let ctx := { ctx with mctx := metaCtx }
       return (← ctx.runMetaM {} <| goals.mapM evalGoal).filterMap id
 
-    evalGoal (mvarId : MVarId) : MetaM (Option Goal) := do
-      genGoal (← ppGoal mvarId)
-
-    genGoal (goalState : Format) : MetaM Goal :=
-      return { goalState := toString goalState }
+    evalGoal (mvarId : MVarId) : MetaM (Option String) := do
+      return toString (← ppGoal mvarId)
 
   def genTactic (ctx : ContextInfo) (info : TacticInfo) : AnalysisM Tactic := do
     let goalsBefore ← genGoals ctx info true
     let goalsAfter ← genGoals ctx info false
     if goalsAfter.isEmpty then  
-      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := [{ goalState := "Goals accomplished! 🐙" }] }
+      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := ["Goals accomplished! 🐙"] }
     else
       return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
 
