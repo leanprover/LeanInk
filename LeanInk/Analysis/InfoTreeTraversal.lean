@@ -55,26 +55,11 @@ namespace AnalysisResult
   def empty : AnalysisResult := []
 
   def merge : AnalysisResult → AnalysisResult → AnalysisResult :=
-    List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos)
+    List.mergeSortedLists (λ x y => x.headPos < y.headPos)
 
   def insertFragment (sentences : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult := do
     let newSentences ← TraversalFragment.genSentences ctx info
     return sentences ++ newSentences
-
-  def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
-    FileMap.lspPosToUtf8Pos fileMap (fileMap.leanPosToLspPos pos)
-
-  private def genMessage (fileMap : FileMap) (message : Lean.Message) : AnalysisM Message := do
-    let headPos := Position.toStringPos fileMap message.pos
-    let tailPos := Position.toStringPos fileMap (message.endPos.getD message.pos)
-    let mut string ← message.data.toString
-    if message.caption != "" then
-      string := message.caption ++ ":¬" ++ string
-    if message.severity == MessageSeverity.warning then
-      string := "Warning: " ++ string
-    else if message.severity == MessageSeverity.error then
-      string := "Error: " ++ string
-    return { headPos := headPos, tailPos := tailPos, msg := string }
 
 end AnalysisResult
 
@@ -92,8 +77,7 @@ namespace TraversalAux
 
 end TraversalAux
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) : AnalysisM TraversalAux := do
-  match tree with
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) : InfoTree → AnalysisM TraversalAux
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
     match ctx? with
