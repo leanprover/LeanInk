@@ -15,13 +15,10 @@ open LeanInk.Analysis
 
 set_option autoImplicit false
 
-structure Sentence where
-  _type : String := "sentence"
+structure Fragment where
   contents : String
   goals : Array String
   deriving ToJson
-
-abbrev Fragment := Sentence
 
 def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
   if head >= tail then

@@ -1,7 +1,5 @@
-[{"goals": [],
-  "contents": "example (n : Nat) : n = n := ",
-  "_type": "sentence"},
- {"goals": ["Goals accomplished! 🐙"], "contents": "by", "_type": "sentence"},
- {"goals": ["n : Nat\n⊢ n = n"], "contents": " ", "_type": "sentence"},
- {"goals": ["Goals accomplished! 🐙"], "contents": "rfl", "_type": "sentence"},
- {"goals": [], "contents": "", "_type": "sentence"}]
+[{"goals": [], "contents": "example (n : Nat) : n = n := "},
+ {"goals": ["Goals accomplished! 🐙"], "contents": "by"},
+ {"goals": ["n : Nat\n⊢ n = n"], "contents": " "},
+ {"goals": ["Goals accomplished! 🐙"], "contents": "rfl"},
+ {"goals": [], "contents": ""}]
