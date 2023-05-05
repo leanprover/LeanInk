@@ -49,7 +49,6 @@ structure Hypothesis where
   body : String
 
 structure Goal where
-  name : String
   goalState : String
 
 structure Tactic extends Fragment where

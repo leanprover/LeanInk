@@ -1,43 +1,34 @@
 [{"goals": [],
   "contents": "example : ∀ a, a + 0 = 0 + a := ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
+ {"goals": [{"goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "by",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "⊢ ∀ (a : Nat), a + 0 = 0 + a", "_type": "goal"}],
+ {"goals": [{"goalState": "⊢ ∀ (a : Nat), a + 0 = 0 + a", "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "a : Nat\n⊢ a + 0 = 0 + a", "_type": "goal"}],
+ {"goals": [{"goalState": "a : Nat\n⊢ a + 0 = 0 + a", "_type": "goal"}],
   "contents": "intro a",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "⊢ ∀ (a : Nat), a + 0 = 0 + a", "_type": "goal"}],
+ {"goals": [{"goalState": "⊢ ∀ (a : Nat), a + 0 = 0 + a", "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "a : Nat\n⊢ a + 0 = 0 + a", "_type": "goal"}],
+ {"goals": [{"goalState": "a : Nat\n⊢ a + 0 = 0 + a", "_type": "goal"}],
   "contents": "have : 0 = 0 := ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
+ {"goals": [{"goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "by",
   "_type": "sentence"},
- {"goals": [{"name": "", "goalState": "a : Nat\n⊢ 0 = 0", "_type": "goal"}],
+ {"goals": [{"goalState": "a : Nat\n⊢ 0 = 0", "_type": "goal"}],
   "contents": " ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
+ {"goals": [{"goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "rfl",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "⊢ ∀ (a : Nat), a + 0 = 0 + a", "_type": "goal"}],
+ {"goals": [{"goalState": "⊢ ∀ (a : Nat), a + 0 = 0 + a", "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
+ {"goals": [{"goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "simp",
   "_type": "sentence"},
  {"goals": [], "contents": "", "_type": "sentence"}]

@@ -32,28 +32,16 @@ namespace TraversalFragment
       return (← ctx.runMetaM {} <| goals.mapM evalGoal).filterMap id
 
     evalGoal (mvarId : MVarId) : MetaM (Option Goal) := do
-      match (← getMCtx).findDecl? mvarId with
-      | none => return none
-      | some decl => return ← genGoal (← ppGoal mvarId) decl.userName
+      genGoal (← ppGoal mvarId)
 
-    genGoal (goalState : Format) : Name -> MetaM Goal
-      | Name.anonymous => do
-        return { 
-          name := ""
-          goalState := toString goalState
-        }
-      | name => do
-        let goalFormatName := format name.eraseMacroScopes
-        return { 
-          name := toString goalFormatName
-          goalState := toString goalState
-        }
+    genGoal (goalState : Format) : MetaM Goal :=
+      return { goalState := toString goalState }
 
   def genTactic (ctx : ContextInfo) (info : TacticInfo) : AnalysisM Tactic := do
     let goalsBefore ← genGoals ctx info true
     let goalsAfter ← genGoals ctx info false
     if goalsAfter.isEmpty then  
-      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := [{ name := "", goalState := "Goals accomplished! 🐙" }] }
+      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := [{ goalState := "Goals accomplished! 🐙" }] }
     else
       return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
 

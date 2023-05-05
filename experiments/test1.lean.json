@@ -1,15 +1,13 @@
 [{"goals": [],
   "contents": "example (n : Nat) : n = n := ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
+ {"goals": [{"goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "by",
   "_type": "sentence"},
- {"goals": [{"name": "", "goalState": "n : Nat\n⊢ n = n", "_type": "goal"}],
+ {"goals": [{"goalState": "n : Nat\n⊢ n = n", "_type": "goal"}],
   "contents": " ",
   "_type": "sentence"},
- {"goals":
-  [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
+ {"goals": [{"goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "rfl",
   "_type": "sentence"},
  {"goals": [], "contents": "", "_type": "sentence"}]

@@ -16,7 +16,6 @@ open LeanInk.Analysis
 
 structure Goal where
   _type : String := "goal"
-  name : String
   goalState : String
   deriving ToJson
 
@@ -49,7 +48,6 @@ def genHypothesis (hypothesis : Analysis.Hypothesis) : Hypothesis := {
 }
 
 def genGoal (goal : Analysis.Goal) : Goal := {
-  name := goal.name
   goalState := goal.goalState
 }
 
