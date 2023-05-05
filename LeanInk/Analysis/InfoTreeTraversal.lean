@@ -20,27 +20,16 @@ open IO
 
 set_option autoImplicit false
 
-inductive TraversalFragment where
-| tactic (ctx : ContextInfo) (info: TacticInfo)
-
 namespace TraversalFragment
-  def headPos : TraversalFragment -> String.Pos
-  | tactic _ info => (info.toElabInfo.stx.getPos? false).getD 0
 
-  def tailPos : TraversalFragment -> String.Pos
-  | tactic _ info => (info.toElabInfo.stx.getTailPos? false).getD 0
+  def headPos (info : TacticInfo) : String.Pos :=
+    info.stx.getPos?.getD 0
 
-  def create (ctx : ContextInfo) (info : Info) : AnalysisM <| (Option TraversalFragment) := do
-    if Info.isExpanded info then
-      pure none
-    else
-      match info with 
-      | Info.ofTacticInfo info => pure <| tactic ctx info
-      | _ => pure none
+  def tailPos (info : TacticInfo) : String.Pos :=
+    info.stx.getTailPos?.getD 0
 
-  def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) (fragment : TraversalFragment) : AnalysisM α :=
-    match fragment with
-    | tactic ctx _ => ctx.runMetaM {} (func fragment)
+  def runMetaM { α : Type } (func : ContextInfo → TacticInfo -> MetaM α) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM α :=
+    ctx.runMetaM {} (func ctx info)
 
   /- Sentence Generation -/
   private def genGoal (goalState : Format) : Name -> MetaM Goal
@@ -69,20 +58,18 @@ namespace TraversalFragment
   where
     _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
       let ctx := { ctx with mctx := metaCtx }
-      return (← ctx.runMetaM {} (goals.mapM (fun x => evalGoal x))).filterMap id
+      return (← ctx.runMetaM {} <| goals.mapM evalGoal).filterMap id
 
-  def genTactic? (self : TraversalFragment) : AnalysisM (Option Tactic) := do
-    match self with
-    | tactic ctx info => do 
-      let goalsBefore ← genGoals ctx info true
-      let goalsAfter ← genGoals ctx info false
-      if goalsAfter.isEmpty then  
-        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", goalState := "Goals accomplished! 🐙" }] }
-      else
-        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
+  def genTactic? (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (Option Tactic) := do
+    let goalsBefore ← genGoals ctx info true
+    let goalsAfter ← genGoals ctx info false
+    if goalsAfter.isEmpty then  
+      return some { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := [{ name := "", goalState := "Goals accomplished! 🐙" }] }
+    else
+      return some { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
 
-  def genSentences (self : TraversalFragment) : AnalysisM (List Sentence) := do
-    if let some t ← self.genTactic? then
+  def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := do
+    if let some t ← genTactic? ctx info then
       return [Sentence.tactic t]
     else
       return []
@@ -100,8 +87,8 @@ namespace AnalysisResult
     sentences := List.mergeSortedLists (λ x y => x.toFragment.headPos < y.toFragment.headPos) x.sentences y.sentences
   }
 
-  def insertFragment (self : AnalysisResult) (fragment : TraversalFragment) : AnalysisM AnalysisResult := do
-    let newSentences ← fragment.genSentences
+  def insertFragment (self : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult := do
+    let newSentences ← TraversalFragment.genSentences ctx info
     pure { self with sentences := self.sentences.append newSentences }
 
   def Position.toStringPos (fileMap: FileMap) (pos: Lean.Position) : String.Pos :=
@@ -140,15 +127,13 @@ namespace TraversalAux
     result := AnalysisResult.merge x.result y.result
   }
 
-  def insertFragment (self : TraversalAux) (fragment : TraversalFragment) : AnalysisM TraversalAux := do
-    match fragment with
-    | .tactic _ _ => do
-      let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
-      if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
-        return self
-      else
-        let newResult ← self.result.insertFragment fragment
-        return { self with result := newResult }
+  def insertFragment (self : TraversalAux) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM TraversalAux := do
+    let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
+    if tacticChildren.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getPos?) then
+      return self
+    else
+      let newResult ← self.result.insertFragment ctx info
+      return { self with result := newResult }
 
 end TraversalAux
 
@@ -161,9 +146,12 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x) 
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
-      match (← TraversalFragment.create ctx info) with
-      | some fragment => sortedChildrenLeafs.insertFragment fragment
-      | none => pure sortedChildrenLeafs
+      if Info.isExpanded info then
+        pure sortedChildrenLeafs
+      else
+        match info with
+          | .ofTacticInfo tacticInfo => sortedChildrenLeafs.insertFragment ctx tacticInfo
+          | _ => pure sortedChildrenLeafs
     | none => pure aux
   | _ => pure aux
 
