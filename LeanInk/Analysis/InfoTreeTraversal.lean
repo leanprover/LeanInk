@@ -19,24 +19,7 @@ set_option autoImplicit false
 
 namespace TraversalFragment
 
-  /- Sentence Generation -/
-  private def genGoal (goalState : Format) : Name -> MetaM Goal
-    | Name.anonymous => do
-      return { 
-        name := ""
-        goalState := toString goalState
-      }
-    | name => do
-      let goalFormatName := format name.eraseMacroScopes
-      return { 
-        name := toString goalFormatName
-        goalState := toString goalState
-      }
-
-  private def evalGoal (mvarId : MVarId) : MetaM (Option Goal) := do
-    match (← getMCtx).findDecl? mvarId with
-      | none => return none
-      | some decl => return ← genGoal (← ppGoal mvarId) decl.userName
+  /-! Sentence Generation -/
 
   private def genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode: Bool) : AnalysisM (List Goal) :=
     if beforeNode then
@@ -48,19 +31,36 @@ namespace TraversalFragment
       let ctx := { ctx with mctx := metaCtx }
       return (← ctx.runMetaM {} <| goals.mapM evalGoal).filterMap id
 
-  def genTactic? (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (Option Tactic) := do
+    evalGoal (mvarId : MVarId) : MetaM (Option Goal) := do
+      match (← getMCtx).findDecl? mvarId with
+      | none => return none
+      | some decl => return ← genGoal (← ppGoal mvarId) decl.userName
+
+    genGoal (goalState : Format) : Name -> MetaM Goal
+      | Name.anonymous => do
+        return { 
+          name := ""
+          goalState := toString goalState
+        }
+      | name => do
+        let goalFormatName := format name.eraseMacroScopes
+        return { 
+          name := toString goalFormatName
+          goalState := toString goalState
+        }
+
+  def genTactic (ctx : ContextInfo) (info : TacticInfo) : AnalysisM Tactic := do
     let goalsBefore ← genGoals ctx info true
     let goalsAfter ← genGoals ctx info false
     if goalsAfter.isEmpty then  
-      return some { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := [{ name := "", goalState := "Goals accomplished! 🐙" }] }
+      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := [{ name := "", goalState := "Goals accomplished! 🐙" }] }
     else
-      return some { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
+      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
 
   def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := do
-    if let some t ← genTactic? ctx info then
-      return [Sentence.tactic t]
-    else
-      return []
+    let t ← genTactic ctx info
+    return [Sentence.tactic t]
+
 end TraversalFragment
 
 /- Traversal -/
