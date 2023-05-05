@@ -78,26 +78,17 @@ namespace AnalysisResult
 
 end AnalysisResult
 
-structure TraversalAux where
-  allowsNewField : Bool := true
-  allowsNewTerm : Bool := true
-  allowsNewSemantic : Bool := true
-  result : AnalysisResult := AnalysisResult.empty
+abbrev TraversalAux := List Sentence
 
 namespace TraversalAux
-  def merge (x y : TraversalAux) : TraversalAux := {
-    allowsNewField := x.allowsNewField ∧ y.allowsNewField
-    allowsNewTerm := x.allowsNewTerm ∧ y.allowsNewTerm
-    result := AnalysisResult.merge x.result y.result
-  }
+  def merge := AnalysisResult.merge
 
   def insertFragment (self : TraversalAux) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM TraversalAux := do
-    let tacticChildren := self.result
+    let tacticChildren := self
     if tacticChildren.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getPos?) then
       return self
     else
-      let newResult ← self.result.insertFragment ctx info
-      return { self with result := newResult }
+      AnalysisResult.insertFragment self ctx info
 
 end TraversalAux
 
@@ -133,10 +124,8 @@ def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
     | Except.error e => TraversalEvent.error e
 
 def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
-  let auxResults ← (trees.map (λ t => 
-    _resolveTacticList none {} t)).mapM (λ x => x)
-  let results := auxResults.map (λ x => x.result)
-  return results.foldl AnalysisResult.merge AnalysisResult.empty
+  let auxResults ← trees.mapM <| _resolveTacticList none {}
+  return auxResults.foldl AnalysisResult.merge AnalysisResult.empty
 
 def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM (Option (List TraversalAux)) := do
   let mut results : List TraversalAux := []
@@ -151,6 +140,5 @@ def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let tasks ← trees.toArray.mapM (λ t => _resolveTask t)
   match (← resolveTasks tasks) with
   | some auxResults => do
-    let results := auxResults.map (λ x => x.result)
-    return results.foldl AnalysisResult.merge AnalysisResult.empty
+    return auxResults.foldl AnalysisResult.merge AnalysisResult.empty
   | _ => return []
