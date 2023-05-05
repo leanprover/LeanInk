@@ -22,20 +22,20 @@ set_option autoImplicit false
 
 inductive TraversalFragment where
 | tactic (ctx : ContextInfo) (info: TacticInfo)
-| term (ctx : ContextInfo) (info: TermInfo)
-| field (ctx : ContextInfo) (info: FieldInfo)
+-- | term (ctx : ContextInfo) (info: TermInfo)
+-- | field (ctx : ContextInfo) (info: FieldInfo)
 | unknown (ctx : ContextInfo) (info: ElabInfo)
 
 namespace TraversalFragment
   def headPos : TraversalFragment -> String.Pos
-  | term _ info => (info.toElabInfo.stx.getPos? false).getD 0
-  | field _ info => (info.stx.getPos? false).getD 0
+  -- | term _ info => (info.toElabInfo.stx.getPos? false).getD 0
+  -- | field _ info => (info.stx.getPos? false).getD 0
   | tactic _ info => (info.toElabInfo.stx.getPos? false).getD 0
   | unknown _ info => (info.stx.getPos? false).getD 0
 
   def tailPos : TraversalFragment -> String.Pos
-  | term _ info => (info.toElabInfo.stx.getTailPos? false).getD 0
-  | field _ info => (info.stx.getTailPos? false).getD 0
+  -- | term _ info => (info.toElabInfo.stx.getTailPos? false).getD 0
+  -- | field _ info => (info.stx.getTailPos? false).getD 0
   | tactic _ info => (info.toElabInfo.stx.getTailPos? false).getD 0
   | unknown _ info => (info.stx.getTailPos? false).getD 0
 
@@ -45,39 +45,16 @@ namespace TraversalFragment
     else
       match info with 
       | Info.ofTacticInfo info => pure <| tactic ctx info
-      | Info.ofTermInfo info => pure <| term ctx info
-      | Info.ofFieldInfo info => pure <| field ctx info
+      -- | Info.ofTermInfo info => pure <| term ctx info
+      -- | Info.ofFieldInfo info => pure <| field ctx info
       | _ => pure none
 
   def runMetaM { α : Type } (func : TraversalFragment -> MetaM α) (fragment : TraversalFragment) : AnalysisM α :=
     match fragment with
-    | term ctx info => ctx.runMetaM info.lctx (func fragment)
-    | field ctx info => ctx.runMetaM info.lctx (func fragment)
+    -- | term ctx info => ctx.runMetaM info.lctx (func fragment)
+    -- | field ctx info => ctx.runMetaM info.lctx (func fragment)
     | tactic ctx _ => ctx.runMetaM {} (func fragment)
     | unknown ctx _ => ctx.runMetaM {} (func fragment)
-
-  def inferType? : TraversalFragment -> MetaM (Option String)
-    | term _ info => do
-      -- This call requires almost half of the runtime of the tree traversal.
-      let format ← try Meta.ppExpr (← Meta.inferType info.expr) catch e => e.toMessageData.toString
-      return s!"{format}"
-    | _ => pure none
-
-  def genDocString? (self : TraversalFragment) : MetaM (Option String) := do
-    let env ← getEnv
-    match self with
-    | term _ info =>
-      if let some name := info.expr.constName? then
-        findDocString? env name
-      else
-        pure none
-    | field _ info => findDocString? env info.projName
-    | tactic _ info =>
-      let elabInfo := info.toElabInfo
-      return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
-    | unknown _ info =>
-      let elabInfo := info
-      return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
 
   /- Sentence Generation -/
   private def genGoal (goalState : Format) : Name -> MetaM Goal
@@ -180,18 +157,18 @@ namespace TraversalAux
 
   def insertFragment (self : TraversalAux) (fragment : TraversalFragment) : AnalysisM TraversalAux := do
     match fragment with
-    | .term _ _ => do
-      if self.allowsNewTerm then
-        let newResult ← self.result.insertFragment fragment
-        return { self with allowsNewTerm := false, result := newResult }
-      else 
-        return self
-    | .field _ _ => do
-      if self.allowsNewField then
-        let newResult ← self.result.insertFragment fragment
-        return { self with allowsNewField := false, result := newResult }
-      else 
-        return self
+    -- | .term _ _ => do
+    --   if self.allowsNewTerm then
+    --     let newResult ← self.result.insertFragment fragment
+    --     return { self with allowsNewTerm := false, result := newResult }
+    --   else 
+    --     return self
+    -- | .field _ _ => do
+    --   if self.allowsNewField then
+    --     let newResult ← self.result.insertFragment fragment
+    --     return { self with allowsNewField := false, result := newResult }
+    --   else 
+    --     return self
     | .tactic _ _ => do
       let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
       if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
