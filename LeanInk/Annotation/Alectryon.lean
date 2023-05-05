@@ -20,15 +20,9 @@ structure Goal where
   goalState : String
   deriving ToJson
 
-structure Message where
-  _type : String := "message"  
-  contents : String
-  deriving ToJson
-
 structure Sentence where
   _type : String := "sentence"
   contents : String
-  messages : Array Message
   goals : Array Goal
   deriving ToJson
 
@@ -65,17 +59,12 @@ def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal :=
   else
     tactic.goalsAfter.map (λ g => genGoal g)
 
-def genMessages (message : Analysis.Message) : Message := { contents := message.msg }
-
 def isComment (contents : String) : Bool := 
   let contents := contents.trim
   contents.startsWith "--" || contents.startsWith "/-"
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
   let tactics : List Analysis.Tactic := annotation.sentence.getFragments
-  -- let messages : List Analysis.Message := 
-  --   (if isComment contents || annotation.sentence.fragments.isEmpty then [⟨⟨globalTailPos, globalTailPos⟩, "This is text"⟩] else []) ++
-  --   annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
   let mut goals : List Goal := []
   if let (some tactic) := Positional.smallest? tactics then
     let useBefore : Bool := tactic.tailPos > globalTailPos
@@ -84,7 +73,6 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
   return { 
     contents := fragmentContents
     goals := goals.toArray
-    messages := #[]
   }
 
 /-
