@@ -1,103 +1,86 @@
-[{"messages": [{"contents": "This is text", "_type": "message"}],
-  "goals": [],
+[{"goals": [],
   "contents":
   "/-!\n# Testing LeanInk\n-/\n\n/-- A proof of the commutativity of addition of natural numbers. -/\ntheorem xyz : ∀ m n : Nat, m + n = n + m := ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "by",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "⊢ ∀ (m n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "m : Nat\n⊢ ∀ (n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "intro m",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "⊢ ∀ (m n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "", "goalState": "m n : Nat\n⊢ m + n = n + m", "_type": "goal"}],
   "contents": "intro n",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "⊢ ∀ (m n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "", "goalState": "m n : Nat\n⊢ m + n = n + m", "_type": "goal"}],
   "contents": "simp",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "⊢ ∀ (m n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "", "goalState": "m n : Nat\n⊢ m + n = n + m", "_type": "goal"}],
   "contents": "rw [",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "m n : Nat\n⊢ m + (n + 0) = n + 0 + m",
     "_type": "goal"}],
   "contents": "← Nat.add_zero n",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "m n : Nat\n⊢ m + (n + 0) = n + 0 + m",
     "_type": "goal"}],
   "contents": "]",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "⊢ ∀ (m n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "", "goalState": "m n : Nat\n⊢ m + n = n + m", "_type": "goal"}],
   "contents": "simp",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "",
     "goalState": "⊢ ∀ (m n : Nat), m + n = n + m",
     "_type": "goal"}],
   "contents": "\n  ",
   "_type": "sentence"},
- {"messages": [],
-  "goals":
+ {"goals":
   [{"name": "", "goalState": "Goals accomplished! 🐙", "_type": "goal"}],
   "contents": "apply Nat.add_comm",
   "_type": "sentence"},
- {"messages": [{"contents": "This is text", "_type": "message"}],
-  "goals": [],
+ {"goals": [],
   "contents":
   "\n\n-- A text comment\n#check xyz -- xyz (m n : Nat) : m + n = n + m",
   "_type": "sentence"}]
