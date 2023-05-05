@@ -66,25 +66,11 @@ structure Message extends Fragment where
   deriving Inhabited
 
 /- Sentence -/
-inductive Sentence where
-| tactic (info: Tactic)
-deriving Inhabited
+abbrev Sentence := Tactic
 
 instance : ToString Sentence where -- TODO: Improve this
-  toString : Sentence -> String
-  | Sentence.tactic t => s!"Tactic {t.headPos}-{t.tailPos}"
-
-namespace Sentence
-  def toFragment : Sentence -> Fragment
-  | tactic info => info.toFragment
-
-  def asTactic? : Sentence -> Option Tactic
-  | tactic info => info
-
-  def asMessage? : Sentence -> Option Message
-  | _ => none
-  
-end Sentence
+  toString : Sentence -> String :=
+    fun t => s!"Tactic {t.headPos}-{t.tailPos}"
 
 instance : Positional Sentence where
   headPos := (λ x => x.toFragment.headPos)

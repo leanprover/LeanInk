@@ -98,14 +98,6 @@
   "_type": "sentence"},
  {"messages": [{"contents": "This is text", "_type": "message"}],
   "goals": [],
-  "contents": "\n\n-- A text comment\n",
-  "_type": "sentence"},
- {"messages":
-  [{"contents": "xyz (m n : Nat) : m + n = n + m", "_type": "message"}],
-  "goals": [],
-  "contents": "#check",
-  "_type": "sentence"},
- {"messages": [{"contents": "This is text", "_type": "message"}],
-  "goals": [],
-  "contents": " xyz -- xyz (m n : Nat) : m + n = n + m",
+  "contents":
+  "\n\n-- A text comment\n#check xyz -- xyz (m n : Nat) : m + n = n + m",
   "_type": "sentence"}]

@@ -72,10 +72,10 @@ def isComment (contents : String) : Bool :=
   contents.startsWith "--" || contents.startsWith "/-"
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
-  let tactics : List Analysis.Tactic := annotation.sentence.getFragments.filterMap (λ f => f.asTactic?)
-  let messages : List Analysis.Message := 
-    (if isComment contents || annotation.sentence.fragments.isEmpty then [⟨⟨globalTailPos, globalTailPos⟩, "This is text"⟩] else []) ++
-    annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
+  let tactics : List Analysis.Tactic := annotation.sentence.getFragments
+  -- let messages : List Analysis.Message := 
+  --   (if isComment contents || annotation.sentence.fragments.isEmpty then [⟨⟨globalTailPos, globalTailPos⟩, "This is text"⟩] else []) ++
+  --   annotation.sentence.getFragments.filterMap (λ f => f.asMessage?)
   let mut goals : List Goal := []
   if let (some tactic) := Positional.smallest? tactics then
     let useBefore : Bool := tactic.tailPos > globalTailPos
@@ -84,7 +84,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
   return { 
     contents := fragmentContents
     goals := goals.toArray
-    messages := (messages.map genMessages).toArray
+    messages := #[]
   }
 
 /-

@@ -59,7 +59,7 @@ namespace TraversalFragment
 
   def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := do
     let t ← genTactic ctx info
-    return [Sentence.tactic t]
+    return [t]
 
 end TraversalFragment
 
@@ -107,7 +107,7 @@ namespace TraversalAux
   }
 
   def insertFragment (self : TraversalAux) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM TraversalAux := do
-    let tacticChildren := self.result.filterMap (λ f => f.asTactic?)
+    let tacticChildren := self.result
     if tacticChildren.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getPos?) then
       return self
     else
