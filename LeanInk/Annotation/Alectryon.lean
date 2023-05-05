@@ -83,8 +83,8 @@ def genHypothesis (hypothesis : Analysis.Hypothesis) : Hypothesis := {
 
 def genGoal (goal : Analysis.Goal) : Goal := {
   name := goal.name
-  conclusion := goal.conclusion
-  hypotheses := (goal.hypotheses.map genHypothesis).toArray
+  conclusion := goal.goalState
+  hypotheses := #[]
 }
 
 def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal := 
