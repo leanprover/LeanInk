@@ -13,23 +13,11 @@ import Lean.Server
 
 namespace LeanInk.Analysis
 
-open Lean
-open Lean.Elab
-open Lean.Meta
-open IO
+open Lean Elab Meta IO
 
 set_option autoImplicit false
 
 namespace TraversalFragment
-
-  def headPos (info : TacticInfo) : String.Pos :=
-    info.stx.getPos?.getD 0
-
-  def tailPos (info : TacticInfo) : String.Pos :=
-    info.stx.getTailPos?.getD 0
-
-  def runMetaM { α : Type } (func : ContextInfo → TacticInfo -> MetaM α) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM α :=
-    ctx.runMetaM {} (func ctx info)
 
   /- Sentence Generation -/
   private def genGoal (goalState : Format) : Name -> MetaM Goal
