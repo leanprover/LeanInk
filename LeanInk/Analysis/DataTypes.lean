@@ -50,8 +50,7 @@ structure Hypothesis where
 
 structure Goal where
   name : String
-  conclusion : String
-  hypotheses : List Hypothesis
+  goalState : String
 
 structure Tactic extends Fragment where
   goalsBefore : List Goal

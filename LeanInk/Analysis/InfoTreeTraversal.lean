@@ -83,68 +83,23 @@ namespace TraversalFragment
       return ← findDocString? env elabInfo.elaborator <||> findDocString? env elabInfo.stx.getKind
 
   /- Sentence Generation -/
-  private def genGoal (goalType : Format) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
+  private def genGoal (goalState : Format) : Name -> MetaM Goal
     | Name.anonymous => do
       return { 
         name := ""
-        conclusion := toString goalType
-        hypotheses := hypotheses 
+        goalState := toString goalState
       }
     | name => do
       let goalFormatName := format name.eraseMacroScopes
       return { 
         name := toString goalFormatName
-        conclusion := toString goalType
-        hypotheses := hypotheses 
+        goalState := toString goalState
       }
 
-  /-- 
-  This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
-  of a single formatted string to support the Alectryon.Goal datatype.
-  -/
   private def evalGoal (mvarId : MVarId) : MetaM (Option Goal) := do
     match (← getMCtx).findDecl? mvarId with
-    | none => return none
-    | some decl => do
-        let ppAuxDecls := pp.auxDecls.get (← getOptions)
-        let ppImplDetailHyps := pp.implementationDetailHyps.get (← getOptions)
-        let lctx := decl.lctx.sanitizeNames.run' { options := (← getOptions) }
-        withLCtx lctx decl.localInstances do
-          let pushPending (list : List Hypothesis) (type? : Option Expr) : List Name -> MetaM (List Hypothesis)
-          | [] => pure list
-          | ids => do
-            match type? with
-              | none      => pure list
-              | some type => do
-                let typeFmt ← ppExpr type
-                let names := ids.reverse.map (λ n => n.toString)
-                return list.append [{ names := names, body := "", type := s!"{typeFmt}" }]
-          let evalVar (varNames : List Name) (prevType? : Option Expr) (hypotheses : List Hypothesis) (localDecl : LocalDecl) : MetaM (List Name × Option Expr × (List Hypothesis)) := do
-              match localDecl with
-              | LocalDecl.cdecl _ _ varName type _ _ =>
-                let varName := varName.simpMacroScopes
-                let type ← instantiateMVars type
-                if prevType? == none || prevType? == some type then
-                  pure (varName::varNames, some type, hypotheses)
-                else do
-                  let hypotheses ← pushPending hypotheses prevType? varNames
-                  pure ([varName], some type, hypotheses)
-              | LocalDecl.ldecl _ _ varName type val _ _ => do
-                let varName := varName.simpMacroScopes
-                let hypotheses ← pushPending hypotheses prevType? varNames
-                let type ← instantiateMVars type
-                let val  ← instantiateMVars val
-                let typeFmt ← ppExpr type
-                let valFmt ← ppExpr val
-                pure ([], none, hypotheses.append [{ names := [varName.toString], body := s!"{valFmt}", type := s!"{typeFmt}" }])
-          let (varNames, type?, hypotheses) ← lctx.foldlM (init := ([], none, [])) λ (varNames, prevType?, hypotheses) (localDecl : LocalDecl) =>
-          if !ppAuxDecls && localDecl.isAuxDecl || !ppImplDetailHyps && localDecl.isImplementationDetail then
-              pure (varNames, prevType?, hypotheses)
-            else
-              evalVar varNames prevType? hypotheses localDecl
-          let hypotheses ← pushPending hypotheses type? varNames 
-          let typeFmt ← ppExpr (← instantiateMVars decl.type)
-          return (← genGoal typeFmt hypotheses decl.userName)
+      | none => return none
+      | some decl => return ← genGoal (← ppGoal mvarId) decl.userName
 
   private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
     let ctx := { contextInfo.ctx with mctx := metaCtx }
@@ -162,7 +117,7 @@ namespace TraversalFragment
       let goalsBefore ← genGoals fragment true
       let goalsAfter ← genGoals fragment false
       if goalsAfter.isEmpty then  
-        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
+        return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", goalState := "Goals accomplished! 🐙" }] }
       else
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
     | _ => pure none
