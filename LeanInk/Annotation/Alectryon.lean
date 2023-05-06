@@ -58,5 +58,10 @@ def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do
   let config ← read
   let fragments ← annotateFileWithCompounds [] config.inputFileContents annotation
   let rawContents := (toJson fragments.toArray).pretty
-  createOutputFile (← IO.currentDir) config.inputFileName rawContents
+  let dirEntry : IO.FS.DirEntry := { 
+    root := ← IO.currentDir,
+    fileName := config.inputFileName ++ ".json"
+  }
+  IO.FS.writeFile dirEntry.path rawContents
+  logInfo s!"Results written to file: {dirEntry.path}!"
   return 0

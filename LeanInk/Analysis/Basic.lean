@@ -16,8 +16,6 @@ open LeanInk.CLI
 open Lean
 open System
 
-private def _validateInputFile (file : FilePath) : Bool := isLeanFile file
-
 private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
   let contents ← IO.FS.readFile file
   return {
@@ -51,7 +49,7 @@ def execAuxM : AnalysisM UInt32 := do
   }
 
 def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
-  if not (_validateInputFile file) then do
+  if ! (file : System.FilePath).extension == "lean" then do
     Logger.logError s!"Provided file \"{file}\" is not lean file."
   else
     IO.println s!"Starting Analysis for: \"{file}\""
