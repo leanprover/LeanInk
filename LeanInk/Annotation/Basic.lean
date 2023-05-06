@@ -15,6 +15,6 @@ open LeanInk.Analysis
 /-
   Annotation
 -/
-def annotateFile (analysis : AnalysisResult) : AnalysisM (List Annotation) := do
+def annotateFile (analysis : List Sentence) : AnalysisM (List Annotation) := do
   let compounds ← matchCompounds (toFragmentIntervals analysis)
   return compounds

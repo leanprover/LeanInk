@@ -17,7 +17,7 @@ where
     { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
   evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
 
-def merge := List.mergeSortedLists (λ (x y : Sentence) => x.headPos < y.headPos)
+def merge := List.mergeSortedLists <| λ (x y : Sentence) => x.headPos < y.headPos
 def insertFragment (sentences : List Sentence) (ctx : ContextInfo) (info : TacticInfo) := (sentences ++ ·) <$> 
   if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then pure [] else genSentences ctx info
 

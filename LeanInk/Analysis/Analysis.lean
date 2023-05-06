@@ -20,7 +20,7 @@ open Lean.Elab
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
   { Command.mkState env msg with infoState := { enabled := true }}
 
-def analyzeInput : AnalysisM AnalysisResult := do
+def analyzeInput : AnalysisM (List Sentence) := do
   let config := ← read
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
