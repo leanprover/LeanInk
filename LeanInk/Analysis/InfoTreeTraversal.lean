@@ -5,36 +5,23 @@ import LeanInk.Configuration
 namespace LeanInk.Analysis
 open Lean Elab Meta IO
 
-namespace TraversalFragment
-  /-! Sentence Generation -/
-  private def genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode: Bool) : AnalysisM (List String) :=
-    if beforeNode then
-      _genGoals ctx info.goalsBefore info.mctxBefore
-    else
-      _genGoals ctx info.goalsAfter info.mctxAfter
-    where
-    _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List String) := 
-      { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
-    evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
+def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := do
+  let goalsBefore ← genGoals ctx info true
+  let goalsAfter ← genGoals ctx info false
+  return [ { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter } ]
+where
+  genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode : Bool) : AnalysisM (List String) :=
+    if beforeNode then _genGoals ctx info.goalsBefore info.mctxBefore
+    else _genGoals ctx info.goalsAfter info.mctxAfter
+  _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List String) := 
+    { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
+  evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
 
-  def genTactic (ctx : ContextInfo) (info : TacticInfo) : AnalysisM Tactic := do
-    let goalsBefore ← genGoals ctx info true
-    let goalsAfter ← genGoals ctx info false
-    return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
-
-  def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := genTactic ctx info >>= pure ∘ ([·])
-end TraversalFragment
-
-/- Traversal -/
 abbrev AnalysisResult := List Sentence
-
 def AnalysisResult.merge : AnalysisResult → AnalysisResult → AnalysisResult := List.mergeSortedLists (λ x y => x.headPos < y.headPos)
-
-def AnalysisResult.insertFragment (sentences : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult :=
-  (sentences ++ ·) <$> TraversalFragment.genSentences ctx info
+def AnalysisResult.insertFragment (sentences : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult := (sentences ++ ·) <$> genSentences ctx info
 
 abbrev TraversalAux := AnalysisResult
-
 def TraversalAux.insertFragment (self : TraversalAux) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM TraversalAux := do
   if self.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then return self
   else AnalysisResult.insertFragment self ctx info
@@ -72,13 +59,12 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM <| Option (Li
   for task in tasks do
     let result ← BaseIO.toIO <| IO.wait task
     match result with
-    | .result r => results := r::results
+    | .result r => results := r :: results
     | _ => return none
   return results
 
 def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let tasks ← trees.toArray.mapM _resolveTask
   match (← resolveTasks tasks) with
-  | some auxResults => do
-    return auxResults.foldl .merge .nil
+  | some auxResults => return auxResults.foldl .merge []
   | _ => return []
