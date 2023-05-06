@@ -63,8 +63,8 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
     | 2 => logInfo s!"No search paths required!"
     | _ => throw <| IO.userError s!"Using lake failed! Make sure that lake is installed!"
 
-def initializeSearchPaths (header : Syntax) (config : Configuration) : AnalysisM Unit := do
-  match config.lakeFile with
+def initializeSearchPaths (header : Syntax) : AnalysisM Unit := do
+  match (← read).lakeFile with
   | some lakeFile => do 
     initializeLakeContext lakeFile header
   | none => initializeLeanContext

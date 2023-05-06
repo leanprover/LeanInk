@@ -24,7 +24,7 @@ def analyzeInput : AnalysisM (List Tactic) := do
   let config := ← read
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
-  initializeSearchPaths header config
+  initializeSearchPaths header
   let options := Options.empty.setBool `trace.Elab.info true
   let (environment, messages) ← processHeader header options messages context 0
   logInfo s!"Header: {environment.header.mainModule}"
