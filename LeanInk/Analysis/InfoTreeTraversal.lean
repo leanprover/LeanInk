@@ -26,15 +26,13 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Se
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
-      let ctx? := info.updateContext? ctx
-      let resolvedChildrenLeafs ← children.toList.mapM <| _resolveTacticList ctx? aux 
+      let resolvedChildrenLeafs ← children.toList.mapM <| _resolveTacticList (info.updateContext? ctx) aux 
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl merge []
       if Info.isExpanded info then
         pure sortedChildrenLeafs
-      else
-        match info with
-        | .ofTacticInfo tacticInfo => insertFragment sortedChildrenLeafs ctx tacticInfo
-        | _ => pure sortedChildrenLeafs
+      else match info with
+      | .ofTacticInfo tacticInfo => insertFragment sortedChildrenLeafs ctx tacticInfo
+      | _ => pure sortedChildrenLeafs
     | none => pure aux
   | _ => pure aux
 
