@@ -53,10 +53,6 @@ instance : Positional Tactic where
   headPos := (·.toFragment.headPos)
   tailPos := (·.toFragment.tailPos)
 
-structure Message extends Fragment where
-  msg: String
-  deriving Inhabited
-
 /- Sentence -/
 abbrev Sentence := Tactic
 
