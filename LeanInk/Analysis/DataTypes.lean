@@ -53,16 +53,8 @@ instance : Positional Tactic where
   headPos := (·.toFragment.headPos)
   tailPos := (·.toFragment.tailPos)
 
-/- Sentence -/
-abbrev Sentence := Tactic
-
-instance : ToString Sentence where -- TODO: Improve this
-  toString : Sentence -> String :=
-    fun t => s!"Tactic {t.headPos}-{t.tailPos}"
-
-instance : Positional Sentence where
-  headPos := (λ x => x.toFragment.headPos)
-  tailPos := (λ x => x.toFragment.tailPos)
+instance : ToString Tactic where
+  toString t := s!"Tactic: {t.headPos}-{t.tailPos}"
 
 /- InfoTree -/
 def Info.isExpanded (self : Info) : Bool :=

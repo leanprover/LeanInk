@@ -15,4 +15,4 @@ open LeanInk.Analysis
 /-
   Annotation
 -/
-def annotateFile (analysis : List Sentence) : AnalysisM (List Annotation) := matchCompounds <| toFragmentIntervals analysis
+def annotateFile (analysis : List Tactic) : AnalysisM (List Annotation) := matchCompounds <| toFragmentIntervals analysis
