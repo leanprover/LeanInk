@@ -31,13 +31,15 @@ where
     | none => none
     | some string => some (FilePath.mk string)
 
+def annotateFile (analysis : List Tactic) : AnalysisM (List Annotation) := matchCompounds <| toFragmentIntervals analysis
+
 def runAnalysis (output : Output) : AnalysisM UInt32 := do
   let config ← read
   logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
   let result ← analyzeInput config
   logInfo "Annotating..."
-  let annotation ← Annotation.annotateFile result
+  let annotation ← annotateFile result
   logInfo "Outputting..."
   return ← output.genOutput annotation
 

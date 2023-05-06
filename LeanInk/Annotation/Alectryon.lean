@@ -1,4 +1,3 @@
-import LeanInk.Annotation.Basic
 import LeanInk.Logger
 import LeanInk.Analysis.DataTypes
 import LeanInk.Annotation.Util
