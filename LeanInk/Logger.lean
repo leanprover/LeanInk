@@ -28,14 +28,14 @@ end Logger
 
 -- Prints a message if in debug mode, otherwise does nothing
 def log [ToString a] (s : a) : AnalysisM Unit := do
-  Logger.log s (← read).verbose
+  Logger.log s (isDebug := true)
 
 def logInfo [ToString a] (s : a) (isDebug: Bool := false) : AnalysisM Unit := do
-  Logger.logInfo s (← read).verbose
+  Logger.logInfo s isDebug
 
 -- Prints a warning message if in debug mode, otherwise does nothing
 def logWarning [ToString a] (s : a) (isDebug: Bool := false) : AnalysisM Unit := do
-  Logger.logWarning s (← read).verbose
+  Logger.logWarning s isDebug
 
 -- Prints an error message
 def logError [ToString a] (s : a) (errorCode : UInt32 := 1) : IO UInt32 := do

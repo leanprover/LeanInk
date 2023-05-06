@@ -9,7 +9,6 @@ structure Configuration where
   inputFilePath : FilePath
   inputFileContents : String
   lakeFile : Option FilePath
-  verbose : Bool
 
 namespace Configuration
   def inputFileName (self : Configuration) : String :=

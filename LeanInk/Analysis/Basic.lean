@@ -24,7 +24,6 @@ private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePa
     inputFilePath := file
     inputFileContents := contents
     lakeFile := getLakeFile? arguments
-    verbose := containsFlag arguments "--verbose"
   }
 where
   getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=
