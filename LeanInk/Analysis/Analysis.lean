@@ -18,7 +18,7 @@ open Lean
 open Lean.Elab
 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
-  { Command.mkState env msg with infoState := { enabled := true }}
+  { Command.mkState env msg with infoState := { enabled := true } }
 
 def analyzeInput : AnalysisM (List Tactic) := do
   let config := ← read
@@ -37,5 +37,5 @@ def analyzeInput : AnalysisM (List Tactic) := do
   let commandState := configureCommandState environment messages
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
-  let messages := s.commandState.messages.msgs.toList.filter (λ m => m.endPos.isSome )
+  let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
   return result
