@@ -20,10 +20,7 @@ namespace TraversalFragment
   def genTactic (ctx : ContextInfo) (info : TacticInfo) : AnalysisM Tactic := do
     let goalsBefore ← genGoals ctx info true
     let goalsAfter ← genGoals ctx info false
-    if goalsAfter.isEmpty then  
-      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := ["Goals accomplished! 🐙"] }
-    else
-      return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
+    return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
 
   def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := genTactic ctx info >>= pure ∘ ([·])
 
