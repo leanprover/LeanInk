@@ -5,8 +5,6 @@ import LeanInk.Configuration
 namespace LeanInk.Analysis
 open Lean Elab Meta IO
 
-set_option autoImplicit false
-
 def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := do
   let goalsBefore ← genGoals ctx info true
   let goalsAfter ← genGoals ctx info false
@@ -19,9 +17,8 @@ where
     { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
   evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
 
-abbrev AnalysisResult := List Sentence
-def AnalysisResult.merge : AnalysisResult → AnalysisResult → AnalysisResult := List.mergeSortedLists (λ x y => x.headPos < y.headPos)
-def insertFragment (sentences : List Sentence) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := (sentences ++ ·) <$> 
+def merge := List.mergeSortedLists (λ (x y : Sentence) => x.headPos < y.headPos)
+def insertFragment (sentences : List Sentence) (ctx : ContextInfo) (info : TacticInfo) := (sentences ++ ·) <$> 
   if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then pure [] else genSentences ctx info
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Sentence := []) : InfoTree → AnalysisM (List Sentence)
@@ -31,7 +28,7 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Se
     | some ctx => do
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM <| _resolveTacticList ctx? aux 
-      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl AnalysisResult.merge []
+      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl merge []
       if Info.isExpanded info then
         pure sortedChildrenLeafs
       else
@@ -61,8 +58,8 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM <| Option <| 
     | _ => return none
   return results
 
-def resolveTacticList (trees: List InfoTree) : AnalysisM AnalysisResult := do
+def resolveTacticList (trees: List InfoTree) : AnalysisM (List Sentence) := do
   let tasks ← trees.toArray.mapM _resolveTask
   match (← resolveTasks tasks) with
-  | some auxResults => return auxResults.foldl .merge []
+  | some auxResults => return auxResults.foldl merge []
   | _ => return []
