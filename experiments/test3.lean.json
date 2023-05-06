@@ -1,7 +1,7 @@
 [{"goals": [],
   "contents":
   "/-!\n# Testing LeanInk\n-/\n\n/-- A proof of the commutativity of addition of natural numbers. -/\ntheorem xyz : ∀ m n : Nat, m + n = n + m := "},
- {"goals": ["Goals accomplished! 🐙"], "contents": "by"},
+ {"goals": [], "contents": "by"},
  {"goals": ["⊢ ∀ (m n : Nat), m + n = n + m"], "contents": "\n  "},
  {"goals": ["m : Nat\n⊢ ∀ (n : Nat), m + n = n + m"], "contents": "intro m"},
  {"goals": ["⊢ ∀ (m n : Nat), m + n = n + m"], "contents": "\n  "},
@@ -16,7 +16,7 @@
  {"goals": ["⊢ ∀ (m n : Nat), m + n = n + m"], "contents": "\n  "},
  {"goals": ["m n : Nat\n⊢ m + n = n + m"], "contents": "simp"},
  {"goals": ["⊢ ∀ (m n : Nat), m + n = n + m"], "contents": "\n  "},
- {"goals": ["Goals accomplished! 🐙"], "contents": "apply Nat.add_comm"},
+ {"goals": [], "contents": "apply Nat.add_comm"},
  {"goals": [],
   "contents":
   "\n\n-- A text comment\n#check xyz -- xyz (m n : Nat) : m + n = n + m"}]

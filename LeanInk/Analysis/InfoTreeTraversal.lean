@@ -23,7 +23,6 @@ namespace TraversalFragment
     return { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
 
   def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := genTactic ctx info >>= pure ∘ ([·])
-
 end TraversalFragment
 
 /- Traversal -/

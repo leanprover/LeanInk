@@ -1,5 +1,5 @@
 [{"goals": [], "contents": "example (n : Nat) : n = n := "},
- {"goals": ["Goals accomplished! 🐙"], "contents": "by"},
+ {"goals": [], "contents": "by"},
  {"goals": ["n : Nat\n⊢ n = n"], "contents": " "},
- {"goals": ["Goals accomplished! 🐙"], "contents": "rfl"},
+ {"goals": [], "contents": "rfl"},
  {"goals": [], "contents": ""}]
