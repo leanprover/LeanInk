@@ -24,7 +24,7 @@ structure Fragment where
   Fragment Generation
 -/
 
-def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List String := 
+def genGoals (beforeNode : Bool) (tactic : Analysis.Tactic) : List String := 
   if beforeNode then 
     tactic.goalsBefore
   else

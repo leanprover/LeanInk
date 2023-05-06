@@ -10,7 +10,6 @@ structure Configuration where
   inputFileContents : String
   lakeFile : Option FilePath
   verbose : Bool
-  prettifyOutput : Bool
 
 namespace Configuration
   def inputFileName (self : Configuration) : String :=
