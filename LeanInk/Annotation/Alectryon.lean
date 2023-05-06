@@ -53,7 +53,7 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
   return l.append [fragment]
 | x::y::ys => do
   let fragment ← genFragment x y.headPos (contents.extract x.headPos y.headPos)
-  return (← annotateFileWithCompounds (l.append [fragment]) contents (y::ys))
+  annotateFileWithCompounds (l.append [fragment]) contents (y::ys)
 
 def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do
   let config ← read

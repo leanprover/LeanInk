@@ -50,8 +50,8 @@ structure Tactic extends Fragment where
   deriving Inhabited
 
 instance : Positional Tactic where
-  headPos := (λ x => x.toFragment.headPos)
-  tailPos := (λ x => x.toFragment.tailPos)
+  headPos := (·.toFragment.headPos)
+  tailPos := (·.toFragment.tailPos)
 
 structure Message extends Fragment where
   msg: String
