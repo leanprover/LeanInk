@@ -14,8 +14,7 @@ import Lean.Util.Trace
 
 namespace LeanInk.Analysis
 
-open Lean
-open Lean.Elab
+open Lean Elab
 
 def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
   { Command.mkState env msg with infoState := { enabled := true } }

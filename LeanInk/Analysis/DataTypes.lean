@@ -6,10 +6,7 @@ import Lean.Syntax
 import Lean.Server
 
 namespace LeanInk.Analysis
-
-open Lean
-open Lean.Elab
-open Lean.Meta
+open Lean Elab Meta
 
 /- Positional -/
 class Positional (α : Type u) where

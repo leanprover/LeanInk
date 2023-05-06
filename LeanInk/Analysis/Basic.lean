@@ -10,10 +10,7 @@ import Lean.Util.Path
 
 namespace LeanInk.Analysis
 
-open LeanInk.Annotation
-open LeanInk.CLI
-open Lean
-open System
+open LeanInk.Annotation LeanInk.CLI Lean System
 
 private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
   let contents ← IO.FS.readFile file

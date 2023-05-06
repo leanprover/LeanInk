@@ -34,9 +34,8 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
   if let (some tactic) := Positional.smallest? tactics then
     let useBefore : Bool := tactic.tailPos > globalTailPos
     goals := genGoals useBefore tactic
-  let mut fragmentContents : String := contents
   return { 
-    contents := fragmentContents
+    contents := contents
     goals := goals.toArray
   }
 
