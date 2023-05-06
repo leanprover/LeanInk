@@ -5,6 +5,8 @@ import LeanInk.Configuration
 namespace LeanInk.Analysis
 open Lean Elab Meta IO
 
+set_option autoImplicit false
+
 def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := do
   let goalsBefore ← genGoals ctx info true
   let goalsAfter ← genGoals ctx info false
@@ -19,32 +21,28 @@ where
 
 abbrev AnalysisResult := List Sentence
 def AnalysisResult.merge : AnalysisResult → AnalysisResult → AnalysisResult := List.mergeSortedLists (λ x y => x.headPos < y.headPos)
-def AnalysisResult.insertFragment (sentences : AnalysisResult) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM AnalysisResult := (sentences ++ ·) <$> genSentences ctx info
+def insertFragment (sentences : List Sentence) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Sentence) := (sentences ++ ·) <$> 
+  if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then pure [] else genSentences ctx info
 
-abbrev TraversalAux := AnalysisResult
-def TraversalAux.insertFragment (self : TraversalAux) (ctx : ContextInfo) (info : TacticInfo) : AnalysisM TraversalAux := do
-  if self.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then return self
-  else AnalysisResult.insertFragment self ctx info
-
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := .nil) : InfoTree → AnalysisM TraversalAux
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Sentence := []) : InfoTree → AnalysisM (List Sentence)
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
       let ctx? := info.updateContext? ctx
       let resolvedChildrenLeafs ← children.toList.mapM <| _resolveTacticList ctx? aux 
-      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl .merge .nil
+      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl AnalysisResult.merge []
       if Info.isExpanded info then
         pure sortedChildrenLeafs
       else
         match info with
-        | .ofTacticInfo tacticInfo => sortedChildrenLeafs.insertFragment ctx tacticInfo
+        | .ofTacticInfo tacticInfo => insertFragment sortedChildrenLeafs ctx tacticInfo
         | _ => pure sortedChildrenLeafs
     | none => pure aux
   | _ => pure aux
 
 inductive TraversalEvent
-| result (r : TraversalAux)
+| result (r : List Sentence)
 | error (e : IO.Error)
 
 def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
@@ -54,8 +52,8 @@ def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
     | .ok ev => ev
     | .error e => .error e
 
-def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM <| Option (List TraversalAux) := do
-  let mut results : List TraversalAux := []
+def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM <| Option <| List (List Sentence) := do
+  let mut results : List (List Sentence) := []
   for task in tasks do
     let result ← BaseIO.toIO <| IO.wait task
     match result with
