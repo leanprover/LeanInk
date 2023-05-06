@@ -1,5 +1,4 @@
 import LeanInk.Configuration
-import LeanInk.FileHelper
 import LeanInk.Annotation.DataTypes
 import LeanInk.Annotation.Alectryon
 import LeanInk.Logger
