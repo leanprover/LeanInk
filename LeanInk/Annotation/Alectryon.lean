@@ -22,14 +22,14 @@ structure Fragment where
   Fragment Generation
 -/
 
-def genGoals (beforeNode : Bool) (tactic : Analysis.Tactic) : List String := 
+def genGoals (beforeNode : Bool) (tactic : Tactic) : List String := 
   if beforeNode then 
     tactic.goalsBefore
   else
     tactic.goalsAfter
 
 def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
-  let tactics : List Analysis.Tactic := annotation.getFragments
+  let tactics : List Tactic := annotation.getFragments
   let mut goals : List String := []
   if let (some tactic) := Positional.smallest? tactics then
     let useBefore : Bool := tactic.tailPos > globalTailPos
@@ -45,12 +45,12 @@ Generates AlectryonFragments for the given CompoundFragments and input file cont
 -/
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Fragment)
 | [] => pure l
-| x::[] => do
+| [x] => do
   let fragment ← genFragment x ⟨contents.utf8ByteSize⟩ (contents.extract x.headPos ⟨contents.utf8ByteSize⟩)
-  return l.append [fragment]
-| x::y::ys => do
+  return l.concat fragment
+| x :: y :: ys => do
   let fragment ← genFragment x y.headPos (contents.extract x.headPos y.headPos)
-  annotateFileWithCompounds (l.append [fragment]) contents (y::ys)
+  annotateFileWithCompounds (l.concat fragment) contents (y :: ys)
 
 def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do
   let config ← read
