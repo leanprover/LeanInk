@@ -15,10 +15,8 @@ namespace Configuration
     self.inputFilePath.toString
 end Configuration
 
-abbrev AnalysisM := ReaderT Configuration $ IO
-
 structure Output where
   name : String
-  genOutput : List Annotation -> AnalysisM UInt32
+  genOutput : List Annotation -> IO UInt32
 
-abbrev ExecM := ReaderT Configuration $ IO
+abbrev ExecM := ReaderT Configuration IO

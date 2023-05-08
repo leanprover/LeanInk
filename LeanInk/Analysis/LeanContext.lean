@@ -26,6 +26,8 @@ def getLakePath : IO String := do
   | some path => return path
   | none => return lakeCmdName
 
+def lakeFile : FilePath := sorry
+
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := do
   if !(← lakeFile.pathExists) then
     throw <| IO.userError s!"lakefile does not exist: {lakeFile}"
@@ -60,9 +62,3 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := d
           logInfo s!"Successfully loaded lake search paths"
     | 2 => logInfo s!"No search paths required!"
     | _ => throw <| IO.userError s!"Using lake failed! Make sure that lake is installed!"
-
-def initializeSearchPaths (header : Syntax) : AnalysisM Unit := do
-  match (← read).lakeFile with
-  | some lakeFile => do 
-    initializeLakeContext lakeFile header
-  | none => initializeLeanContext

@@ -14,11 +14,11 @@ import Lean.Util.Trace
 
 open Lean Elab
 
-def LeanInk.Analysis.analyzeInput  : AnalysisM (List Tactic) := do
-  let config ← read
-  let context := Parser.mkInputContext config.inputFileContents config.inputFileName
+def LeanInk.Analysis.analyzeInput (file : System.FilePath) : IO (List Tactic) := do
+  let fileContents ← IO.FS.readFile file
+  let context := Parser.mkInputContext fileContents file.toString
   let (header, state, messages) ← Parser.parseHeader context
-  initializeSearchPaths header
+  initializeLakeContext lakeFile header
   let options := Options.empty |>.setBool `trace.Elab.info true |>.setBool `tactic.simp.trace true
   let (environment, messages) ← processHeader header options messages context 0
   logInfo s!"Header: {environment.header.mainModule}"

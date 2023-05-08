@@ -40,13 +40,12 @@ def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) 
   let fragment := genFragment x (contents.extract x.headPos y.headPos)
   annotateFileWithCompounds (l.concat fragment) contents (y :: ys)
 
-def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do
-  let config ← read
-  let fragments ← annotateFileWithCompounds [] config.inputFileContents annotation
+def genOutput (file : System.FilePath) (contents : String) (annotation : List Annotation) : IO UInt32 := do
+  let fragments ← annotateFileWithCompounds [] contents annotation
   let rawContents := (toJson fragments.toArray).pretty
   let dirEntry : IO.FS.DirEntry := { 
     root := ← IO.currentDir,
-    fileName := config.inputFileName ++ ".json"
+    fileName := file.toString ++ ".json"
   }
   IO.FS.writeFile dirEntry.path rawContents
   logInfo s!"Results written to file: {dirEntry.path}!"

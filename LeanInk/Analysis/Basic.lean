@@ -13,45 +13,31 @@ namespace LeanInk.Analysis
 
 open LeanInk.Annotation LeanInk.CLI Lean System
 
-private def _buildConfiguration (arguments: List ResolvedArgument) (file: FilePath) : IO Configuration := do
-  let contents ← IO.FS.readFile file
-  return {
-    inputFilePath := file
-    inputFileContents := contents
-    lakeFile := getLakeFile? arguments
-  }
-where
-  getLakeFile? (arguments : List ResolvedArgument) : Option FilePath :=
-    match environmentValue arguments "--lake" with
-    | none => none
-    | some string => some (FilePath.mk string)
-
 def annotateFile (analysis : List Tactic) : IO (List Annotation) := matchCompounds <| toFragmentIntervals analysis
 
-def runAnalysis (output : Output) : AnalysisM UInt32 := do
-  let config ← read
-  logInfo s!"Starting process with lean file: {config.inputFileName}"
+def runAnalysis (file : System.FilePath) (output : Output) : IO UInt32 := do
+  -- logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
-  let result ← analyzeInput config
+  let result ← analyzeInput file
   logInfo "Annotating..."
   let annotation ← annotateFile result
   logInfo "Outputting..."
   output.genOutput annotation
 
 -- EXECUTION
-def execAuxM : AnalysisM UInt32 := do
-  return ← runAnalysis {
+def execAuxM (file : System.FilePath) (contents : String) : IO UInt32 := do
+  return ← runAnalysis file {
     name := "Alectryon"
-    genOutput := Alectryon.genOutput
+    genOutput := Alectryon.genOutput file contents
   }
 
-def execAux (args: List ResolvedArgument) (file: String) : IO UInt32 := do
+def execAux (args : List ResolvedArgument) (file : String) : IO UInt32 := do
   if ! (file : System.FilePath).extension == "lean" then do
     Logger.logError s!"Provided file \"{file}\" is not lean file."
   else
     IO.println s!"Starting Analysis for: \"{file}\""
-    let config ← _buildConfiguration args file
-    return ← (execAuxM.run config)
+    let contents ← IO.FS.readFile file
+    execAuxM file contents
 
 /-
 `enableInitializersExecution` is usually only run from the C part of the
