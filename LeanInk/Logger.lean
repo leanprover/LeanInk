@@ -1,5 +1,3 @@
-import LeanInk.Configuration
-
 open Lean
 
 namespace LeanInk

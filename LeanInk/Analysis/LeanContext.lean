@@ -4,7 +4,6 @@ import Lean.Elab
 import Lean.Util.Paths
 
 import LeanInk.Logger
-import LeanInk.Configuration
 
 namespace LeanInk.Analysis
 

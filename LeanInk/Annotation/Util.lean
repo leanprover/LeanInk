@@ -1,4 +1,3 @@
-import LeanInk.Configuration
 import LeanInk.Logger
 
 import LeanInk.Analysis.Analysis

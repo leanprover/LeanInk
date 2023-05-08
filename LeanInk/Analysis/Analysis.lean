@@ -2,7 +2,6 @@ import LeanInk.Analysis.DataTypes
 import LeanInk.Analysis.LeanContext
 import LeanInk.Analysis.InfoTreeTraversal
 
-import LeanInk.Configuration
 import LeanInk.Logger
 
 import Lean.Elab.Frontend
