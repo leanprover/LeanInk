@@ -2,14 +2,37 @@ import LeanInk.Annotation.DataTypes
 import LeanInk.Annotation.Util
 import LeanInk.Annotation.Alectryon
 import LeanInk.Logger
+import LeanInk.Analysis.DataTypes
+import LeanInk.Analysis.LeanContext
+import LeanInk.Analysis.InfoTreeTraversal
+import LeanInk.Logger
 
-import LeanInk.Analysis.Analysis
-
+import Lean.Util.Trace
 import Lean.Util.Path
 
 namespace LeanInk.Analysis
 
-open LeanInk.Annotation Lean System
+open LeanInk.Annotation Lean Elab System
+
+def analyzeInput (file : System.FilePath) : IO (List Tactic) := do
+  let fileContents ← IO.FS.readFile file
+  let context := Parser.mkInputContext fileContents file.toString
+  let (header, state, messages) ← Parser.parseHeader context
+  initializeLakeContext lakeFile header
+  let options := Options.empty |>.setBool `trace.Elab.info true |>.setBool `tactic.simp.trace true
+  let (environment, messages) ← processHeader header options messages context 0
+  logInfo s!"Header: {environment.header.mainModule}"
+  logInfo s!"Header: {environment.header.moduleNames}"
+  if messages.hasErrors then
+    for msg in messages.toList do
+      if msg.severity == .error then
+        let _ ← logError <$> msg.toString
+    throw <| IO.userError "Errors during import; aborting"
+  let commandState := { Command.mkState environment messages with infoState := { enabled := true } }
+  let s ← IO.processCommands context state commandState
+  let result ← resolveTacticList s.commandState.infoState.trees.toList
+  let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
+  return result
 
 def annotateFile (analysis : List Tactic) : IO (List Annotation) := matchCompounds <| toFragmentIntervals analysis
 
