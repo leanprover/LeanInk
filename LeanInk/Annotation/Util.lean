@@ -2,6 +2,7 @@ import LeanInk.Logger
 
 import LeanInk.Analysis.Analysis
 import LeanInk.Analysis.DataTypes
+import LeanInk.Annotation.DataTypes
 
 namespace LeanInk.Annotation
 
