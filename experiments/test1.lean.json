@@ -1,5 +1,7 @@
-[{"goals": [], "contents": "example (n : Nat) : n = n := "},
- {"goals": [], "contents": "by"},
- {"goals": ["n : Nat\n⊢ n = n"], "contents": " "},
- {"goals": [], "contents": "rfl"},
- {"goals": [], "contents": ""}]
+[{"goalsBefore": [],
+  "goalsAfter": [],
+  "contents": "example (n : Nat) : n = n := "},
+ {"goalsBefore": ["n : Nat\n⊢ n = n"], "goalsAfter": [], "contents": "by"},
+ {"goalsBefore": ["n : Nat\n⊢ n = n"], "goalsAfter": [], "contents": " "},
+ {"goalsBefore": ["n : Nat\n⊢ n = n"], "goalsAfter": [], "contents": "rfl"},
+ {"goalsBefore": [], "goalsAfter": [], "contents": ""}]

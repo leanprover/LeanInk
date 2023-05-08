@@ -16,12 +16,11 @@ class Positional (α : Type u) where
 namespace Positional
   def length { α : Type u } [Positional α] (self : α) : String.Pos := (Positional.tailPos self) - (Positional.headPos self)
 
-  def smallest? { α : Type u } [Positional α] (list : List α) : Option α := List.foldl (λ a y => 
-    let y : α := y -- We need to help the compiler a bit here otherwise it thinks `y : Option α`
+  def smallest? { α : Type u } [Positional α] (list : List α) : Option α := list.foldl (λ a (y : α) =>
     match a with 
     | none => y
-    | some x => if (Positional.length x) <= (Positional.length y) then x else y
-  ) none list
+    | some x => if Positional.length x ≤ Positional.length y then x else y
+  ) none
 end Positional
 
 /- Fragment -/

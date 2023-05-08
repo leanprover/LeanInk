@@ -15,29 +15,18 @@ set_option autoImplicit false
 
 structure Fragment where
   contents : String
-  goals : Array String
+  goalsBefore : List String
+  goalsAfter : List String
   deriving ToJson
   
 /- 
   Fragment Generation
 -/
 
-def genGoals (beforeNode : Bool) (tactic : Tactic) : List String := 
-  if beforeNode then 
-    tactic.goalsBefore
-  else
-    tactic.goalsAfter
-
-def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents : String) : AnalysisM Alectryon.Fragment := do
-  let tactics : List Tactic := annotation.getFragments
-  let mut goals : List String := []
-  if let (some tactic) := Positional.smallest? tactics then
-    let useBefore : Bool := tactic.tailPos > globalTailPos
-    goals := genGoals useBefore tactic
-  return { 
-    contents := contents
-    goals := goals.toArray
-  }
+def genFragment (annotation : Annotation) (contents : String) : Alectryon.Fragment :=
+  match Positional.smallest? annotation.getFragments with
+    | some tactic => { contents := contents, goalsBefore := tactic.goalsBefore, goalsAfter := tactic.goalsAfter }
+    | none => { contents := contents, goalsBefore := [], goalsAfter := [] }
 
 /-
 Expects a list of sorted CompoundFragments (sorted by headPos).
@@ -46,10 +35,10 @@ Generates AlectryonFragments for the given CompoundFragments and input file cont
 def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Fragment)
 | [] => pure l
 | [x] => do
-  let fragment ← genFragment x ⟨contents.utf8ByteSize⟩ (contents.extract x.headPos ⟨contents.utf8ByteSize⟩)
+  let fragment := genFragment x (contents.extract x.headPos ⟨contents.utf8ByteSize⟩)
   return l.concat fragment
 | x :: y :: ys => do
-  let fragment ← genFragment x y.headPos (contents.extract x.headPos y.headPos)
+  let fragment := genFragment x (contents.extract x.headPos y.headPos)
   annotateFileWithCompounds (l.concat fragment) contents (y :: ys)
 
 def genOutput (annotation : List Annotation) : AnalysisM UInt32 := do
