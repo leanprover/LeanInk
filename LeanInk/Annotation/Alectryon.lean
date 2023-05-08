@@ -1,6 +1,5 @@
 import LeanInk.Logger
 import LeanInk.Analysis.DataTypes
-import LeanInk.Annotation.Util
 
 import Lean.Data.Json
 import Lean.Data.Json.FromToJson
