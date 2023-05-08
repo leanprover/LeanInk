@@ -1,48 +1,5 @@
-import LeanInk.CLI
 import LeanInk.Analysis
 
 open LeanInk
-open LeanInk.CLI
-open LeanInk.CLI.Argument
 
-def app : AppInfo := {
-  name := "LeanInk"
-  base := "leanInk"
-  version := { major := 1, minor := 0, patch := 0 }
-  description := "LeanInk is a code analysis tool for Lean 4 that extracts proof tactic information. It's main goal is to ease the support for Lean 4 in Alectryon."
-}
-
-def analyzeCommand : Command := {
-  identifiers := ["analyze", "a"]
-  help := "Analyzes the given input file and outputs the results in Alectryons fragment json format."
-  additionalUsageInfo := "<INPUT_FILE>"
-  arguments := [
-    environment {
-      identifiers := ["--lake"]
-      help := "Specify path to lakefile.lean, so dependencies can be resolved during analysis. Default: none"
-    },
-    flag {
-      identifiers := ["--x-enable-type-info"]
-      help := "Enables output of experimental type info support for Alectryon. Alectryon will show a hover popup with type information for certain tokens."
-    },
-    flag {
-      identifiers := ["--x-enable-docStrings"]
-      help := "Enables output of experimental docStrings support for Alectryon. Alectryon will show a hover popup with the docString for tactics and terms if available."
-    },
-    flag {
-      identifiers := ["--x-enable-semantic-token"],
-      help := "Enables output of experimental semantic token support for Alectryon. Alectryon uses this information to implement semantic syntax highlighting."
-    },
-    flag {
-      identifiers := ["--x-disable-sorry-info"],
-      help := "Disables alectryon bubbles on blocks containing sorry's."
-    },
-    flag {
-      identifiers := ["--x-disable-calc-info"],
-      help := "Disables alectryon bubbles on calc blocks."
-    }
-  ]
-  run := Analysis.exec
-}
-
-def main : List String -> IO UInt32 := runCLI app [analyzeCommand]
+def main : List String -> IO UInt32 := Analysis.exec
