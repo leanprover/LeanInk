@@ -1,5 +1,6 @@
 import LeanInk.Configuration
 import LeanInk.Annotation.DataTypes
+import LeanInk.Annotation.Util
 import LeanInk.Annotation.Alectryon
 import LeanInk.Logger
 import LeanInk.CLI

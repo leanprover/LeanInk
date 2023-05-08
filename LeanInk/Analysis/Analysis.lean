@@ -12,28 +12,23 @@ import Lean.Parser
 
 import Lean.Util.Trace
 
-namespace LeanInk.Analysis
-
 open Lean Elab
 
-def configureCommandState (env : Environment) (msg : MessageLog) : Command.State :=
-  { Command.mkState env msg with infoState := { enabled := true } }
-
-def analyzeInput : AnalysisM (List Tactic) := do
-  let config := ← read
+def LeanInk.Analysis.analyzeInput : AnalysisM (List Tactic) := do
+  let config ← read
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context
   initializeSearchPaths header
-  let options := Options.empty.setBool `trace.Elab.info true
+  let options := Options.empty |>.setBool `trace.Elab.info true |>.setBool `tactic.simp.trace true
   let (environment, messages) ← processHeader header options messages context 0
   logInfo s!"Header: {environment.header.mainModule}"
   logInfo s!"Header: {environment.header.moduleNames}"
   if messages.hasErrors then
     for msg in messages.toList do
       if msg.severity == .error then
-        let _ ← logError (← msg.toString)
+        let _ ← logError <$> msg.toString
     throw <| IO.userError "Errors during import; aborting"
-  let commandState := configureCommandState environment messages
+  let commandState := { Command.mkState environment messages with infoState := { enabled := true } }
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
   let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)

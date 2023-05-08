@@ -8,8 +8,7 @@ import LeanInk.Configuration
 
 namespace LeanInk.Analysis
 
-open System
-open Lean
+open System Lean IO
 
 -- LEAN
 def initializeLeanContext : IO Unit := do
@@ -27,7 +26,6 @@ def getLakePath : IO String := do
   | some path => return path
   | none => return lakeCmdName
 
-open IO
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
     throw <| IO.userError s!"lakefile does not exist: {lakeFile}"
