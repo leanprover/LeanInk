@@ -26,7 +26,7 @@ where
     | none => none
     | some string => some (FilePath.mk string)
 
-def annotateFile (analysis : List Tactic) : AnalysisM (List Annotation) := matchCompounds <| toFragmentIntervals analysis
+def annotateFile (analysis : List Tactic) : IO (List Annotation) := matchCompounds <| toFragmentIntervals analysis
 
 def runAnalysis (output : Output) : AnalysisM UInt32 := do
   let config ← read
@@ -36,7 +36,7 @@ def runAnalysis (output : Output) : AnalysisM UInt32 := do
   logInfo "Annotating..."
   let annotation ← annotateFile result
   logInfo "Outputting..."
-  return ← output.genOutput annotation
+  output.genOutput annotation
 
 -- EXECUTION
 def execAuxM : AnalysisM UInt32 := do

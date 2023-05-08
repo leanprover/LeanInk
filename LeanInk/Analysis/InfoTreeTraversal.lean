@@ -7,15 +7,15 @@ open Lean Elab Meta IO
 
 set_option autoImplicit false
 
-def genSentences (ctx : ContextInfo) (info : TacticInfo) : AnalysisM (List Tactic) := do
+def genSentences (ctx : ContextInfo) (info : TacticInfo) : IO (List Tactic) := do
   let goalsBefore ← genGoals ctx info true
   let goalsAfter ← genGoals ctx info false
   return [ { headPos := info.stx.getPos?.getD 0, tailPos := info.stx.getTailPos?.getD 0, goalsBefore := goalsBefore, goalsAfter := goalsAfter } ]
 where
-  genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode : Bool) : AnalysisM (List String) :=
+  genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode : Bool) : IO (List String) :=
     if beforeNode then _genGoals ctx info.goalsBefore info.mctxBefore
     else _genGoals ctx info.goalsAfter info.mctxAfter
-  _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List String) := 
+  _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : IO (List String) := 
     { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
   evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
 
@@ -23,7 +23,7 @@ def merge := List.mergeSortedLists <| λ (x y : Tactic) => x.headPos < y.headPos
 def insertFragment (sentences : List Tactic) (ctx : ContextInfo) (info : TacticInfo) := (sentences ++ ·) <$> 
   if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then pure [] else genSentences ctx info
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Tactic := []) : InfoTree → AnalysisM (List Tactic)
+partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Tactic := []) : InfoTree → IO (List Tactic)
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
     match ctx? with
@@ -42,14 +42,14 @@ inductive TraversalEvent
 | result (r : List Tactic)
 | error (e : IO.Error)
 
-def _resolveTask (tree : InfoTree) : AnalysisM (Task TraversalEvent) := do
-  let taskBody : AnalysisM TraversalEvent := .result <$> _resolveTacticList none [] tree
-  let task ← IO.asTask (taskBody $ ← read)
+def _resolveTask (tree : InfoTree) : IO (Task TraversalEvent) := do
+  let taskBody : IO TraversalEvent := .result <$> _resolveTacticList none [] tree
+  let task ← IO.asTask taskBody
   return task.map fun
     | .ok ev => ev
     | .error e => .error e
 
-def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM <| Option <| List (List Tactic) := do
+def resolveTasks (tasks : Array (Task TraversalEvent)) : IO <| Option <| List (List Tactic) := do
   let mut results : List (List Tactic) := []
   for task in tasks do
     let result ← BaseIO.toIO <| IO.wait task
@@ -58,7 +58,7 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : AnalysisM <| Option <| 
     | _ => return none
   return results
 
-def resolveTacticList (trees: List InfoTree) : AnalysisM (List Tactic) := do
+def resolveTacticList (trees: List InfoTree) : IO (List Tactic) := do
   let tasks ← trees.toArray.mapM _resolveTask
   match (← resolveTasks tasks) with
   | some auxResults => return auxResults.foldl merge []

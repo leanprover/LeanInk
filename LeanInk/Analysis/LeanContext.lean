@@ -26,7 +26,7 @@ def getLakePath : IO String := do
   | some path => return path
   | none => return lakeCmdName
 
-def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
+def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := do
   if !(← lakeFile.pathExists) then
     throw <| IO.userError s!"lakefile does not exist: {lakeFile}"
   else if lakeFile.fileName != some "lakefile.lean" then

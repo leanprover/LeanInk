@@ -14,7 +14,7 @@ import Lean.Util.Trace
 
 open Lean Elab
 
-def LeanInk.Analysis.analyzeInput : AnalysisM (List Tactic) := do
+def LeanInk.Analysis.analyzeInput  : AnalysisM (List Tactic) := do
   let config ← read
   let context := Parser.mkInputContext config.inputFileContents config.inputFileName
   let (header, state, messages) ← Parser.parseHeader context

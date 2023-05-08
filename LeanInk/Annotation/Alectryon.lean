@@ -31,7 +31,7 @@ def genFragment (annotation : Annotation) (contents : String) : Alectryon.Fragme
 Expects a list of sorted CompoundFragments (sorted by headPos).
 Generates AlectryonFragments for the given CompoundFragments and input file content.
 -/
-def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> AnalysisM (List Fragment)
+def annotateFileWithCompounds (l : List Alectryon.Fragment) (contents : String) : List Annotation -> IO (List Fragment)
 | [] => pure l
 | [x] => do
   let fragment := genFragment x (contents.extract x.headPos ⟨contents.utf8ByteSize⟩)

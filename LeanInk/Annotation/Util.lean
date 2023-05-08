@@ -55,7 +55,7 @@ def maxTailPos (y : String.Pos) : Option String.Pos -> String.Pos
   | some x => if x < y then x else y
 
 @[inline]
-def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compounds : List (Compound a)) : AnalysisM (List (Compound a)) := do
+def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compounds : List (Compound a)) : IO (List (Compound a)) := do
   match compounds with
     | [] => do
       if e.isHead then
@@ -95,7 +95,7 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
           logInfo s!"FOUND COMPOUND {c} -> CREATING NEW COMPOUND WITH TAIL {e.idx} -> {newCompound}"
           return newCompound::oldCompound::cs
 
-def matchCompounds [Positional a] [ToString a] (events : List (FragmentInterval a)) : AnalysisM (List (Compound a)) := do
+def matchCompounds [Positional a] [ToString a] (events : List (FragmentInterval a)) : IO (List (Compound a)) := do
   let mut compounds : List (Compound a) := [{ headPos := 0, tailPos := none, fragments := [] }]
   for e in events do
     compounds ← _insertCompound e compounds
