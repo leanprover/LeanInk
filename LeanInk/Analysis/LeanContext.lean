@@ -26,7 +26,7 @@ def getLakePath : IO String := do
   | some path => return path
   | none => return lakeCmdName
 
-def lakeFile : FilePath := sorry
+def lakeFile : FilePath := "./lakefile.lean"
 
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := do
   if !(← lakeFile.pathExists) then
