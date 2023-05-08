@@ -3,7 +3,6 @@ import LeanInk.Annotation.DataTypes
 import LeanInk.Annotation.Util
 import LeanInk.Annotation.Alectryon
 import LeanInk.Logger
-import LeanInk.CLI
 
 import LeanInk.Analysis.Analysis
 
@@ -11,7 +10,7 @@ import Lean.Util.Path
 
 namespace LeanInk.Analysis
 
-open LeanInk.Annotation LeanInk.CLI Lean System
+open LeanInk.Annotation Lean System
 
 def annotateFile (analysis : List Tactic) : IO (List Annotation) := matchCompounds <| toFragmentIntervals analysis
 
@@ -25,19 +24,17 @@ def runAnalysis (file : System.FilePath) (output : Output) : IO UInt32 := do
   output.genOutput annotation
 
 -- EXECUTION
-def execAuxM (file : System.FilePath) (contents : String) : IO UInt32 := do
-  return ← runAnalysis file {
-    name := "Alectryon"
-    genOutput := Alectryon.genOutput file contents
-  }
 
-def execAux (args : List ResolvedArgument) (file : String) : IO UInt32 := do
+def execAux (file : String) : IO UInt32 := do
   if ! (file : System.FilePath).extension == "lean" then do
     Logger.logError s!"Provided file \"{file}\" is not lean file."
   else
     IO.println s!"Starting Analysis for: \"{file}\""
     let contents ← IO.FS.readFile file
-    execAuxM file contents
+    runAnalysis file {
+    name := "Alectryon"
+    genOutput := Alectryon.genOutput file contents
+  }
 
 /-
 `enableInitializersExecution` is usually only run from the C part of the
@@ -47,12 +44,12 @@ to work with custom user extensions correctly.
 @[implemented_by enableInitializersExecution]
 private def enableInitializersExecutionWrapper : IO Unit := pure ()
 
-def exec (args: List ResolvedArgument) : List String -> IO UInt32
+def exec : List String -> IO UInt32
   | [] => do Logger.logError s!"No input files provided"
   | files => do
     enableInitializersExecutionWrapper
     -- Span task for every file?
     for file in files do
-      if (← execAux args file) != 0 then
+      if (← execAux file) != 0 then
         return ← Logger.logError s!"Analysis for \"{file}\" failed!"
     return 0
