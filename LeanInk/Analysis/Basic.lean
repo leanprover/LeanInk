@@ -14,7 +14,7 @@ namespace LeanInk.Analysis
 
 open LeanInk.Annotation Lean Elab System
 
-def analyzeInput (file : System.FilePath) : IO (List Tactic) := do
+def analyzeInput (file : System.FilePath) : IO (List TacticFragment) := do
   let fileContents ← IO.FS.readFile file
   let context := Parser.mkInputContext fileContents file.toString
   let (header, state, messages) ← Parser.parseHeader context
@@ -34,9 +34,9 @@ def analyzeInput (file : System.FilePath) : IO (List Tactic) := do
   let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
   return result
 
-def annotateFile (analysis : List Tactic) : IO (List <| Compound Tactic) := matchCompounds <| toFragmentIntervals analysis
+def annotateFile (analysis : List TacticFragment) : IO (List <| Compound TacticFragment) := matchCompounds <| toFragmentIntervals analysis
 
-def runAnalysis (file : System.FilePath) (genOutput : List (Compound Tactic) -> IO UInt32) : IO UInt32 := do
+def runAnalysis (file : System.FilePath) (genOutput : List (Compound TacticFragment) -> IO UInt32) : IO UInt32 := do
   -- logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
   let result ← analyzeInput file

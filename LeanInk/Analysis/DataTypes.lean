@@ -40,17 +40,17 @@ instance : Positional Fragment where
 
 /- Tactics -/
 
-structure Tactic extends Fragment where
+structure TacticFragment extends Fragment where
   goalsBefore : List String
   goalsAfter : List String
   deriving Inhabited
 
-instance : Positional Tactic where
+instance : Positional TacticFragment where
   headPos := (·.toFragment.headPos)
   tailPos := (·.toFragment.tailPos)
 
-instance : ToString Tactic where
-  toString t := s!"Tactic: {t.headPos}-{t.tailPos}"
+instance : ToString TacticFragment where
+  toString t := s!"TacticFragment: {t.headPos}-{t.tailPos}"
 
 /- InfoTree -/
 def Info.isExpanded (self : Info) : Bool :=
