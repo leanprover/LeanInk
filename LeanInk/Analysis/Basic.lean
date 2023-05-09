@@ -11,7 +11,7 @@ namespace LeanInk.Analysis
 
 open Lean Elab System
 
-def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List TacticFragment) := do
+def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List TacticFragmentWithContent) := do
   let context := Parser.mkInputContext fileContents file.toString
   let (header, state, messages) ← Parser.parseHeader context
   initializeLakeContext lakeFile header
@@ -27,17 +27,16 @@ def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List Tac
   let commandState := { Command.mkState environment messages with infoState := { enabled := true } }
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
-  let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
-  return result
+  let annotation := result.map <| TacticFragment.withContent fileContents
+  let messages := s.commandState.messages.msgs.toList
+  return annotation
 
 def runAnalysis (file : System.FilePath) (fileContents : String) : IO UInt32 := do
   -- logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
   let result ← analyzeInput file fileContents
-  logInfo "Annotating..."
-  let annotation := result.map <| TacticFragment.withContent fileContents
   logInfo "Outputting..."
-  let rawContents := toJson annotation |>.pretty
+  let rawContents := toJson result |>.pretty
   let dirEntry : IO.FS.DirEntry := { 
     root := ← IO.currentDir,
     fileName := file.toString ++ ".json"

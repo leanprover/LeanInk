@@ -35,9 +35,6 @@ structure TacticFragmentWithContent extends TacticFragment where
 def TacticFragment.withContent (contents : String) (fragment : TacticFragment) : TacticFragmentWithContent :=
   ⟨fragment, contents.extract fragment.headPos fragment.tailPos⟩
 
-instance : ToString TacticFragment where
-  toString t := s!"TacticFragment: {t.headPos}-{t.tailPos}"
-
 /- InfoTree -/
 def Info.isExpanded (self : Info) : Bool :=
   let stx := Info.stx self
