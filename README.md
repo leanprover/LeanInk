@@ -3,6 +3,8 @@
 [![CI](https://github.com/leanprover/LeanInk/actions/workflows/build.yml/badge.svg)](https://github.com/insightmind/LeanInk/actions/workflows/build.yml)
 [![LƎⱯN - 4](https://img.shields.io/static/v1?label=LƎⱯN&message=4&color=black)](https://github.com/leanprover/lean4)
 
+This branch of `LeanInk` is a bare-bones version meant for extracting tactic data from `mathlib4`. It was derived from the original `LeanInk` source by iteratively simplifying and customising the code for tactic data extraction.
+
 LeanInk is a command line helper tool for [Alectryon](https://github.com/cpitclaudel/alectryon) which aims to ease the integration and support of [Lean 4](https://github.com/leanprover/lean4).
 Alectryon uses the information provided by LeanInk to create a static code visualization for Lean 4 code.
 For more information about Alectryon make sure to take a look at their repository.
@@ -32,45 +34,23 @@ To install this built version it is recommended you simply add the `LeanInk/buil
 
 # Usage
 
-Analyzing a simple lean program `Input.lean` is very straightforward. To do so you simply use the `analyze` command (shorthand `a`) and provide LeanInk the input file.
+Analyzing a simple lean program `Input.lean` is very straightforward. To do so you simply provide `LeanInk` the input file.
 
 ```bash
-leanInk analyze Input.lean
-# OR
-leanInk a Input.lean
+leanInk Input.lean
 ```
 
-The `analyze` command will generate an output file `Input.lean.leanInk` with the annotate lean program, encoded using Alectryons fragment json format. (For more information about the json format take a look at [Alectryon.lean](https://github.com/leanprover/LeanInk/blob/main/LeanInk/Annotation/Alectryon.lean))
-
----
-
-If your lean program has external dependencies and uses Lake as its package manager you can use the `--lake` argument to provide the lakefile.
-
-```bash
-leanInk analyze Input.lean --lake lakefile.lean
-```
-
-LeanInk will then fetch any dependencies if necessary.
+This creates a file `Input.lean.json` with the data of the tactic states.
 
 ---
 
 You can also analyze multiple files sequentially (concurrent analysis should be possible but is currently out of scope, feel free to contribute!):
 
 ```bash
-leanInk analyze Input1.lean Input2.lean
+leanInk Input1.lean Input2.lean
 ```
 
-This will create `Input1.leanink` and `Input2.leanink` respectively. However if you want to provide a lake should be valid for both input files, as you can only provide a single lake file.
-
----
-
-To get the supported Lean 4 version of your instance of LeanInk you can do the following:
-
-```bash
-leanInk leanVersion
-# OR
-leanInk lV
-```
+This will create `Input1.lean.json` and `Input2.lean.json` respectively. However if you want to provide a lake should be valid for both input files, as you can only provide a single lake file.
 
 ## Usage in Alectryon
 
@@ -82,13 +62,6 @@ For more information about Alectryon make sure to take a look at their repositor
 # Development
 
 ## Experimental Features
-
-### Additional Type Hover Metadata
-The following flags are experimental and used to display additional information about a source text token in Alectryon. However this feature in Alectryon is still in active development and available here: [AlectryonFork:typeid](https://github.com/insightmind/alectryon/tree/typeid):
-
-- `--x-enable-type-info` flag enables extraction of type information
-- `--x-enable-docStrings` flag enables extraction of doc strings
-- `--x-enable-semantic-token` flag enables extraction of semantic toke types for semantic syntax highlighting support
 
 ## Running Tests
 There are some aspects you might want to take note of when attempting to develop a feature or fix a bug in LeanInk.
