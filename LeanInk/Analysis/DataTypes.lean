@@ -8,21 +8,6 @@ import Lean.Server
 namespace LeanInk.Analysis
 open Lean Elab Meta
 
-/- Positional -/
-class Positional (α : Type u) where
-  headPos : α -> String.Pos
-  tailPos : α -> String.Pos
-
-namespace Positional
-  def length { α : Type u } [Positional α] (self : α) : String.Pos := (Positional.tailPos self) - (Positional.headPos self)
-
-  def smallest? { α : Type u } [Positional α] (list : List α) : Option α := list.foldl (λ a (y : α) =>
-    match a with 
-    | none => y
-    | some x => if Positional.length x ≤ Positional.length y then x else y
-  ) none
-end Positional
-
 instance : ToJson String.Pos := ⟨fun ⟨n⟩ => toJson n⟩
 
 /- Fragment -/
@@ -35,10 +20,6 @@ structure Fragment where
   headPos : String.Pos
   tailPos : String.Pos
   deriving Inhabited, ToJson
-
-instance : Positional Fragment where
-  headPos := Fragment.headPos
-  tailPos := Fragment.tailPos
 
 /- Tactics -/
 
@@ -53,10 +34,6 @@ structure TacticFragmentWithContent extends TacticFragment where
 
 def TacticFragment.withContent (contents : String) (fragment : TacticFragment) : TacticFragmentWithContent :=
   ⟨fragment, contents.extract fragment.headPos fragment.tailPos⟩
-
-instance : Positional TacticFragment where
-  headPos := (·.toFragment.headPos)
-  tailPos := (·.toFragment.tailPos)
 
 instance : ToString TacticFragment where
   toString t := s!"TacticFragment: {t.headPos}-{t.tailPos}"

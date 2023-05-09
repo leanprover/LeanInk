@@ -15,7 +15,6 @@ def initializeLeanContext : IO Unit := do
   Lean.initSearchPath leanPath
 
 -- LAKE
-def lakefileName := "lakefile.lean"
 def lakeEnvName := "LAKE"
 def lakeCmdName := "lake"
 def lakePrintPathsCmd := "print-paths"
@@ -53,8 +52,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : IO Unit := d
       | Except.error _ => throw <| IO.userError s!"Failed to parse lake output: {stdout}"
       | Except.ok val => match fromJson? val with
         | Except.error _ => throw <| IO.userError s!"Failed to decode lake output: {stdout}"
-        | Except.ok paths => do
-          let paths : LeanPaths := paths 
+        | Except.ok (paths : LeanPaths) => do
           initializeLeanContext
           initSearchPath (← findSysroot) paths.oleanPath
           logInfo s!"{paths.oleanPath}"
