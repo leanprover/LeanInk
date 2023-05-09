@@ -13,8 +13,6 @@ structure Compound (β : Type u) where
   fragments : List (Nat × β)
   deriving Inhabited
 
-abbrev Annotation := Compound Tactic
-
 namespace Compound
   def getFragments (self : Compound b) : List b := self.fragments.map (·.snd)
 

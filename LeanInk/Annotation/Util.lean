@@ -20,18 +20,14 @@ instance [ToString a] : ToString (FragmentInterval a) where
 
 /- FUNCTIONS -/
 def toFragmentIntervals { x : Type } [Positional x] [Inhabited x] [Inhabited x] (positionals : List x) : List (FragmentInterval x) :=
-  let indexedPositionals := positionals.enum.map (λ (idx, f) => 
+  let indexedPositionals := positionals.enum.map <| fun (idx, f) => 
     [{ isHead := true, position := Positional.headPos f, fragment := f, idx := idx }, 
-     { isHead := false, position := Positional.tailPos f, fragment := f, idx := idx }])
+     { isHead := false, position := Positional.tailPos f, fragment := f, idx := idx }]
   let mergedPositionals := indexedPositionals.join
   List.sort (λ x y =>  x.position < y.position) mergedPositionals
 
-def maxTailPos (y : String.Pos) : Option String.Pos -> String.Pos
-  | none => y
-  | some x => if x < y then x else y
-
 @[inline]
-def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compounds : List (Compound a)) : IO (List (Compound a)) := do
+def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compounds : List (Compound a)) : IO <| List (Compound a) := do
   match compounds with
     | [] => do
       if e.isHead then
