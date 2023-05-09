@@ -1,6 +1,6 @@
 import Init
 import Lean
-import LeanInk.Analysis.DataTypes
+import LeanInk.DataTypes
 
 namespace LeanInk.Analysis
 open Lean Elab Meta IO

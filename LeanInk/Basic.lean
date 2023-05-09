@@ -1,7 +1,7 @@
 import LeanInk.Logger
-import LeanInk.Analysis.DataTypes
-import LeanInk.Analysis.LeanContext
-import LeanInk.Analysis.InfoTreeTraversal
+import LeanInk.DataTypes
+import LeanInk.LeanContext
+import LeanInk.InfoTreeTraversal
 import LeanInk.Logger
 
 import Lean.Util.Trace
