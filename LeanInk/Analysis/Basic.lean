@@ -14,8 +14,7 @@ namespace LeanInk.Analysis
 
 open LeanInk.Annotation Lean Elab System
 
-def analyzeInput (file : System.FilePath) : IO (List TacticFragment) := do
-  let fileContents ← IO.FS.readFile file
+def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List TacticFragment) := do
   let context := Parser.mkInputContext fileContents file.toString
   let (header, state, messages) ← Parser.parseHeader context
   initializeLakeContext lakeFile header
@@ -34,16 +33,21 @@ def analyzeInput (file : System.FilePath) : IO (List TacticFragment) := do
   let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
   return result
 
-def annotateFile (analysis : List TacticFragment) : IO (List <| Compound TacticFragment) := matchCompounds <| toFragmentIntervals analysis
-
-def runAnalysis (file : System.FilePath) (genOutput : List (Compound TacticFragment) -> IO UInt32) : IO UInt32 := do
+def runAnalysis (file : System.FilePath) (fileContents : String) : IO UInt32 := do
   -- logInfo s!"Starting process with lean file: {config.inputFileName}"
   logInfo "Analyzing..."
-  let result ← analyzeInput file
+  let result ← analyzeInput file fileContents
   logInfo "Annotating..."
-  let annotation ← annotateFile result
+  let annotation := result.map <| TacticFragment.withContent fileContents
   logInfo "Outputting..."
-  genOutput annotation
+  let rawContents := toJson annotation |>.pretty
+  let dirEntry : IO.FS.DirEntry := { 
+    root := ← IO.currentDir,
+    fileName := file.toString ++ ".json"
+  }
+  IO.FS.writeFile dirEntry.path rawContents
+  logInfo s!"Results written to file: {dirEntry.path}!"
+  return 0
 
 -- EXECUTION
 
@@ -53,7 +57,7 @@ def execAux (file : String) : IO UInt32 := do
   else
     IO.println s!"Starting Analysis for: \"{file}\""
     let contents ← IO.FS.readFile file
-    runAnalysis file <| Alectryon.genOutput file contents
+    runAnalysis file contents
   
 /-
 `enableInitializersExecution` is usually only run from the C part of the

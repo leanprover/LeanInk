@@ -23,6 +23,8 @@ namespace Positional
   ) none
 end Positional
 
+instance : ToJson String.Pos := ⟨fun ⟨n⟩ => toJson n⟩
+
 /- Fragment -/
 /--
   A `Fragment` is a simple structure that describes an interval within the source text.
@@ -32,7 +34,7 @@ end Positional
 structure Fragment where
   headPos : String.Pos
   tailPos : String.Pos
-  deriving Inhabited
+  deriving Inhabited, ToJson
 
 instance : Positional Fragment where
   headPos := Fragment.headPos
@@ -43,7 +45,14 @@ instance : Positional Fragment where
 structure TacticFragment extends Fragment where
   goalsBefore : List String
   goalsAfter : List String
-  deriving Inhabited
+  deriving Inhabited, ToJson
+
+structure TacticFragmentWithContent extends TacticFragment where
+  content : String
+  deriving Inhabited, ToJson
+
+def TacticFragment.withContent (contents : String) (fragment : TacticFragment) : TacticFragmentWithContent :=
+  ⟨fragment, contents.extract fragment.headPos fragment.tailPos⟩
 
 instance : Positional TacticFragment where
   headPos := (·.toFragment.headPos)
