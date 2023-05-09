@@ -1,6 +1,3 @@
-import LeanInk.Annotation.DataTypes
-import LeanInk.Annotation.Util
-import LeanInk.Annotation.Alectryon
 import LeanInk.Logger
 import LeanInk.Analysis.DataTypes
 import LeanInk.Analysis.LeanContext
@@ -12,7 +9,7 @@ import Lean.Util.Path
 
 namespace LeanInk.Analysis
 
-open LeanInk.Annotation Lean Elab System
+open Lean Elab System
 
 def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List TacticFragment) := do
   let context := Parser.mkInputContext fileContents file.toString

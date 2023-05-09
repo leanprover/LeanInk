@@ -5,8 +5,6 @@ import LeanInk.Analysis.DataTypes
 namespace LeanInk.Analysis
 open Lean Elab Meta IO
 
-set_option autoImplicit false
-
 def genSentences (ctx : ContextInfo) (info : TacticInfo) : IO (List TacticFragment) := do
   let goalsBefore ← genGoals ctx info true
   let goalsAfter ← genGoals ctx info false
