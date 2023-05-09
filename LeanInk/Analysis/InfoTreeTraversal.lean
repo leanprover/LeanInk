@@ -17,7 +17,6 @@ where
     { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
   evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
 
-def merge := List.mergeSortedLists <| λ (x y : TacticFragment) => x.headPos < y.headPos
 def insertFragment (sentences : List TacticFragment) (ctx : ContextInfo) (info : TacticInfo) := (sentences ++ ·) <$> 
   if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then pure [] else genSentences ctx info
 
@@ -27,7 +26,7 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List Ta
     match ctx? with
     | some ctx => do
       let resolvedChildrenLeafs ← children.toList.mapM <| _resolveTacticList (info.updateContext? ctx) aux 
-      let sortedChildrenLeafs := resolvedChildrenLeafs.foldl merge []
+      let sortedChildrenLeafs := resolvedChildrenLeafs.join
       if Info.isExpanded info then
         pure sortedChildrenLeafs
       else match info with
@@ -56,8 +55,8 @@ def resolveTasks (tasks : Array (Task TraversalEvent)) : IO <| Option <| List (L
     | _ => return none
   return results
 
-def resolveTacticList (trees: List InfoTree) : IO (List TacticFragment) := do
+def resolveTacticList (trees : List InfoTree) : IO (List TacticFragment) := do
   let tasks ← trees.toArray.mapM _resolveTask
   match (← resolveTasks tasks) with
-  | some auxResults => return auxResults.foldl merge []
+  | some auxResults => return auxResults.join
   | _ => return []
