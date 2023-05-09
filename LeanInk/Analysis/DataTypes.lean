@@ -1,5 +1,3 @@
-import LeanInk.ListUtil
-
 import Lean.Elab
 import Lean.Data.Lsp
 import Lean.Syntax
