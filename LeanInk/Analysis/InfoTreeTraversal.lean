@@ -13,14 +13,17 @@ where
   genGoals (ctx : ContextInfo) (info : TacticInfo) (beforeNode : Bool) : IO (List String) :=
     if beforeNode then _genGoals ctx info.goalsBefore info.mctxBefore
     else _genGoals ctx info.goalsAfter info.mctxAfter
-  _genGoals (ctx : ContextInfo) (goals: List MVarId) (metaCtx: MetavarContext) : IO (List String) := 
+  _genGoals (ctx : ContextInfo) (goals : List MVarId) (metaCtx : MetavarContext) : IO (List String) := 
     { ctx with mctx := metaCtx }.runMetaM {} <| goals.mapM evalGoal >>= List.filterMapM pure
   evalGoal (mvarId : MVarId) : MetaM (Option String) := (some ∘ toString) <$> ppGoal mvarId
 
 def insertFragment (sentences : List TacticFragment) (ctx : ContextInfo) (info : TacticInfo) := (sentences ++ ·) <$> 
-  if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then pure [] else genSentences ctx info
+  if sentences.any (λ t => t.headPos == info.stx.getPos? && t.tailPos == info.stx.getTailPos?) then 
+    pure [] 
+  else 
+    genSentences ctx info
 
-partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : List TacticFragment := []) : InfoTree → IO (List TacticFragment)
+partial def _resolveTacticList (ctx? : Option ContextInfo := none) (aux : List TacticFragment := []) : InfoTree → IO (List TacticFragment)
   | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
   | InfoTree.node info children =>
     match ctx? with

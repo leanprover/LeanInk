@@ -9,7 +9,7 @@ lean_lib LeanInk
 
 @[default_target]
 lean_exe leanInk {
-  root := `Main
+  root := `LeanInk
   supportInterpreter := true
 }
 
