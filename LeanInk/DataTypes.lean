@@ -36,11 +36,8 @@ def extractSuggestion (msg : Message) : IO (Option String) := do
     guard <| raw.startsWith "Try this: "
     return raw.drop "Try this: ".length
 
-def TacticFragment.withContent (contents : String) (messages? : Option <| List Message) (fragment : TacticFragment) : IO TacticFragmentWithContent := do
-  -- let msg? : Option Message := sorry
-  let replacement? := none
-  let content : String := replacement?.getD <| contents.extract fragment.headPos fragment.tailPos
-  return ⟨fragment, content⟩
+def TacticFragment.withContent (contents : String) (fragment : TacticFragment) : TacticFragmentWithContent :=
+  ⟨fragment, contents.extract fragment.headPos fragment.tailPos⟩
 
 /- InfoTree -/
 def Info.isExpanded (self : Info) : Bool :=
