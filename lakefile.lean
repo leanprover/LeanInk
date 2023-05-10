@@ -4,6 +4,7 @@ open System Lake DSL
 open System.FilePath IO IO.FS
 
 package leanInk where
+  moreLeanArgs := #["-Dtactic.simp.trace=true"]
   moreServerArgs := #["-Dtactic.simp.trace=true"]
 
 lean_lib LeanInk where
