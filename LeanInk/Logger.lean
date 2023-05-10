@@ -1,6 +1,6 @@
 open Lean
 
-def verboseDebug : Bool := true
+def verboseDebug : Bool := false
 
 namespace LeanInk
 namespace Logger
