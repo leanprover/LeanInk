@@ -3,15 +3,17 @@ import Init.System.IO
 open System Lake DSL
 open System.FilePath IO IO.FS
 
-package leanInk
+package leanInk where
+  moreServerArgs := #["-Dtactic.simp.trace=true"]
 
-lean_lib LeanInk
+lean_lib LeanInk where
+  moreLeanArgs := #["-Dtactic.simp.trace=true"]
 
 @[default_target]
-lean_exe leanInk {
+lean_exe leanInk where
   root := `LeanInk
   supportInterpreter := true
-}
+  moreLeanArgs := #["-Dtactic.simp.trace=true"]
 
 /-! Run the leanInk that is built locally to analyze the given test file.
 If there is a lakefile.lean present then pass the additional `--lake` option -/

@@ -27,8 +27,9 @@ def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List Tac
   let commandState := { Command.mkState environment messages with infoState := { enabled := true } }
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
-  let annotation := result.map <| TacticFragment.withContent fileContents
+  let annotation ← result.mapM <| TacticFragment.withContent fileContents none -- TODO change this
   let messages := s.commandState.messages.msgs.toList
+  IO.println <| ← messages.mapM (·.data.toString)
   return annotation
 
 def runAnalysis (file : System.FilePath) (fileContents : String) : IO UInt32 := do
