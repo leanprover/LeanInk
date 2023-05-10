@@ -1,20 +1,22 @@
 open Lean
 
+def verboseDebug : Bool := true
+
 namespace LeanInk
 namespace Logger
 
 -- Prints a message if in debug mode, otherwise does nothing
-def log [ToString a] (s : a) (isDebug: Bool := false) : IO Unit := do
+def log [ToString a] (s : a) (isDebug: Bool := verboseDebug) : IO Unit := do
   match isDebug with
   | true => IO.println s
   | false => return
 
 -- Prints a message if in debug mode, otherwise does nothing
-def logInfo [ToString a] (s : a) (isDebug: Bool := false) : IO Unit := do
+def logInfo [ToString a] (s : a) (isDebug: Bool := verboseDebug) : IO Unit := do
   log s!"INFO: {s}" isDebug
 
 -- Prints a warning message if in debug mode, otherwise does nothing
-def logWarning [ToString a] (s : a) (isDebug: Bool := false) : IO Unit := do
+def logWarning [ToString a] (s : a) (isDebug: Bool := verboseDebug) : IO Unit := do
   log s!"WARNING: {s}" isDebug
 
 -- Prints an error message
@@ -26,13 +28,13 @@ end Logger
 
 -- Prints a message if in debug mode, otherwise does nothing
 def log [ToString a] (s : a) : IO Unit := do
-  Logger.log s (isDebug := true)
+  Logger.log s (isDebug := verboseDebug)
 
-def logInfo [ToString a] (s : a) (isDebug: Bool := false) : IO Unit := do
+def logInfo [ToString a] (s : a) (isDebug: Bool := verboseDebug) : IO Unit := do
   Logger.logInfo s isDebug
 
 -- Prints a warning message if in debug mode, otherwise does nothing
-def logWarning [ToString a] (s : a) (isDebug: Bool := false) : IO Unit := do
+def logWarning [ToString a] (s : a) (isDebug: Bool := verboseDebug) : IO Unit := do
   Logger.logWarning s isDebug
 
 -- Prints an error message
