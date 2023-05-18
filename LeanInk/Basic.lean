@@ -19,8 +19,13 @@ def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List Tac
   let (environment, messages) ← processHeader header options messages context 0
   logInfo s!"Header: {environment.header.mainModule}"
   logInfo s!"Header: {environment.header.moduleNames}"
+  for msg in messages.toList do
+      IO.println "ProcessHeader Message"
+      IO.println <| ←  msg.toString
   if messages.hasErrors then
     for msg in messages.toList do
+      IO.println "ProcessHeader Message"
+      IO.println <| ←  msg.toString
       if msg.severity == .error then
         let _ ← logError <$> msg.toString
     throw <| IO.userError "Errors during import; aborting"
@@ -30,9 +35,11 @@ def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List Tac
   let annotation := result.map <| TacticFragment.withContent fileContents
   let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
   for msg in messages do
+    IO.println "CommandState Message"
     IO.println <| ← msg.toString
   return annotation
 
+#check Message
 #check Core.getMessageLog
 
 def runAnalysis (file : System.FilePath) (fileContents : String) : IO UInt32 := do
