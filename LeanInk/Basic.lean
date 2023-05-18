@@ -28,6 +28,9 @@ def analyzeInput (file : System.FilePath) (fileContents : String) : IO (List Tac
   let s ← IO.processCommands context state commandState
   let result ← resolveTacticList s.commandState.infoState.trees.toList
   let annotation := result.map <| TacticFragment.withContent fileContents
+  let messages := s.commandState.messages.msgs.toList.filter (·.endPos.isSome)
+  for msg in messages do
+    IO.println <| ← msg.toString
   return annotation
 
 #check Core.getMessageLog
