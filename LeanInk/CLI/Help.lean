@@ -8,7 +8,6 @@ def header (app : AppInfo) : String := s!"
   {app.description}\n\n"
 
 def generateRows (rowEntries : List (String × String)) : List String :=
-  let maxKeyLength := (rowEntries.map (λ x => x.1.length)).maximum?
   match (rowEntries.map (λ x => x.1.length)).maximum? with
   | none => []
   | some maxLength => rowEntries.map (λ x =>

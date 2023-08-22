@@ -30,11 +30,11 @@ end Logger
 def log [ToString a] (s : a) : AnalysisM Unit := do
   Logger.log s (← read).verbose
 
-def logInfo [ToString a] (s : a) (isDebug: Bool := false) : AnalysisM Unit := do
+def logInfo [ToString a] (s : a) : AnalysisM Unit := do
   Logger.logInfo s (← read).verbose
 
 -- Prints a warning message if in debug mode, otherwise does nothing
-def logWarning [ToString a] (s : a) (isDebug: Bool := false) : AnalysisM Unit := do
+def logWarning [ToString a] (s : a) : AnalysisM Unit := do
   Logger.logWarning s (← read).verbose
 
 -- Prints an error message

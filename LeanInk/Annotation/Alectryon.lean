@@ -124,7 +124,7 @@ def genSemanticTokenValue : Option SemanticTokenInfo -> AnalysisM (Option String
     | SemanticTokenType.property => pure (some "Name.Attribute")
     | SemanticTokenType.keyword => pure (some "Keyword")
     | SemanticTokenType.variable => pure (some "Name.Variable")
-    | default => pure none
+    | _ => pure none
 
 def genToken (token : Compound Analysis.Token) (contents : Option String) (getContents : String.Pos -> String.Pos -> Option String) : AnalysisM (Option Token) := do
   match contents with
@@ -150,7 +150,7 @@ def extractContents (offset : String.Pos) (contents : String) (head tail: String
 def minPos (x y : String.Pos) := if x < y then x else y
 def maxPos (x y : String.Pos) := if x > y then x else y
 
-partial def genTokens (contents : String) (head : String.Pos) (offset : String.Pos) (l : List Token)  (compounds : List (Compound Analysis.Token)) : AnalysisM (List Token) := do
+partial def genTokens (contents : String) (head : String.Pos) (offset : String.Pos) (compounds : List (Compound Analysis.Token)) : AnalysisM (List Token) := do
   let textTail := ⟨contents.utf8ByteSize⟩ + offset
   let mut head : String.Pos := head
   let mut tokens : List Token := []
@@ -211,7 +211,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
   if annotation.sentence.fragments.isEmpty then
     if config.experimentalTypeInfo ∨ config.experimentalDocString then
       let headPos := annotation.sentence.headPos
-      let tokens ← genTokens contents headPos headPos [] annotation.tokens
+      let tokens ← genTokens contents headPos headPos []
       return Fragment.text { contents := Contents.experimentalTokens tokens.toArray }
     else
       return Fragment.text { contents := Contents.string contents }
@@ -225,7 +225,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
     let mut fragmentContents : Contents := Contents.string contents
     if config.experimentalTypeInfo ∨ config.experimentalDocString then
       let headPos := annotation.sentence.headPos
-      let tokens ← genTokens contents headPos headPos [] annotation.tokens
+      let tokens ← genTokens contents headPos headPos []
       fragmentContents := Contents.experimentalTokens tokens.toArray
     return Fragment.sentence {
       contents := fragmentContents

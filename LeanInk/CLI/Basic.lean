@@ -44,7 +44,7 @@ Errors:
 - throws CLIError.unknownCommand if the first argument cannot be resolved to any of the available commands.
 -/
 private def _resolveCommandList (available: List Command) (args: List String) : Result CLIError (Command × List String) :=
-  if available.isEmpty then 
+  if available.isEmpty then
     failure CLIError.noCommandsProvided -- If no root commands are available we throw an error
   else
     match args with
@@ -63,7 +63,7 @@ private partial def resolveArgumentList (available: List Argument) (args: List S
     | a::as =>
       let argument := List.find? (λ x => x.identifiers.elem a) available
       match argument with
-      | none => 
+      | none =>
         let (res, unres) := resolveArgumentList available as
         (res, a::unres)
       | some argument =>
@@ -73,22 +73,22 @@ private partial def resolveArgumentList (available: List Argument) (args: List S
           let (otherArgs, unresolved) := resolveArgumentList (available.erase argument) as
           (resolvedArg::otherArgs, unresolved)
         | Argument.environment i =>
-          match as with 
-          | [] => 
+          match as with
+          | [] =>
             let (res, unres) := resolveArgumentList available as
             (res, a::unres)
-          | b::bs => 
+          | b::bs =>
             let resolvedArg := ResolvedArgument.env i b
             let (otherArgs, unresolved) := resolveArgumentList (available.erase argument) bs
             (resolvedArg::otherArgs, unresolved)
-        
+
 
 def runHelp (app: AppInfo)  (available: List Command) (arguments : List String) : IO UInt32 := do
   match _resolveCommandList available arguments with
-  | Result.failure error => do
+  | Result.failure _ => do
     IO.println (generateDefaultHelp app available)
     return 1
-  | Result.success (command, unresolvedArgs) => do
+  | Result.success (command, _) => do
       IO.println (generateCommandHelp app command)
     return 0
 
@@ -96,7 +96,7 @@ def runHelp (app: AppInfo)  (available: List Command) (arguments : List String) 
 def runCLI (app: AppInfo) (commands: List Command) (args: List String) : IO UInt32 := do
   let commands := helpCommand::versionCommand::commands
   match _resolveCommandList commands args with -- We automatically add the help and version command internally for command resolution.
-  | Result.failure error => do
+  | Result.failure _ => do
     IO.println (generateDefaultHelp app commands)
     return 1
   | Result.success result => do

@@ -7,10 +7,21 @@ package leanInk
 
 lean_lib LeanInk
 
+-- These are additional settings which do not affect the lake hash,
+-- so they can be enabled in CI and disabled locally or vice versa.
+-- Warning: Do not put any options here that actually change the olean files,
+-- or inconsistent behavior may result
+def weakLeanArgs :=
+  if get_config? CI |>.isSome then
+    #["-DwarningAsError=true"]
+  else
+    #[]
+
 @[default_target]
 lean_exe leanInk {
   root := `Main
   supportInterpreter := true
+  weakLeanArgs := weakLeanArgs
 }
 
 /-! Run the leanInk that is built locally to analyze the given test file.

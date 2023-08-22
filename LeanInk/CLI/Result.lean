@@ -8,4 +8,4 @@ inductive Result (error : Type) (result: Type) where
 instance [ToString e] : ToString (Result e r) where
   toString
     | Result.failure error => s!"ERROR: {error}"
-    | Result.success result => "SUCCESS!"
+    | Result.success _ => "SUCCESS!"
