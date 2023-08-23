@@ -1,5 +1,5 @@
 #!/bin/bash
-git clone https://github.com/insightmind/LeanInk ./leanInk -q
+git clone https://github.com/leanprover/LeanInk ./leanInk -q
 cd leanInk
 git fetch --tags -q
 latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
