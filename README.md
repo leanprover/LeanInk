@@ -81,6 +81,13 @@ For more information about Alectryon make sure to take a look at their repositor
 
 # Development
 
+## Updating
+
+When updating the `lean-toolchain`, please also:
+* update `test/dep/lean-toolchain` to match,
+* change the Mathlib commit in `test/dep.lakefile.lean` to a commit of Mathlib using the same toolchain,
+* run `lake update` in `test/dep/` to update the `lake-manifest.json`.
+
 ## Experimental Features
 
 ### Additional Type Hover Metadata
