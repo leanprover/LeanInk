@@ -572,14 +572,14 @@
     "raw": "guard_hyp",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "n", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -592,7 +592,7 @@
     "raw": " : ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Type", "name": "Nat", "_type": "typeinfo"},
     "semanticType": null,
@@ -705,14 +705,14 @@
     "raw": "guard_hyp",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "m", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -725,7 +725,7 @@
     "raw": " := ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "1", "_type": "typeinfo"},
     "semanticType": null,
@@ -764,14 +764,14 @@
     "raw": "guard_hyp",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "m", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -784,7 +784,7 @@
     "raw": " : ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Type", "name": "Nat", "_type": "typeinfo"},
     "semanticType": null,
@@ -798,7 +798,7 @@
     "raw": " := ",
     "link": null,
     "docstring":
-    "Check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n",
+    "Tactic to check that a named hypothesis has a given type and/or value.\n\n* `guard_hyp h : t` checks the type up to reducible defeq,\n* `guard_hyp h :~ t` checks the type up to default defeq,\n* `guard_hyp h :ₛ t` checks the type up to syntactic equality,\n* `guard_hyp h :ₐ t` checks the type up to alpha equality.\n* `guard_hyp h := v` checks value up to reducible defeq,\n* `guard_hyp h :=~ v` checks value up to default defeq,\n* `guard_hyp h :=ₛ v` checks value up to syntactic equality,\n* `guard_hyp h :=ₐ v` checks the value up to alpha equality.\n\nThe value `v` is elaborated using the type of `h` as the expected type.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Nat", "name": "1", "_type": "typeinfo"},
     "semanticType": null,
@@ -837,14 +837,14 @@
     "raw": "guard_target",
     "link": null,
     "docstring":
-    "Check the target agrees with a given expression.\n* `guard_target = e` checks that the target is defeq at reducible transparency to `e`.\n* `guard_target =~ e` checks that the target is defeq at default transparency to `e`.\n* `guard_target =ₛ e` checks that the target is syntactically equal to `e`.\n* `guard_target =ₐ e` checks that the target is alpha-equivalent to `e`.\n",
+    "Tactic to check that the target agrees with a given expression.\n* `guard_target = e` checks that the target is defeq at reducible transparency to `e`.\n* `guard_target =~ e` checks that the target is defeq at default transparency to `e`.\n* `guard_target =ₛ e` checks that the target is syntactically equal to `e`.\n* `guard_target =ₐ e` checks that the target is alpha-equivalent to `e`.\n\nThe term `e` is elaborated with the type of the goal as the expected type, which is mostly\nuseful within `conv` mode.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " =ₛ ",
     "link": null,
     "docstring":
-    "Check the target agrees with a given expression.\n* `guard_target = e` checks that the target is defeq at reducible transparency to `e`.\n* `guard_target =~ e` checks that the target is defeq at default transparency to `e`.\n* `guard_target =ₛ e` checks that the target is syntactically equal to `e`.\n* `guard_target =ₐ e` checks that the target is alpha-equivalent to `e`.\n",
+    "Tactic to check that the target agrees with a given expression.\n* `guard_target = e` checks that the target is defeq at reducible transparency to `e`.\n* `guard_target =~ e` checks that the target is defeq at default transparency to `e`.\n* `guard_target =ₛ e` checks that the target is syntactically equal to `e`.\n* `guard_target =ₐ e` checks that the target is alpha-equivalent to `e`.\n\nThe term `e` is elaborated with the type of the goal as the expected type, which is mostly\nuseful within `conv` mode.\n",
     "_type": "token"},
    {"typeinfo": {"type": "Type", "name": "Nat", "_type": "typeinfo"},
     "semanticType": null,
