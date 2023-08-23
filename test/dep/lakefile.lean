@@ -3,7 +3,7 @@ open Lake DSL
 
 package dep
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4.git" @ "3d5d1404a27f4b285302a1589e1da2672590da34"
+require mathlib from git "https://github.com/leanprover-community/mathlib4.git" @ "1cd8b316f3e3e2f1e307b4e38e2b304ae5e596bd"
 
 @[default_target]
 lean_lib dep
