@@ -55,7 +55,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
       | Except.ok val => match fromJson? val with
         | Except.error _ => throw <| IO.userError s!"Failed to decode lake output: {stdout}"
         | Except.ok paths => do
-          let paths : LeanPaths := paths 
+          let paths : LeanPaths := paths
           initializeLeanContext
           initSearchPath (← findSysroot) paths.oleanPath
           logInfo s!"{paths.oleanPath}"
@@ -65,6 +65,6 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
 
 def initializeSearchPaths (header : Syntax) (config : Configuration) : AnalysisM Unit := do
   match config.lakeFile with
-  | some lakeFile => do 
+  | some lakeFile => do
     initializeLakeContext lakeFile header
   | none => initializeLeanContext

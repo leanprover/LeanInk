@@ -19,19 +19,19 @@ open Lean.Elab
 open Lean.Meta
 open IO
 
-structure InfoTreeContext where 
-  hasSorry : Bool 
+structure InfoTreeContext where
+  hasSorry : Bool
   isCalcTatic : Bool
 deriving Repr
 
-partial def _hasSorry (t : InfoTree) : Bool := 
+partial def _hasSorry (t : InfoTree) : Bool :=
   let rec go (ci? : Option ContextInfo) (t : InfoTree) : Bool :=
     match t with
     | InfoTree.context ci t => go ci t
     | InfoTree.node i cs =>
-      if let (some _, .ofTermInfo ti) := (ci?, i) then 
+      if let (some _, .ofTermInfo ti) := (ci?, i) then
         ti.expr.hasSorry
-      else 
+      else
         cs.any (go ci?)
     | _ => false
   go none t
@@ -39,19 +39,19 @@ partial def _hasSorry (t : InfoTree) : Bool :=
 partial def _isCalcTatic (tree: InfoTree) : Bool :=
   match tree with
   | .context _ _ => false
-  | .node i _ => 
-    if let .ofTacticInfo ti := i then 
+  | .node i _ =>
+    if let .ofTacticInfo ti := i then
       ti.stx.getKind == ``calcTactic
-    else 
+    else
       false
   | _ => false
 
-def _buildInfoTreeContext (config : Configuration) (tree : InfoTree) : InfoTreeContext := 
+def _buildInfoTreeContext (config : Configuration) (tree : InfoTree) : InfoTreeContext :=
   let hasSorry := config.experimentalSorryConfig && (_hasSorry tree)
   let isCalcTatic := config.experimentalCalcConfig && (_isCalcTatic tree)
   InfoTreeContext.mk hasSorry isCalcTatic
 
-def _updateIsCalcTatic (config : Configuration) (ctx : InfoTreeContext) (tree : InfoTree) : InfoTreeContext := 
+def _updateIsCalcTatic (config : Configuration) (ctx : InfoTreeContext) (tree : InfoTree) : InfoTreeContext :=
   { ctx with isCalcTatic := if config.experimentalCalcConfig then ctx.isCalcTatic || _isCalcTatic tree else false }
 
 structure ContextBasedInfo (β : Type) where
@@ -81,10 +81,10 @@ namespace TraversalFragment
     if Info.isExpanded info then
       pure (none, none)
     else
-      let mut semantic : Option SemanticTraversalInfo := none 
+      let mut semantic : Option SemanticTraversalInfo := none
       if (← read).experimentalSemanticType then
         semantic := some { node := info, stx := info.stx }
-      match info with 
+      match info with
       | Info.ofTacticInfo info => pure (tactic { info := info, ctx := ctx }, semantic)
       | Info.ofTermInfo info => pure (term { info := info, ctx := ctx }, semantic)
       | Info.ofFieldInfo info => pure (field { info := info, ctx := ctx }, semantic)
@@ -96,7 +96,7 @@ namespace TraversalFragment
   | tactic fragment => fragment.ctx.runMetaM {} (func (tactic fragment))
   | unknown fragment => fragment.ctx.runMetaM {} (func (unknown fragment))
 
-  /- 
+  /-
     Token Generation
   -/
   def inferType? : TraversalFragment -> MetaM (Option String)
@@ -144,20 +144,20 @@ namespace TraversalFragment
   /- Sentence Generation -/
   private def genGoal (goalType : Format) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
     | Name.anonymous => do
-      return { 
+      return {
         name := ""
         conclusion := toString goalType
-        hypotheses := hypotheses 
+        hypotheses := hypotheses
       }
     | name => do
       let goalFormatName := format name.eraseMacroScopes
-      return { 
+      return {
         name := toString goalFormatName
         conclusion := toString goalType
-        hypotheses := hypotheses 
+        hypotheses := hypotheses
       }
 
-  /-- 
+  /--
   This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
   of a single formatted string to support the Alectryon.Goal datatype.
   -/
@@ -165,7 +165,7 @@ namespace TraversalFragment
     match (← getMCtx).findDecl? mvarId with
     | none => return none
     | some decl => do
-      if infoTreeCtx.hasSorry || infoTreeCtx.isCalcTatic then 
+      if infoTreeCtx.hasSorry || infoTreeCtx.isCalcTatic then
         return none
       else
         let ppAuxDecls := pp.auxDecls.get (← getOptions)
@@ -204,11 +204,11 @@ namespace TraversalFragment
               pure (varNames, prevType?, hypotheses)
             else
               evalVar varNames prevType? hypotheses localDecl
-          let hypotheses ← pushPending hypotheses type? varNames 
+          let hypotheses ← pushPending hypotheses type? varNames
           let typeFmt ← ppExpr (← instantiateMVars decl.type)
           return (← genGoal typeFmt hypotheses decl.userName)
 
-  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) (infoTreeCtx : InfoTreeContext) : AnalysisM (List Goal) := 
+  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) (infoTreeCtx : InfoTreeContext) : AnalysisM (List Goal) :=
     let ctx := { contextInfo.ctx with mctx := metaCtx }
     return (← ctx.runMetaM {} (goals.mapM (fun x => evalGoal x infoTreeCtx))).filterMap id
 
@@ -220,12 +220,12 @@ namespace TraversalFragment
 
   def genTactic? (self : TraversalFragment) (infoTreeCtx : InfoTreeContext) : AnalysisM (Option Tactic) := do
     match self with
-    | tactic fragment => do 
+    | tactic fragment => do
       let goalsBefore ← genGoals fragment true infoTreeCtx
       let goalsAfter ← genGoals fragment false infoTreeCtx
-      if infoTreeCtx.hasSorry || infoTreeCtx.isCalcTatic then do 
+      if infoTreeCtx.hasSorry || infoTreeCtx.isCalcTatic then do
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := [], goalsAfter := [] }
-      if goalsAfter.isEmpty then  
+      if goalsAfter.isEmpty then
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := [{ name := "", conclusion := "Goals accomplished! 🐙", hypotheses := [] }] }
       else
         return some { headPos := self.headPos, tailPos := self.tailPos, goalsBefore := goalsBefore, goalsAfter := goalsAfter }
@@ -307,13 +307,13 @@ namespace TraversalAux
       if self.allowsNewTerm then
         let newResult ← self.result.insertFragment fragment infoTreeCtx
         return { self with allowsNewTerm := false, result := newResult }
-      else 
+      else
         return self
     | TraversalFragment.field _ => do
       if self.allowsNewField then
         let newResult ← self.result.insertFragment fragment infoTreeCtx
         return { self with allowsNewField := false, result := newResult }
-      else 
+      else
         return self
     | TraversalFragment.tactic contextInfo => do
       let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
@@ -335,18 +335,18 @@ end TraversalAux
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
   let config ← read
   match tree with
-  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree) 
+  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree)
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
       let ctx? := info.updateContext? ctx
-      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x (_updateIsCalcTatic config infoTreeCtx x)) 
+      let resolvedChildrenLeafs ← children.toList.mapM (fun x => _resolveTacticList ctx? aux x (_updateIsCalcTatic config infoTreeCtx x))
       let sortedChildrenLeafs := resolvedChildrenLeafs.foldl TraversalAux.merge {}
       match (← TraversalFragment.create ctx info) with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
-      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment infoTreeCtx         
+        sortedChildrenLeafs.insertFragment fragment infoTreeCtx
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment infoTreeCtx
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
     | none => pure aux
@@ -367,7 +367,7 @@ def _resolveTask (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM (
 
 def _resolve (trees: List InfoTree) : AnalysisM AnalysisResult := do
   let config ← read
-  let auxResults ← (trees.map (λ t => 
+  let auxResults ← (trees.map (λ t =>
     _resolveTacticList none {} t (_buildInfoTreeContext config t))).mapM (λ x => x)
   let results := auxResults.map (λ x => x.result)
   return results.foldl AnalysisResult.merge AnalysisResult.empty

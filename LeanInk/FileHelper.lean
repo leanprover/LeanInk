@@ -11,13 +11,13 @@ open System
 
 def leanFileExtension := s!"lean"
 
-def isLeanFile (path : FilePath) : Bool := 
+def isLeanFile (path : FilePath) : Bool :=
   path.extension == leanFileExtension
 
 -- OUTPUT
 open IO.FS
 def createOutputFile (folderPath : FilePath) (fileName : String) (content : String) : AnalysisM Unit := do
-  let dirEntry : DirEntry := { 
+  let dirEntry : DirEntry := {
     root := folderPath,
     fileName := fileName ++ ".leanInk"
   }
@@ -25,7 +25,7 @@ def createOutputFile (folderPath : FilePath) (fileName : String) (content : Stri
   IO.FS.writeFile path content
   logInfo s!"Results written to file: {path}!"
 
-def generateOutput { α : Type } [ToJson α] (fragments : Array α) : AnalysisM String := do 
+def generateOutput { α : Type } [ToJson α] (fragments : Array α) : AnalysisM String := do
   if (← read).prettifyOutput then
     return (toJson fragments).pretty
   else

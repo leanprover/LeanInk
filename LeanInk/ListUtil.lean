@@ -7,7 +7,7 @@ def sort [Inhabited α] (f: α -> α -> Bool) (xs : List α) : List α := (xs.to
 partial def mergeSortedLists (f: α -> α -> Bool) : List α -> List α -> List α
   | [], xs => xs
   | xs, [] => xs
-  | x::xs, y::ys => 
+  | x::xs, y::ys =>
     if f x y then
       x::mergeSortedLists f xs (y::ys)
     else

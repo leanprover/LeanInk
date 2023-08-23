@@ -56,7 +56,7 @@ structure Goal where
   deriving ToJson
 
 structure Message where
-  _type : String := "message"  
+  _type : String := "message"
   contents : String
   deriving ToJson
 
@@ -72,7 +72,7 @@ structure Text where
   contents : Contents
   deriving ToJson
 
-/-- 
+/--
 We need a custom ToJson implementation for Alectryons fragments.
 
 For example we have following fragment:
@@ -102,7 +102,7 @@ instance : ToJson Fragment where
     | Fragment.text v => toJson v
     | Fragment.sentence v => toJson v
 
-/- 
+/-
   Token Generation
 -/
 
@@ -111,7 +111,7 @@ def genTypeInfo? (getContents : String.Pos -> String.Pos -> Option String) (toke
   | some type => do
     let headPos := Positional.headPos token
     let tailPos := Positional.tailPos token
-    match getContents headPos tailPos with 
+    match getContents headPos tailPos with
     | none => pure none
     | "" => pure none
     | some x => return some { name := x, type := type }
@@ -136,12 +136,12 @@ def genToken (token : Compound Analysis.Token) (contents : Option String) (getCo
     let semanticToken := Positional.smallest? semanticTokens
     let semanticTokenType ← genSemanticTokenValue semanticToken
     match (Positional.smallest? typeTokens) with
-    | none => do 
+    | none => do
       return some { raw := contents, semanticType := semanticTokenType }
-    | some token => do 
+    | some token => do
       return some { raw := contents, typeinfo := ← genTypeInfo? getContents token, link := none, docstring := token.docString, semanticType := semanticTokenType }
 
-def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String := 
+def extractContents (offset : String.Pos) (contents : String) (head tail: String.Pos) : Option String :=
   if head >= tail then
     none
   else
@@ -174,8 +174,8 @@ partial def genTokens (contents : String) (head : String.Pos) (offset : String.P
   match extractContents offset contents head (⟨contents.utf8ByteSize⟩ + offset) with
   | none => return tokens.reverse
   | some x => return ({ raw := x }::tokens).reverse
-  
-/- 
+
+/-
   Fragment Generation
 -/
 
@@ -191,15 +191,15 @@ def genGoal (goal : Analysis.Goal) : Goal := {
   hypotheses := (goal.hypotheses.map genHypothesis).toArray
 }
 
-def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal := 
-  if beforeNode then 
+def genGoals (beforeNode: Bool) (tactic : Analysis.Tactic) : List Goal :=
+  if beforeNode then
     tactic.goalsBefore.map (λ g => genGoal g)
   else
     tactic.goalsAfter.map (λ g => genGoal g)
 
 def genMessages (message : Analysis.Message) : Message := { contents := message.msg }
 
-def isComment (contents : String) : Bool := 
+def isComment (contents : String) : Bool :=
   let contents := contents.trim
   contents.startsWith "--" || contents.startsWith "/-"
 
@@ -227,7 +227,7 @@ def genFragment (annotation : Annotation) (globalTailPos : String.Pos) (contents
       let headPos := annotation.sentence.headPos
       let tokens ← genTokens contents headPos headPos [] annotation.tokens
       fragmentContents := Contents.experimentalTokens tokens.toArray
-    return Fragment.sentence { 
+    return Fragment.sentence {
       contents := fragmentContents
       goals := goals.toArray
       messages := (messages.map genMessages).toArray
