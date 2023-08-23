@@ -23,17 +23,17 @@ def tokensBetween (head : String.Pos) (tail : Option String.Pos) (compounds: Lis
     | (some tail, some tokenTail) =>
       if token.headPos <= tail && tokenTail > head then
         tokens ← tokens.push token
-    | (none, some tokenTail) => 
+    | (none, some tokenTail) =>
       if tokenTail > head then
         tokens ← tokens.push token
   return tokens.toList
 
 def matchTokenToAnalysis (tokens : List (Compound Token)) (aux : List Annotation) : List (Compound Sentence) -> List Annotation
   | [] => aux
-  | x::y::xs => 
+  | x::y::xs =>
     let tokens := (tokens.dropWhile (λ t => x.headPos > t.tailPos.getD t.headPos))
     matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween x.headPos y.headPos tokens}]) (y::xs)
-  | x::xs => 
+  | x::xs =>
     let tokens := (tokens.dropWhile (λ t => x.headPos > t.tailPos.getD t.headPos))
     matchTokenToAnalysis tokens (aux.append [{ sentence := x, tokens := tokensBetween x.headPos none tokens}]) xs
 

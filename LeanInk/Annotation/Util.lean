@@ -85,7 +85,7 @@ def _insertCompound [Positional a] [ToString a] (e : FragmentInterval a) (compou
           let updatedCompound := { c with tailPos := none, fragments := newFragments}
           logInfo s!"FOUND COMPOUND {c} -> UPDATING CURRENT WITH TAIL AT {e.position} -> {updatedCompound}"
           return updatedCompound::cs
-        else 
+        else
           /-
             It may be the case that the newFragments list isEmpty. This is totally fine as we need to
             insert text spacers later for the text. No we can simply generate a text fragment whenever a compound is empty.

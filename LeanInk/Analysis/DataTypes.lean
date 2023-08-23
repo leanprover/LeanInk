@@ -19,9 +19,9 @@ class Positional (α : Type u) where
 namespace Positional
   def length { α : Type u } [Positional α] (self : α) : String.Pos := (Positional.tailPos self) - (Positional.headPos self)
 
-  def smallest? { α : Type u } [Positional α] (list : List α) : Option α := List.foldl (λ a y => 
+  def smallest? { α : Type u } [Positional α] (list : List α) : Option α := List.foldl (λ a y =>
     let y : α := y -- We need to help the compiler a bit here otherwise it thinks `y : Option α`
-    match a with 
+    match a with
     | none => y
     | some x => if (Positional.length x) <= (Positional.length y) then x else y
   ) none list
@@ -74,7 +74,7 @@ instance : Positional TypeTokenInfo where
   headPos := (λ x => x.toFragment.headPos)
   tailPos := (λ x => x.toFragment.tailPos)
 
-/-- 
+/--
   A `Token` describes the metadata of a specific range of source text.
   E.g.: a `Token.type` describes for some variable `p` that it conforms to type `Nat`.
   For every category of metadata there should be an additonal constructor with specified `TokenInfo` to make sure the
