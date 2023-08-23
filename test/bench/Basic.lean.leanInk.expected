@@ -7488,14 +7488,14 @@
     "raw": "repeat",
     "link": null,
     "docstring":
-    "`repeat tac` applies `tac` to main goal. If the application succeeds,\nthe tactic is applied recursively to the generated subgoals until it eventually fails.\n",
+    "`repeat tac` repeatedly applies `tac` to the main goal until it fails.\nThat is, if `tac` produces multiple subgoals, only subgoals up to the first failure will be visited.\nThe `Std` library provides `repeat'` which repeats separately in each subgoal.\n",
     "_type": "token"},
    {"typeinfo": null,
     "semanticType": null,
     "raw": " ",
     "link": null,
     "docstring":
-    "`repeat tac` applies `tac` to main goal. If the application succeeds,\nthe tactic is applied recursively to the generated subgoals until it eventually fails.\n",
+    "`repeat tac` repeatedly applies `tac` to the main goal until it fails.\nThat is, if `tac` produces multiple subgoals, only subgoals up to the first failure will be visited.\nThe `Std` library provides `repeat'` which repeats separately in each subgoal.\n",
     "_type": "token"}],
   "_type": "sentence"},
  {"messages": [],
