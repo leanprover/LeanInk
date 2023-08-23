@@ -315,7 +315,7 @@ namespace TraversalAux
         return { self with allowsNewField := false, result := newResult }
       else
         return self
-    | TraversalFragment.tactic contextInfo => do
+    | TraversalFragment.tactic _ => do
       let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
       if tacticChildren.any (λ t => t.headPos == fragment.headPos && t.tailPos == fragment.tailPos) then
         return self
