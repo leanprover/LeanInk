@@ -12,3 +12,4 @@ lake-packages/
 *.trace
 *.json
 !lake-manifest.json
+.lake/lakefile.olean
