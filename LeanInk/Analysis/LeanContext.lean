@@ -20,7 +20,7 @@ def initializeLeanContext : IO Unit := do
 def lakefileName := "lakefile.lean"
 def lakeEnvName := "LAKE"
 def lakeCmdName := "lake"
-def lakePrintPathsCmd := "print-paths"
+def lakePrintPathsCmd := "setup-file"
 
 def getLakePath : IO String := do
   match (← IO.getEnv lakeEnvName) with
@@ -38,7 +38,7 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
   else
     logInfo s!"Loading Lake Context with lakefile ({lakeFile})..."
     let imports := Lean.Elab.headerToImports header
-    let arguments := #[lakePrintPathsCmd] ++ imports.map (toString ·.module)
+    let arguments := #[lakePrintPathsCmd, (toString lakeFile)] ++ imports.map (toString ·.module)
     let lakeProcess ← Process.spawn {
       stdin := Process.Stdio.null
       stdout := Process.Stdio.piped
