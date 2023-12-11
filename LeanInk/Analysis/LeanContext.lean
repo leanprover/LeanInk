@@ -27,6 +27,11 @@ def getLakePath : IO String := do
   | some path => return path
   | none => return lakeCmdName
 
+structure SetupFileOutput where
+  paths : LeanPaths
+  -- ignore the rest
+  deriving ToJson, FromJson
+
 open IO
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
@@ -51,11 +56,13 @@ def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Un
     | 0 => do
       let stdout := stdout.split (· == '\n') |>.getLast!
       match Json.parse stdout with
-      | Except.error _ => throw <| IO.userError s!"Failed to parse lake output: {stdout}"
+      | Except.error msg => throw <| IO.userError s!"Failed to parse lake output: {stdout}\nerror: {msg}"
       | Except.ok val => match fromJson? val with
-        | Except.error _ => throw <| IO.userError s!"Failed to decode lake output: {stdout}"
-        | Except.ok paths => do
-          let paths : LeanPaths := paths
+        | Except.error msg => throw <| IO.userError s!"Failed to decode lake output: {stdout}\nerror: {msg}"
+        | Except.ok output => do
+          let output : SetupFileOutput := output
+          let paths : LeanPaths := output.paths
+
           initializeLeanContext
           initSearchPath (← findSysroot) paths.oleanPath
           logInfo s!"{paths.oleanPath}"
