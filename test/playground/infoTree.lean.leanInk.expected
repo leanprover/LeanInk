@@ -103,7 +103,7 @@
     "link": null,
     "docstring": null,
     "_type": "token"},
-   {"typeinfo": {"type": "A × A → B", "name": "B", "_type": "typeinfo"},
+   {"typeinfo": {"type": "Type", "name": "B", "_type": "typeinfo"},
     "semanticType": null,
     "raw": "B",
     "link": null,
