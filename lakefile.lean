@@ -55,12 +55,12 @@ def indexOf? [BEq α] (xs : List α) (s : α) (start := 0): Option Nat :=
   | a :: tail => if a == s then some start else indexOf? tail s (start+1)
 
 /-! Walk the `test` folder looking for every `.lean` file that's not a `lakefile` or part of an
-`lake-packages` and run `leanInk` on it. If `capture` is true then update the `.lean.leanInk.expected`
+`.lake/packages` and run `leanInk` on it. If `capture` is true then update the `.lean.leanInk.expected`
 file, otherwise compare the new output to the expected output and return an error if they are
 different. -/
 def execute (leanInkExe: FilePath) (capture : Bool) : IO UInt32 := do
   let root : FilePath := "." / "test"
-  let dirs ← walkDir root (enter := fun path => return path.fileName != "lake-packages")
+  let dirs ← walkDir root (enter := fun path => return path.fileName != "packages" )
   let mut retVal : UInt32 := 0
   for test in dirs do
     if test.extension = "lean" && test.fileName != "lakefile.lean" then
