@@ -76,7 +76,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {f : α → β} {g : β → α}, injective f → left_inverse f g → right_inverse f g",
+     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β} {g : β → α}, injective f → left_inverse f g → right_inverse f g",
      "name": "right_inverse_of_injective_of_left_inverse",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -791,7 +791,7 @@
     "_type": "token"},
    {"typeinfo":
     {"type":
-     "∀ {α : Sort u₁} {β : Sort u₂} {f : α → β} {g : β → α}, surjective f → right_inverse f g → left_inverse f g",
+     "∀ {f : α → β} {g : β → α}, surjective f → right_inverse f g → left_inverse f g",
      "name": "left_inverse_of_surjective_of_right_inverse",
      "_type": "typeinfo"},
     "semanticType": "Name.Variable",
@@ -1399,9 +1399,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {α : Sort u₁}, surjective id",
-     "name": "surjective_id",
-     "_type": "typeinfo"},
+    {"type": "surjective id", "name": "surjective_id", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "surjective_id",
     "link": null,
@@ -1508,9 +1506,7 @@
     "docstring": null,
     "_type": "token"},
    {"typeinfo":
-    {"type": "∀ {α : Sort u₁}, bijective id",
-     "name": "bijective_id",
-     "_type": "typeinfo"},
+    {"type": "bijective id", "name": "bijective_id", "_type": "typeinfo"},
     "semanticType": "Name.Variable",
     "raw": "bijective_id",
     "link": null,
