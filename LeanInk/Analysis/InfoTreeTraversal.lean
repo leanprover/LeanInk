@@ -46,10 +46,10 @@ namespace TraversalFragment
     if Info.isExpanded info then
       pure (none, none)
     else
-      let mut semantic : Option SemanticTraversalInfo := none 
+      let mut semantic : Option SemanticTraversalInfo := none
       if (← read).experimentalSemanticType then
         semantic := some { node := info, stx := info.stx }
-      match info with 
+      match info with
       | Info.ofTacticInfo info => pure (tactic { info := info, ctx := ctx }, semantic)
       | Info.ofTermInfo info => pure (term { info := info, ctx := ctx }, semantic)
       | Info.ofFieldInfo info => pure (field { info := info, ctx := ctx }, semantic)
@@ -61,7 +61,7 @@ namespace TraversalFragment
   | tactic fragment => fragment.ctx.runMetaM {} (func (tactic fragment))
   | unknown fragment => fragment.ctx.runMetaM {} (func (unknown fragment))
 
-  /- 
+  /-
     Token Generation
   -/
   def prettyPrintTerm (expr : Expr) : MetaM (Widget.CodeWithInfos × String) := do
@@ -129,20 +129,20 @@ namespace TraversalFragment
   /- Sentence Generation -/
   private def genGoal (goalType : Widget.CodeWithInfos × String) (hypotheses : List Hypothesis): Name -> MetaM (Goal)
     | Name.anonymous => do
-      return { 
+      return {
         name := ""
         conclusion := .typed goalType.fst goalType.snd
-        hypotheses := hypotheses 
+        hypotheses := hypotheses
       }
     | name => do
       let goalFormatName := format name.eraseMacroScopes
-      return { 
+      return {
         name := toString goalFormatName
         conclusion := .typed goalType.fst goalType.snd
-        hypotheses := hypotheses 
+        hypotheses := hypotheses
       }
 
-  /-- 
+  /--
   This method is a adjusted version of the Meta.ppGoal function. As we do need to extract the goal informations into seperate properties instead
   of a single formatted string to support the Alectryon.Goal datatype.
   -/
@@ -186,11 +186,11 @@ namespace TraversalFragment
             pure (varNames, prevType?, hypotheses)
           else
             evalVar varNames prevType? hypotheses localDecl
-        let hypotheses ← pushPending hypotheses type? varNames 
+        let hypotheses ← pushPending hypotheses type? varNames
         let prettyType ← prettyPrintTerm (← instantiateMVars decl.type)
         return (← genGoal prettyType hypotheses decl.userName)
 
-  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) := 
+  private def _genGoals (contextInfo : ContextBasedInfo TacticInfo) (goals: List MVarId) (metaCtx: MetavarContext) : AnalysisM (List Goal) :=
     let ctx := { contextInfo.ctx with mctx := metaCtx }
     return (← ctx.runMetaM {} (goals.mapM evalGoal)).filterMap id
 
@@ -202,7 +202,7 @@ namespace TraversalFragment
 
   def genTactic? (self : TraversalFragment) : AnalysisM (Option Tactic) := do
     match self with
-    | tactic fragment => do 
+    | tactic fragment => do
       let goalsBefore ← genGoals fragment true
       let goalsAfter ← genGoals fragment false
       if goalsAfter.isEmpty then
@@ -287,13 +287,13 @@ namespace TraversalAux
       if self.allowsNewTerm then
         let newResult ← self.result.insertFragment fragment
         return { self with allowsNewTerm := false, result := newResult }
-      else 
+      else
         return self
     | TraversalFragment.field _ => do
       if self.allowsNewField then
         let newResult ← self.result.insertFragment fragment
         return { self with allowsNewField := false, result := newResult }
-      else 
+      else
         return self
     | TraversalFragment.tactic _ => do
       let tacticChildren := self.result.sentences.filterMap (λ f => f.asTactic?)
@@ -314,7 +314,7 @@ end TraversalAux
 
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) : AnalysisM TraversalAux :=
   match tree with
-  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree
+  | InfoTree.context ctx tree => _resolveTacticList (ctx.mergeIntoOuter? ctx?) aux tree
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
@@ -324,8 +324,8 @@ partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : Travers
       match (← TraversalFragment.create ctx info) with
       | (some fragment, some semantic) => do
         let sortedChildrenLeafs ← sortedChildrenLeafs.insertSemanticInfo semantic
-        sortedChildrenLeafs.insertFragment fragment          
-      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment          
+        sortedChildrenLeafs.insertFragment fragment
+      | (some fragment, none) => sortedChildrenLeafs.insertFragment fragment
       | (none, some semantic) => sortedChildrenLeafs.insertSemanticInfo semantic
       | (_, _) => pure sortedChildrenLeafs
     | none => pure aux
