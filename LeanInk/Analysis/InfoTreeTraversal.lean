@@ -27,7 +27,7 @@ deriving Repr
 partial def _hasSorry (t : InfoTree) : Bool :=
   let rec go (ci? : Option ContextInfo) (t : InfoTree) : Bool :=
     match t with
-    | InfoTree.context ci t => go ci t
+    | InfoTree.context ci t => go (ci.mergeIntoOuter? ci?) t
     | InfoTree.node i cs =>
       if let (some _, .ofTermInfo ti) := (ci?, i) then
         ti.expr.hasSorry
@@ -335,7 +335,7 @@ end TraversalAux
 partial def _resolveTacticList (ctx?: Option ContextInfo := none) (aux : TraversalAux := {}) (tree : InfoTree) (infoTreeCtx : InfoTreeContext) : AnalysisM TraversalAux := do
   let config ← read
   match tree with
-  | InfoTree.context ctx tree => _resolveTacticList ctx aux tree (_updateIsCalcTatic config infoTreeCtx tree)
+  | InfoTree.context ctx tree => _resolveTacticList (ctx.mergeIntoOuter? ctx?) aux tree (_updateIsCalcTatic config infoTreeCtx tree)
   | InfoTree.node info children =>
     match ctx? with
     | some ctx => do
