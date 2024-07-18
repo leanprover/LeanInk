@@ -18,6 +18,7 @@ def initializeLeanContext : IO Unit := do
 
 -- LAKE
 def lakefileName := "lakefile.lean"
+def lakefileNamev8 := "lakefile.toml"
 def lakeEnvName := "LAKE"
 def lakeCmdName := "lake"
 def lakePrintPathsCmd := "setup-file"
@@ -36,10 +37,11 @@ open IO
 def initializeLakeContext (lakeFile : FilePath) (header : Syntax) : AnalysisM Unit := do
   if !(← lakeFile.pathExists) then
     throw <| IO.userError s!"lakefile does not exist: {lakeFile}"
-  else if lakeFile.fileName != some "lakefile.lean" then
+  else if lakeFile.fileName != some lakefileName && lakeFile.fileName != some lakefileNamev8 then
     match lakeFile.fileName with
     | none => throw <| IO.userError s!"lakefile is not a valid file!"
-    | some fileName => throw <| IO.userError s!"lakefile [{fileName}] not called: lakefile.lean"
+    | some fileName =>
+      throw <| IO.userError s!"lakefile [{fileName}] not called: {lakefileName} || {lakefileNamev8}"
   else
     logInfo s!"Loading Lake Context with lakefile ({lakeFile})..."
     let imports := Lean.Elab.headerToImports header
